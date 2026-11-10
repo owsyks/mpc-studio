@@ -252,12 +252,12 @@ export default function PracticePage() {
             {currentExercise.hints?.slice(0, hintLevel).map((hint: string, hIdx: number) => (
               <div
                 key={hIdx}
-                className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs text-foreground leading-relaxed space-y-1 animate-in fade-in"
+                className="p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-xs text-amber-950 dark:text-amber-100 leading-relaxed space-y-1 animate-in fade-in"
               >
-                <div className="font-semibold text-amber-300 font-mono text-[11px]">
+                <div className="font-bold text-amber-950 dark:text-amber-300 font-mono text-[11px]">
                   {language === "en" ? "Hint" : "Indice"} {hIdx + 1} :
                 </div>
-                <div className="text-amber-100/90">
+                <div className="text-amber-950/95 dark:text-amber-100/90">
                   <MathRenderer content={hint} />
                 </div>
               </div>
@@ -513,11 +513,11 @@ export default function PracticePage() {
 
             {/* Missing elements */}
             {evaluationResult.missingElements?.length > 0 && (
-              <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs space-y-1.5">
-                <div className="font-semibold text-amber-300">
-                  Éléments ou justifications manquantes :
+              <div className="p-3.5 rounded-xl border border-amber-500/40 bg-amber-500/10 text-xs space-y-1.5 text-amber-950 dark:text-amber-200">
+                <div className="font-bold text-amber-950 dark:text-amber-300">
+                  {language === "en" ? "Missing elements or justifications:" : "Éléments ou justifications manquantes :"}
                 </div>
-                <ul className="list-disc list-inside text-[11px] text-amber-200/90 space-y-0.5">
+                <ul className="list-disc list-inside text-[11px] text-amber-950/90 dark:text-amber-200/90 space-y-0.5">
                   {evaluationResult.missingElements.map((m: string, mIdx: number) => (
                     <li key={mIdx}>{m}</li>
                   ))}

@@ -21,7 +21,10 @@ function normalizeLatexSymbols(math: string): string {
     .replace(/\\Q(?![a-zA-Z])/g, "\\mathbb{Q}")
     .replace(/\\Ker(?![a-zA-Z])/g, "\\ker")
     .replace(/\\Im(?![a-zA-Z])/g, "\\operatorname{Im}")
-    .replace(/\\pgcd(?![a-zA-Z])/g, "\\gcd");
+    .replace(/\\pgcd(?![a-zA-Z])/g, "\\gcd")
+    .replace(/\\ppcm(?![a-zA-Z])/g, "\\operatorname{lcm}")
+    .replace(/\\card(?![a-zA-Z])/g, "\\operatorname{card}")
+    .replace(/\\ord(?![a-zA-Z])/g, "\\operatorname{ord}");
 }
 
 export function MathRenderer({ content, className = "", block = false }: MathRendererProps) {

@@ -345,12 +345,12 @@ export default function LessonPage({ params }: PageProps) {
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {currentLesson.content.notationGuide.map((item, i) => (
-                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/60">
-                      <div className="font-mono text-xs text-primary font-bold bg-card/80 px-2.5 py-1 rounded border border-border shrink-0">
+                    <div key={i} className="flex items-start gap-3 p-3.5 rounded-xl bg-card border border-border shadow-xs">
+                      <div className="font-mono text-xs text-primary font-bold bg-muted/60 px-2.5 py-1.5 rounded-lg border border-border shrink-0">
                         <MathRenderer content={`$${item.symbol}$`} />
                       </div>
-                      <div className="text-xs text-muted-foreground leading-snug pt-0.5">
-                        {item.meaning}
+                      <div className="text-xs text-foreground/90 leading-relaxed pt-1">
+                        <MathRenderer content={item.meaning} />
                       </div>
                     </div>
                   ))}
@@ -408,24 +408,24 @@ export default function LessonPage({ params }: PageProps) {
                     </div>
 
                     <div className="space-y-3">
-                      <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
-                        <div className="font-semibold flex items-center gap-1.5 mb-1">
-                          <Check className="h-3.5 w-3.5" />
-                          <span>Astuce de Rédaction d'Oran 1 :</span>
+                      <div className="p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-950 dark:text-emerald-200">
+                        <div className="font-bold flex items-center gap-1.5 mb-1.5 text-emerald-950 dark:text-emerald-300 text-xs">
+                          <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
+                          <span>{language === "en" ? "Oran 1 Exam Writing Tip:" : "Astuce de Rédaction d'Oran 1 :"}</span>
                         </div>
-                        <p className="text-[11px] leading-relaxed text-emerald-300/90">
-                          {m.examTip}
-                        </p>
+                        <div className="text-[12px] leading-relaxed text-emerald-950 dark:text-emerald-200 font-medium">
+                          <MathRenderer content={m.examTip || ""} />
+                        </div>
                       </div>
 
-                      <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300">
-                        <div className="font-semibold flex items-center gap-1.5 mb-1">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          <span>Piège classique à éviter :</span>
+                      <div className="p-3.5 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-950 dark:text-rose-200">
+                        <div className="font-bold flex items-center gap-1.5 mb-1.5 text-rose-950 dark:text-rose-300 text-xs">
+                          <AlertTriangle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0" />
+                          <span>{language === "en" ? "Frequent Exam Trap to Avoid:" : "Piège classique à éviter :"}</span>
                         </div>
-                        <p className="text-[11px] leading-relaxed text-rose-300/90">
-                          {m.commonTrap}
-                        </p>
+                        <div className="text-[12px] leading-relaxed text-rose-950 dark:text-rose-200 font-medium">
+                          <MathRenderer content={m.commonTrap || m.pitfallToAvoid || ""} />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -509,11 +509,11 @@ export default function LessonPage({ params }: PageProps) {
         {/* TAB 4: PIEGES D'EXAMEN */}
         {activeTab === "traps" && (
           <div className="space-y-4 animate-in fade-in duration-200">
-            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 flex items-start gap-3">
-              <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/30 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
               <div className="text-xs leading-relaxed">
-                <p className="font-semibold text-rose-300 text-sm">{t("lesson.traps.title")}</p>
-                <p className="text-rose-300/80 mt-0.5">
+                <p className="font-bold text-rose-950 dark:text-rose-200 text-sm">{t("lesson.traps.title")}</p>
+                <p className="text-rose-900/90 dark:text-rose-200/90 mt-0.5 font-medium">
                   {t("lesson.traps.desc")}
                 </p>
               </div>
@@ -540,7 +540,7 @@ export default function LessonPage({ params }: PageProps) {
             {currentLesson.quiz.map((q, qIdx) => (
               <div key={qIdx} className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-4">
                 <h3 className="text-sm sm:text-base font-semibold text-foreground">
-                  Question : {q.question}
+                  Question : <MathRenderer content={q.question} />
                 </h3>
 
                 <div className="space-y-2">
@@ -551,9 +551,9 @@ export default function LessonPage({ params }: PageProps) {
 
                     if (quizSubmitted) {
                       if (isCorrect) {
-                        optionStyle = "border-emerald-500 bg-emerald-500/15 text-emerald-300 font-semibold";
+                        optionStyle = "border-emerald-500 bg-emerald-500/15 text-emerald-950 dark:text-emerald-200 font-bold";
                       } else if (isSelected && !isCorrect) {
-                        optionStyle = "border-rose-500 bg-rose-500/15 text-rose-300";
+                        optionStyle = "border-rose-500 bg-rose-500/15 text-rose-950 dark:text-rose-200 font-semibold";
                       } else {
                         optionStyle = "opacity-50 border-border/40 text-muted-foreground";
                       }
@@ -568,12 +568,12 @@ export default function LessonPage({ params }: PageProps) {
                         onClick={() => setSelectedQuizOption(optIdx)}
                         className={`w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm transition-all flex items-center justify-between ${optionStyle}`}
                       >
-                        <span>{opt}</span>
+                        <MathRenderer content={opt} />
                         {quizSubmitted && isCorrect && (
-                          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                          <CheckCircle2 className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0" />
                         )}
                         {quizSubmitted && isSelected && !isCorrect && (
-                          <XCircle className="h-4 w-4 text-rose-400 shrink-0" />
+                          <XCircle className="h-4 w-4 text-rose-600 dark:text-rose-400 shrink-0" />
                         )}
                       </button>
                     );

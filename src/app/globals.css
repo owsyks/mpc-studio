@@ -121,6 +121,16 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+html.light .katex, body.light .katex, .light .katex {
+  color: #0f172a !important;
+}
+
+html.light .katex-display, body.light .katex-display, .light .katex-display {
+  background-color: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
 .katex-block-wrapper {
   overflow-x: auto;
   padding: 0.15em 0;
