@@ -603,6 +603,81 @@ export default function LessonPage({ params }: PageProps) {
           </div>
         )}
 
+        {/* Inline AI Assistant Card */}
+        <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 sm:p-6 space-y-4 shadow-sm backdrop-blur-md">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-xl bg-primary/20 text-primary border border-primary/30">
+                <Cpu className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-foreground">
+                  {language === "en" ? "Ask AI Tutor about this lesson" : "Une question sur cette leçon ?"}
+                </h3>
+                <p className="text-xs text-muted-foreground">
+                  {language === "en"
+                    ? "NVIDIA NIM answers your questions with exact Oran 1 proofs and citations."
+                    : "L'IA NVIDIA NIM répond avec les démonstrations exactes et citations du cours d'Oran 1."}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsTutorOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/10 hover:bg-primary/20 text-primary text-xs font-semibold self-start sm:self-auto transition-colors"
+            >
+              <Maximize2 className="h-3.5 w-3.5" />
+              <span>{language === "en" ? "Open Full Chat Drawer" : "Ouvrir le panneau complet"}</span>
+            </button>
+          </div>
+
+          {/* Quick prompt chips */}
+          <div className="flex flex-wrap gap-2 pt-1">
+            <button
+              onClick={() => handleSendMessage(language === "en" ? `Explain the core theorem of "${currentLesson.title}" step by step.` : `Explique-moi le théorème central de "${currentLesson.title}" pas-à-pas.`)}
+              className="text-xs bg-card hover:bg-muted px-3 py-1.5 rounded-lg border border-border text-foreground transition-colors"
+            >
+              ✨ {language === "en" ? "Explain core theorem" : "Expliquer le théorème central"}
+            </button>
+            <button
+              onClick={() => handleSendMessage(language === "en" ? `Give me a classic exam counter-example for "${currentLesson.title}".` : `Donne-moi un contre-exemple d'examen classique pour "${currentLesson.title}".`)}
+              className="text-xs bg-card hover:bg-muted px-3 py-1.5 rounded-lg border border-border text-foreground transition-colors"
+            >
+              ⚠️ {language === "en" ? "Classic counter-example" : "Contre-exemple classique"}
+            </button>
+            <button
+              onClick={() => handleSendMessage(language === "en" ? `Ask me a quick oral exam question on "${currentLesson.title}".` : `Pose-moi une question type examen pour tester ma compréhension.`)}
+              className="text-xs bg-card hover:bg-muted px-3 py-1.5 rounded-lg border border-border text-foreground transition-colors"
+            >
+              🎯 {language === "en" ? "Test my understanding" : "Tester ma compréhension"}
+            </button>
+          </div>
+
+          {/* Direct Input Field */}
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSendMessage();
+            }}
+            className="flex gap-2 pt-1"
+          >
+            <input
+              type="text"
+              value={inputMessage}
+              onChange={(e) => setInputMessage(e.target.value)}
+              placeholder={language === "en" ? "Type your question here (e.g. How to prove associativity for this law?)..." : "Tapez votre question ici (ex: Comment rédiger la clôture de la loi ?)..."}
+              className="flex-1 bg-card border border-border rounded-xl px-4 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
+            />
+            <button
+              type="submit"
+              disabled={isAiLoading || !inputMessage.trim()}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary/90 text-white text-xs font-semibold disabled:opacity-50 transition-all shadow-md shadow-primary/25"
+            >
+              {isAiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+              <span>{language === "en" ? "Ask" : "Poser"}</span>
+            </button>
+          </form>
+        </div>
+
         {/* Bottom Navigation: Previous / Next Lesson */}
         <div className="pt-6 border-t border-border/80 flex items-center justify-between">
           {prevLesson ? (
@@ -633,96 +708,119 @@ export default function LessonPage({ params }: PageProps) {
         </div>
       </div>
 
+      {/* Floating Action Button to toggle AI Tutor drawer when closed */}
+      {!isTutorOpen && (
+        <button
+          onClick={() => setIsTutorOpen(true)}
+          className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-primary hover:bg-primary/90 text-white shadow-2xl shadow-primary/40 border border-white/20 transition-all hover:scale-105"
+        >
+          <Cpu className="h-4 w-4 text-emerald-300" />
+          <span className="text-xs font-semibold">{t("lesson.tutor.title")}</span>
+          <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+        </button>
+      )}
+
       {/* 3. Right: Collapsible NVIDIA NIM AI Copilot Drawer */}
       <div
-        className={`fixed lg:static top-16 bottom-0 right-0 z-40 flex flex-col border-l border-border/80 bg-card/90 backdrop-blur-xl transition-all duration-300 ${
-          isTutorOpen ? "w-80 sm:w-96" : "w-12"
+        className={`fixed top-16 bottom-0 right-0 z-50 flex flex-col border-l border-border bg-card shadow-2xl transition-all duration-300 ${
+          isTutorOpen ? "w-[360px] sm:w-[420px] translate-x-0" : "w-0 translate-x-full pointer-events-none"
         }`}
       >
-        {/* Toggle Bar */}
-        <button
-          onClick={() => setIsTutorOpen(!isTutorOpen)}
-          className="flex items-center justify-between p-3 border-b border-border/80 text-xs font-medium text-foreground hover:bg-muted/40 transition-colors"
-        >
-          <div className="flex items-center gap-2 truncate">
-            <Cpu className="h-4 w-4 text-emerald-400 shrink-0" />
-            {isTutorOpen && <span className="font-semibold truncate">{t("lesson.tutor.title")}</span>}
-          </div>
-          {isTutorOpen ? <ChevronDown className="h-4 w-4 rotate-90" /> : <ChevronUp className="h-4 w-4 -rotate-90" />}
-        </button>
-
-        {isTutorOpen && (
-          <div className="flex-1 flex flex-col overflow-hidden p-3 space-y-3">
-            {/* Quick Suggestion Chips */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground">{t("lesson.tutor.chips")}</span>
-              <div className="flex flex-wrap gap-1.5">
-                <button
-                  onClick={() => handleSendMessage(language === "en" ? "Explain the 4 group axioms with a classic counter-example." : "Explique-moi les 4 axiomes avec un contre-exemple classique.")}
-                  className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
-                >
-                  {t("lesson.tutor.chip1")}
-                </button>
-                <button
-                  onClick={() => handleSendMessage(language === "en" ? "What is the #1 trap to avoid on this topic during exams?" : "Quel est le piège n°1 à éviter sur cette leçon à l'examen ?")}
-                  className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
-                >
-                  {t("lesson.tutor.chip2")}
-                </button>
-                <button
-                  onClick={() => handleSendMessage(language === "en" ? "Ask me a question to test my understanding of this lesson." : "Pose-moi une question pour tester ma maîtrise.")}
-                  className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
-                >
-                  {t("lesson.tutor.chip3")}
-                </button>
+        {/* Header Bar */}
+        <div className="flex items-center justify-between p-4 border-b border-border bg-card shrink-0">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <Cpu className="h-4 w-4" />
+            </div>
+            <div>
+              <div className="text-xs font-bold text-foreground">{t("lesson.tutor.title")}</div>
+              <div className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                Gemma 4 31B • RAG Oran 1
               </div>
             </div>
-
-            {/* Chat Messages Log */}
-            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-              {chatMessages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={`p-3 rounded-lg text-xs leading-relaxed ${
-                    msg.role === "assistant"
-                      ? "bg-muted/50 border border-border/70 text-foreground"
-                      : "bg-primary/20 border border-primary/30 text-primary-foreground ml-4"
-                  }`}
-                >
-                  <div className="text-[10px] font-mono text-muted-foreground mb-1">
-                    {msg.role === "assistant" ? "NVIDIA NIM" : (language === "en" ? "You" : "Vous")}
-                  </div>
-                  <MathRenderer content={msg.content} />
-                </div>
-              ))}
-              {isAiLoading && (
-                <div className="p-3 rounded-lg bg-muted/40 border border-border/60 text-xs flex items-center gap-2 text-muted-foreground">
-                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                  <span>{t("lesson.tutor.loading")}</span>
-                </div>
-              )}
-            </div>
-
-            {/* Chat Input */}
-            <div className="pt-2 border-t border-border/80 flex gap-2">
-              <input
-                type="text"
-                value={inputMessage}
-                onChange={(e) => setInputMessage(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder={t("lesson.tutor.placeholder")}
-                className="flex-1 bg-muted/40 border border-border/80 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
-              />
-              <button
-                disabled={isAiLoading || !inputMessage.trim()}
-                onClick={() => handleSendMessage()}
-                className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
-              >
-                <Send className="h-3.5 w-3.5" />
-              </button>
-            </div>
           </div>
-        )}
+          <button
+            onClick={() => setIsTutorOpen(false)}
+            className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground text-xs transition-colors"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Suggestion Chips */}
+        <div className="p-3 border-b border-border/60 bg-muted/20 shrink-0 space-y-1.5">
+          <span className="text-[10px] font-mono uppercase text-muted-foreground">{t("lesson.tutor.chips")}</span>
+          <div className="flex flex-wrap gap-1.5">
+            <button
+              onClick={() => handleSendMessage(language === "en" ? "Explain the 4 group axioms with a classic counter-example." : "Explique-moi les 4 axiomes avec un contre-exemple classique.")}
+              className="text-[11px] bg-card hover:bg-muted px-2.5 py-1 rounded-lg border border-border/80 text-muted-foreground hover:text-foreground text-left transition-colors"
+            >
+              {t("lesson.tutor.chip1")}
+            </button>
+            <button
+              onClick={() => handleSendMessage(language === "en" ? "What is the #1 trap to avoid on this topic during exams?" : "Quel est le piège n°1 à éviter sur cette leçon à l'examen ?")}
+              className="text-[11px] bg-card hover:bg-muted px-2.5 py-1 rounded-lg border border-border/80 text-muted-foreground hover:text-foreground text-left transition-colors"
+            >
+              {t("lesson.tutor.chip2")}
+            </button>
+            <button
+              onClick={() => handleSendMessage(language === "en" ? "Ask me a question to test my understanding of this lesson." : "Pose-moi une question pour tester ma maîtrise.")}
+              className="text-[11px] bg-card hover:bg-muted px-2.5 py-1 rounded-lg border border-border/80 text-muted-foreground hover:text-foreground text-left transition-colors"
+            >
+              {t("lesson.tutor.chip3")}
+            </button>
+          </div>
+        </div>
+
+        {/* Chat Messages Log */}
+        <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-3">
+          {chatMessages.map((msg, i) => (
+            <div
+              key={i}
+              className={`p-3 rounded-xl text-xs leading-relaxed ${
+                msg.role === "assistant"
+                  ? "bg-muted/50 border border-border/80 text-foreground"
+                  : "bg-primary text-white ml-6 shadow-sm shadow-primary/20"
+              }`}
+            >
+              <div className="text-[10px] font-mono mb-1 opacity-70">
+                {msg.role === "assistant" ? "NVIDIA NIM Copilot" : (language === "en" ? "You" : "Vous")}
+              </div>
+              <MathRenderer content={msg.content} />
+            </div>
+          ))}
+          {isAiLoading && (
+            <div className="p-3 rounded-xl bg-muted/40 border border-border text-xs flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
+              <span>{t("lesson.tutor.loading")}</span>
+            </div>
+          )}
+        </div>
+
+        {/* Chat Input Bar - ALWAYS PINNED & VISIBLE AT THE BOTTOM */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSendMessage();
+          }}
+          className="p-3 border-t border-border bg-card shrink-0 flex gap-2"
+        >
+          <input
+            type="text"
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder={t("lesson.tutor.placeholder")}
+            className="flex-1 bg-muted/40 border border-border rounded-xl px-3.5 py-2.5 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary shadow-inner"
+          />
+          <button
+            type="submit"
+            disabled={isAiLoading || !inputMessage.trim()}
+            className="p-2.5 rounded-xl bg-primary text-white hover:bg-primary/90 disabled:opacity-50 transition-colors shadow-sm"
+          >
+            <Send className="h-4 w-4" />
+          </button>
+        </form>
       </div>
     </div>
   );

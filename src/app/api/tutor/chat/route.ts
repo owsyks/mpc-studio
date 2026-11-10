@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { NvidiaAIService, ChatMessage } from "@/lib/nvidia-ai";
 import { RagService } from "@/lib/rag-service";
 
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const { messages, context } = await req.json();
@@ -55,7 +58,7 @@ Directives pédagogiques impératives :
       const reply = await NvidiaAIService.chatCompletion({
         messages: chatMessages,
         temperature: 0.2,
-        maxTokens: 1800,
+        maxTokens: 1000,
       });
 
       return NextResponse.json({
@@ -67,15 +70,37 @@ Directives pédagogiques impératives :
         })),
       });
     } catch (aiErr: any) {
-      // Fallback message when NVIDIA_API_KEY is not set or network issue
+      console.warn("NVIDIA NIM call fell back to local RAG knowledge:", aiErr.message);
+
+      const topChunk = retrievedChunks[0]?.chunk;
+      const fallbackReply = language === "en"
+        ? `### Course Reference & Explanation (${topChunk?.title || lessonTitle || "Course Theory"})
+According to the University of Oran 1 course notes (**${topChunk?.sourcePdf || "cours-mpc-partie1.pdf"}**, Page ${topChunk?.page || 1}):
+
+${topChunk?.content ? topChunk.content.slice(0, 500) + "..." : "A group $(G, *)$ must satisfy 4 fundamental axioms: closure, associativity, existence of an identity element $e$, and existence of an inverse for every element."}
+
+**Key Step-by-Step Method:**
+1. **Closure**: Verify that for all $x, y \\in G$, $x * y \\in G$.
+2. **Associativity**: Check that $(x * y) * z = x * (y * z)$.
+3. **Identity Element**: Solve $x * e = x$ and verify $e \\in G$.
+4. **Symmetric / Inverse**: Solve $x * x' = e$ and verify $x' \\in G$.
+
+*(Note: Live inference momentarily fell back to curated Oran 1 course notes. Please re-send if you require detailed customized steps).*`
+        : `### Référence & Explication du Cours Oran 1 (${topChunk?.title || lessonTitle || "Théorie du cours"})
+D'après les polycopiés officiels de l'Université Oran 1 (**${topChunk?.sourcePdf || "cours-mpc-partie1.pdf"}**, Page ${topChunk?.page || 1}) :
+
+${topChunk?.content ? topChunk.content.slice(0, 500) + "..." : "Rappel des 4 axiomes fondamentaux d'un groupe $(G, *)$ : loi de composition interne (stabilité), associativité, existence d'un élément neutre unique $e$, et existence d'un inverse ou symétrique $x^{-1}$ pour chaque élément."}
+
+**Méthode de démonstration type examen :**
+1. **Loi interne (stabilité)** : Montrer que $\\forall x, y \\in G, \\; x * y \\in G$.
+2. **Associativité** : Démontrer que $(x * y) * z = x * (y * z)$.
+3. **Élément neutre** : Résoudre l'équation $x * e = x$ pour trouver $e \\in G$.
+4. **Symétrique** : Résoudre $x * x' = e$ et prouver que $x' \\in G$.
+
+*(Note : L'inférence directe a basculé sur la base de connaissances RAG du cours d'Oran 1 pour garantir une réponse immédiate sans blocage).*`;
+
       return NextResponse.json({
-        reply: `**Note du Tuteur MPC :** L'inférence NVIDIA NIM a renvoyé : *${aiErr.message}*.
-
-Pour activer les réponses complètes en direct du modèle Llama 3.1 70B via NVIDIA NIM, assurez-vous d'avoir configuré \`NVIDIA_API_KEY\` dans vos variables d'environnement.
-
-En attendant, voici les points essentiels du cours pour votre question :
-- Consultez le document [${retrievedChunks[0]?.chunk.sourcePdf || "cours-mpc-partie1.pdf"}, Page ${retrievedChunks[0]?.chunk.page || 5}] : *${retrievedChunks[0]?.chunk.title || "Notion de groupe"}*.
-- Les propriétés fondamentales : fermeture, associativité, neutre $e$, et existence de l'inverse $x^{-1}$.`,
+        reply: fallbackReply,
         sources: retrievedChunks.map((r) => ({
           pdf: r.chunk.sourcePdf,
           page: r.chunk.page,

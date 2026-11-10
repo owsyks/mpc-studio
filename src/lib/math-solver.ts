@@ -26,6 +26,14 @@ export class MathSolver {
   }
 
   /**
+   * Least Common Multiple (LCM / PPCM)
+   */
+  static lcm(a: number, b: number): number {
+    if (a === 0 || b === 0) return 0;
+    return Math.abs(a * b) / this.gcd(a, b);
+  }
+
+  /**
    * Extended Euclidean Algorithm: finds gcd, x, y such that ax + by = gcd(a, b)
    */
   static extendedGcd(a: number, b: number): BezoutResult {

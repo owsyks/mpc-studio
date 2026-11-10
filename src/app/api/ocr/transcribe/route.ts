@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NvidiaAIService } from "@/lib/nvidia-ai";
 
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const { imageBase64 } = await req.json();

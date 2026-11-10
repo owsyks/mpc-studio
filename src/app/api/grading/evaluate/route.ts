@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { NvidiaAIService, ChatMessage } from "@/lib/nvidia-ai";
 
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     const { studentWork, exercise, ocrConfirmed } = await req.json();

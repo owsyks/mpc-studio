@@ -57,19 +57,19 @@ export class NvidiaAIService {
       model,
       messages: options.messages,
       temperature: options.temperature ?? 0.2,
-      max_tokens: options.maxTokens ?? 2048,
+      max_tokens: Math.min(options.maxTokens ?? 1000, 1200),
       stream: false,
     };
 
     let attempts = 0;
-    const maxAttempts = 3;
+    const maxAttempts = 2;
     let lastError: Error | null = null;
 
     while (attempts < maxAttempts) {
       try {
         attempts++;
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 45000); // 45s timeout
+        const timeout = setTimeout(() => controller.abort(), 22000); // 22s timeout per request
 
         const response = await fetch(url, {
           method: "POST",

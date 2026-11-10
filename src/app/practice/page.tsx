@@ -23,6 +23,7 @@ import {
 import exercisesData from "@/data/exercises.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
 import { useLanguage } from "@/lib/i18n";
+import { ExerciseGenerator } from "@/lib/exercise-generator";
 
 export default function PracticePage() {
   const { language, t } = useLanguage();
@@ -31,6 +32,12 @@ export default function PracticePage() {
   const [studentInput, setStudentInput] = useState<string>("");
   const [hintLevel, setHintLevel] = useState<number>(0);
   const [showSolution, setShowSolution] = useState<boolean>(false);
+
+  // Exercise Generation Modal state
+  const [isGenModalOpen, setIsGenModalOpen] = useState<boolean>(false);
+  const [genModuleId, setGenModuleId] = useState<string>("module-1");
+  const [genTopic, setGenTopic] = useState<string>("group-law");
+  const [genDifficulty, setGenDifficulty] = useState<string>("Medium");
 
   // OCR state
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -57,27 +64,28 @@ export default function PracticePage() {
     setEvaluationResult(null);
   };
 
-  // Generate another exercise
-  const handleGenerateVariation = async (difficulty: string = "Medium") => {
+  // Generate exercise by selected chapter and topic
+  const handleGenerateByChapter = async (
+    targetModuleId?: string,
+    targetTopic?: string,
+    targetDifficulty?: string
+  ) => {
     setIsGenerating(true);
     try {
-      const topicType = currentExercise.sheet?.includes("1")
-        ? "group-proof"
-        : currentExercise.id?.includes("5")
-        ? "element-order"
-        : currentExercise.id?.includes("6")
-        ? "modular-units"
-        : "modular-inverse";
+      const mod = targetModuleId || genModuleId;
+      const top = targetTopic || genTopic;
+      const diff = targetDifficulty || genDifficulty;
 
       const res = await fetch("/api/exercises", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: topicType, difficulty }),
+        body: JSON.stringify({ moduleId: mod, topic: top, difficulty: diff }),
       });
       const generated = await res.json();
       if (generated && generated.id) {
         setExercises((prev) => [generated, ...prev]);
         handleSelectExercise(generated);
+        setIsGenModalOpen(false);
       }
     } catch (err) {
       console.error("Erreur de génération", err);
@@ -164,10 +172,10 @@ export default function PracticePage() {
 
           <button
             disabled={isGenerating}
-            onClick={() => handleGenerateVariation("Medium")}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 hover:bg-primary/25 text-primary text-xs font-medium transition-all shadow-sm disabled:opacity-50 border border-primary/30"
+            onClick={() => setIsGenModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-medium transition-all shadow-sm shadow-primary/20 disabled:opacity-50"
           >
-            <RefreshCw className={`h-3.5 w-3.5 ${isGenerating ? "animate-spin" : ""}`} />
+            <Sparkles className={`h-3.5 w-3.5 ${isGenerating ? "animate-spin" : ""}`} />
             <span>{t("practice.generate")}</span>
           </button>
         </div>
@@ -510,6 +518,133 @@ export default function PracticePage() {
           </div>
         )}
       </div>
+
+      {/* Generator by Chapter & Topic Modal */}
+      {isGenModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in">
+          <div className="relative w-full max-w-xl rounded-2xl border border-border bg-card p-6 shadow-2xl space-y-5">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-primary" />
+                <h3 className="text-base font-bold text-foreground">
+                  {t("practice.genModal.title")}
+                </h3>
+              </div>
+              <button
+                onClick={() => setIsGenModalOpen(false)}
+                className="p-1 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground text-xs"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-muted-foreground">
+              {t("practice.genModal.subtitle")}
+            </p>
+
+            {/* 1. Module Selector */}
+            <div className="space-y-2">
+              <label className="text-xs font-mono font-semibold uppercase text-foreground">
+                {t("practice.genModal.module")}
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {ExerciseGenerator.MODULES.map((mod) => (
+                  <button
+                    key={mod.id}
+                    onClick={() => {
+                      setGenModuleId(mod.id);
+                      setGenTopic(mod.topics[0]?.id || "");
+                    }}
+                    className={`p-2.5 rounded-xl border text-xs text-left transition-all ${
+                      genModuleId === mod.id
+                        ? "border-primary bg-primary/10 text-primary font-bold shadow-sm"
+                        : "border-border/70 bg-muted/30 text-muted-foreground hover:bg-muted/70 hover:text-foreground"
+                    }`}
+                  >
+                    {mod.title}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Topic Selector */}
+            <div className="space-y-2">
+              <label className="text-xs font-mono font-semibold uppercase text-foreground">
+                {t("practice.genModal.topic")}
+              </label>
+              <div className="flex flex-wrap gap-2">
+                {ExerciseGenerator.MODULES.find((m) => m.id === genModuleId)?.topics.map((top) => (
+                  <button
+                    key={top.id}
+                    onClick={() => setGenTopic(top.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${
+                      genTopic === top.id
+                        ? "border-primary bg-primary text-white font-semibold shadow-sm"
+                        : "border-border/70 bg-muted/40 text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    {top.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. Difficulty Selector */}
+            <div className="space-y-2">
+              <label className="text-xs font-mono font-semibold uppercase text-foreground">
+                {t("practice.genModal.difficulty")}
+              </label>
+              <div className="flex gap-2">
+                {[
+                  { id: "Easy", label: language === "en" ? "Easy" : "Facile" },
+                  { id: "Medium", label: language === "en" ? "Medium" : "Moyen" },
+                  { id: "Hard", label: language === "en" ? "Hard" : "Difficile" },
+                  { id: "Exam Level", label: language === "en" ? "Exam Level" : "Niveau Examen" },
+                ].map((diff) => (
+                  <button
+                    key={diff.id}
+                    onClick={() => setGenDifficulty(diff.id)}
+                    className={`px-3 py-1.5 rounded-lg text-xs border transition-all ${
+                      genDifficulty === diff.id
+                        ? "border-amber-500 bg-amber-500/15 text-amber-300 font-bold"
+                        : "border-border/70 bg-muted/30 text-muted-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {diff.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="pt-3 border-t border-border flex items-center justify-end gap-2.5">
+              <button
+                onClick={() => setIsGenModalOpen(false)}
+                className="px-4 py-2 rounded-lg text-xs font-medium text-muted-foreground hover:bg-muted transition-colors"
+              >
+                {t("practice.genModal.close")}
+              </button>
+              <button
+                disabled={isGenerating}
+                onClick={() => handleGenerateByChapter()}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary/90 text-white text-xs font-semibold shadow-md shadow-primary/25 disabled:opacity-50 transition-all"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span>Génération en cours...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-4 w-4" />
+                    <span>{t("practice.genModal.btn")}</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

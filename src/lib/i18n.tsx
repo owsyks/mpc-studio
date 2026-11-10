@@ -84,7 +84,14 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Practice
     "practice.title": "Votre Espace de Démonstration",
-    "practice.generate": "Générer une variation",
+    "practice.generate": "Générer par Chapitre",
+    "practice.genModal.title": "Générateur d'Exercice par Chapitre",
+    "practice.genModal.subtitle": "Choisissez le module et le thème du cours pour générer un exercice inédit avec corrigé complet :",
+    "practice.genModal.module": "Chapitre / Module :",
+    "practice.genModal.topic": "Thème spécifique :",
+    "practice.genModal.difficulty": "Difficulté visée :",
+    "practice.genModal.btn": "Générer l'Exercice avec Corrigé",
+    "practice.genModal.close": "Fermer",
     "practice.switch": "Choisir un exercice du programme :",
     "practice.statement": "ÉNONCÉ OFFICIEL",
     "practice.hints": "Indices Pédagogiques Progressifs",
@@ -200,7 +207,14 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Practice
     "practice.title": "Your Demonstration Workspace",
-    "practice.generate": "Generate variation",
+    "practice.generate": "Generate by Chapter",
+    "practice.genModal.title": "Exercise Generator by Chapter",
+    "practice.genModal.subtitle": "Select a course module and topic to generate a brand new exercise with step-by-step solutions:",
+    "practice.genModal.module": "Chapter / Module:",
+    "practice.genModal.topic": "Specific Topic:",
+    "practice.genModal.difficulty": "Target Difficulty:",
+    "practice.genModal.btn": "Generate Exercise with Solution",
+    "practice.genModal.close": "Close",
     "practice.switch": "Choose a course exercise:",
     "practice.statement": "OFFICIAL PROBLEM STATEMENT",
     "practice.hints": "Progressive Pedagogical Hints",

@@ -3,13 +3,15 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Layers, Cpu, Award, Library, Sparkles, Menu, X, ArrowRight, Globe } from "lucide-react";
+import { BookOpen, Layers, Cpu, Award, Library, Sparkles, Menu, X, ArrowRight, Sun, Moon } from "lucide-react";
 import { useLanguage } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 
 export default function HeaderNav() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { language, setLanguage, t } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
 
   const navLinks = [
     { href: "/dashboard", label: t("nav.dashboard"), icon: Layers },
@@ -64,6 +66,15 @@ export default function HeaderNav() {
 
         {/* Right CTA, Language Switcher & Status */}
         <div className="hidden sm:flex items-center gap-3">
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Changer de thème"
+            className="p-2 rounded-lg border border-border/80 bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+          </button>
+
           {/* Language Switcher */}
           <div className="flex items-center p-0.5 rounded-lg border border-border/80 bg-muted/40 text-xs font-mono">
             <button
@@ -107,6 +118,15 @@ export default function HeaderNav() {
 
         {/* Mobile Hamburger Button & Quick Lang */}
         <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            aria-label="Changer de thème"
+            className="p-1.5 rounded-lg border border-border/80 bg-card text-muted-foreground"
+          >
+            {theme === "dark" ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-indigo-500" />}
+          </button>
+
           {/* Mobile Language Switcher */}
           <button
             onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
