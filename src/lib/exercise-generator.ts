@@ -253,7 +253,7 @@ Ainsi, $\\ker(f) = \\frac{2}{${coeff}}\\mathbb{Z}$.`,
       sourcePage: 12,
       difficulty: difficulty as any,
       type: "proof",
-      statement: `Soit $G = (\\mathbb{Z}/12\\mathbb{Z}, +)$ et soit $H = \\langle \\bar{${n}} \\rangle$ le sous-groupe engendré par la classe de ${n}$.
+      statement: `Soit $G = (\\mathbb{Z}/12\\mathbb{Z}, +)$ et soit $H = \\langle \\bar{${n}} \\rangle$ le sous-groupe engendré par la classe $\\bar{${n}}$.
 1. Déterminer tous les éléments du sous-groupe $H$ et son ordre $|H|$.
 2. Justifier sans calcul lourd pourquoi $H$ est distingué dans $G$.
 3. Déterminer l'ordre du groupe quotient $G/H$ et lister ses classes d'équivalence.`,
