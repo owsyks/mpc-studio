@@ -27,15 +27,15 @@ export class NvidiaAIService {
   }
 
   public static getTutorModel(): string {
-    return process.env.NVIDIA_TUTOR_MODEL || "meta/llama-3.1-70b-instruct";
+    return process.env.NVIDIA_TUTOR_MODEL || "google/gemma-4-31b-it";
   }
 
   public static getGradingModel(): string {
-    return process.env.NVIDIA_GRADING_MODEL || "meta/llama-3.1-70b-instruct";
+    return process.env.NVIDIA_GRADING_MODEL || "google/gemma-4-31b-it";
   }
 
   public static getVisionModel(): string {
-    return process.env.NVIDIA_VISION_MODEL || "meta/llama-3.2-11b-vision-instruct";
+    return process.env.NVIDIA_VISION_MODEL || "meta/llama-3.2-90b-vision-instruct";
   }
 
   /**
