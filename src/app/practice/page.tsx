@@ -88,7 +88,7 @@ export default function PracticePage() {
       const res = await fetch("/api/exercises", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ moduleId: mod, topic: top, difficulty: diff }),
+        body: JSON.stringify({ moduleId: mod, topic: top, difficulty: diff, language }),
       });
       const generated = await res.json();
       if (generated && generated.id) {

@@ -27,19 +27,19 @@ export class NvidiaAIService {
   }
 
   public static getTutorModel(): string {
-    return process.env.NVIDIA_TUTOR_MODEL || "google/gemma-4-31b-it";
+    return process.env.NVIDIA_TUTOR_MODEL || "nvidia/nemotron-3.5-bolt-e4b";
   }
 
   public static getGradingModel(): string {
-    return process.env.NVIDIA_GRADING_MODEL || "google/gemma-4-31b-it";
+    return process.env.NVIDIA_GRADING_MODEL || "nvidia/nemotron-3.5-bolt-e4b";
   }
 
   public static getVisionModel(): string {
-    return process.env.NVIDIA_VISION_MODEL || "meta/llama-3.2-90b-vision-instruct";
+    return process.env.NVIDIA_VISION_MODEL || "nvidia/nemotron-3.5-super-vl-120b-a12b";
   }
 
   /**
-   * Execute chat completion with retry and backoff
+   * Execute chat completion with multi-model fallback chain and robust timeout handling
    */
   public static async chatCompletion(options: NvidiaCompletionOptions): Promise<string> {
     const apiKey = this.getApiKey();
@@ -50,26 +50,31 @@ export class NvidiaAIService {
     }
 
     const baseUrl = this.getBaseUrl();
-    const model = options.model || this.getTutorModel();
-    const url = `${baseUrl}/chat/completions`;
+    const primaryModel = options.model || this.getTutorModel();
+    // Fast, verified models on NVIDIA NIM with fallback
+    const candidateModels = [
+      primaryModel,
+      "nvidia/nemotron-3.5-bolt-e4b",
+      "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning",
+      "google/gemma-4-31b-it",
+    ].filter((m, idx, arr) => arr.indexOf(m) === idx);
 
-    const body = {
-      model,
-      messages: options.messages,
-      temperature: options.temperature ?? 0.2,
-      max_tokens: Math.min(options.maxTokens ?? 1000, 1200),
-      stream: false,
-    };
-
-    let attempts = 0;
-    const maxAttempts = 2;
     let lastError: Error | null = null;
 
-    while (attempts < maxAttempts) {
+    for (const currentModel of candidateModels) {
+      const url = `${baseUrl}/chat/completions`;
+      const body = {
+        model: currentModel,
+        messages: options.messages,
+        temperature: options.temperature ?? 0.2,
+        max_tokens: Math.min(options.maxTokens ?? 1000, 1200),
+        stream: false,
+      };
+
       try {
-        attempts++;
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 22000); // 22s timeout per request
+        // 25s per model attempt ensures fast response or quick failover
+        const timeout = setTimeout(() => controller.abort(), 25000);
 
         const response = await fetch(url, {
           method: "POST",
@@ -88,38 +93,36 @@ export class NvidiaAIService {
           let parsedMsg = errText;
           try {
             const errObj = JSON.parse(errText);
-            parsedMsg = errObj.error?.message || errText;
+            parsedMsg = errObj.error?.message || errObj.detail || errText;
           } catch (_) {}
 
-          if (response.status === 429 || response.status >= 500) {
-            // Transient error, backoff
-            await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempts) * 1000));
-            continue;
-          }
-
-          throw new Error(`Erreur NVIDIA NIM (${response.status}): ${parsedMsg}`);
+          console.warn(`[NVIDIA NIM] Model ${currentModel} returned ${response.status}: ${parsedMsg.slice(0, 100)}`);
+          lastError = new Error(`NVIDIA NIM (${response.status}): ${parsedMsg}`);
+          continue; // Try next candidate model
         }
 
         const data = await response.json();
-        const content = data.choices?.[0]?.message?.content;
-        if (!content) {
-          throw new Error("Réponse vide reçue de l'API NVIDIA NIM.");
+        const choice = data.choices?.[0];
+        let content = choice?.message?.content;
+        if (!content && choice?.message?.reasoning_content) {
+          content = choice.message.reasoning_content;
+        }
+
+        if (!content || typeof content !== "string" || content.trim().length === 0) {
+          console.warn(`[NVIDIA NIM] Empty content from model ${currentModel}, trying fallback...`);
+          lastError = new Error("Réponse vide reçue de l'API NVIDIA NIM.");
+          continue;
         }
 
         return content;
       } catch (err: any) {
+        console.warn(`[NVIDIA NIM] Error with model ${currentModel}:`, err.message);
         lastError = err;
-        if (err.name === "AbortError") {
-          throw new Error("Délai d'attente dépassé (timeout) pour l'API NVIDIA NIM.");
-        }
-        if (attempts >= maxAttempts) {
-          break;
-        }
-        await new Promise((resolve) => setTimeout(resolve, Math.pow(2, attempts) * 1000));
+        // Continue to next candidate model
       }
     }
 
-    throw lastError || new Error("Échec de communication avec l'API NVIDIA NIM après plusieurs tentatives.");
+    throw lastError || new Error("Échec de communication avec l'API NVIDIA NIM après essai des modèles disponibles.");
   }
 
   /**

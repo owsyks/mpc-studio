@@ -11,12 +11,14 @@ export async function GET(req: NextRequest) {
   const topic = searchParams.get("topic") || undefined;
   const action = searchParams.get("action");
   const difficulty = searchParams.get("difficulty") || "Medium";
+  const language = (searchParams.get("language") || "fr") as "fr" | "en";
 
   if (action === "generate") {
     const generated = ExerciseGenerator.generate(
       moduleId || "module-1",
       difficulty as any,
-      topic
+      topic,
+      language
     );
     return NextResponse.json(generated);
   }
@@ -32,12 +34,13 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { moduleId, topic, difficulty } = body;
+    const { moduleId, topic, difficulty, language } = body;
 
     const generated = ExerciseGenerator.generate(
       moduleId || "module-1",
       (difficulty as any) || "Medium",
-      topic
+      topic,
+      language || "fr"
     );
 
     return NextResponse.json(generated);

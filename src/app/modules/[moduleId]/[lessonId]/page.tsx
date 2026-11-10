@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, use } from "react";
+import React, { useState, use, useRef, useEffect } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -65,6 +65,7 @@ export default function LessonPage({ params }: PageProps) {
 
   // State for AI Tutor drawer
   const [isTutorOpen, setIsTutorOpen] = useState<boolean>(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([
     {
       role: "assistant",
@@ -75,6 +76,13 @@ export default function LessonPage({ params }: PageProps) {
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
+
+  // Auto-scroll chat drawer whenever messages update or loading state changes
+  useEffect(() => {
+    if (isTutorOpen) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages, isAiLoading, isTutorOpen]);
 
   const proofSteps = currentLesson.content.workedExample?.steps || [];
   const stepByStepMethods = (currentLesson.content as any).stepByStepMethod || [];
@@ -115,7 +123,9 @@ export default function LessonPage({ params }: PageProps) {
           ...newMessages,
           {
             role: "assistant",
-            content: "Une erreur est survenue lors de la communication avec l'assistant. Veuillez réessayer.",
+            content: language === "en"
+              ? "An error occurred while communicating with the assistant. Please retry."
+              : "Une erreur est survenue lors de la communication avec l'assistant. Veuillez réessayer.",
           },
         ]);
       }
@@ -124,7 +134,9 @@ export default function LessonPage({ params }: PageProps) {
         ...newMessages,
         {
           role: "assistant",
-          content: `Erreur de connexion au service AI : ${e.message}`,
+          content: language === "en"
+            ? `Connection error to AI service: ${e.message}`
+            : `Erreur de connexion au service AI : ${e.message}`,
         },
       ]);
     } finally {
@@ -133,7 +145,10 @@ export default function LessonPage({ params }: PageProps) {
   };
 
   const askTutorAboutStep = (stepTitle: string) => {
-    handleSendMessage(`Peux-tu m'expliquer en détail l'étape suivante pour ${currentLesson.title} : "${stepTitle}" avec un exemple concret et les pièges d'examen ?`);
+    const prompt = language === "en"
+      ? `Can you explain the following step for "${currentLesson.title}" in detail: "${stepTitle}" with a concrete example and exam traps?`
+      : `Peux-tu m'expliquer en détail l'étape suivante pour ${currentLesson.title} : "${stepTitle}" avec un exemple concret et les pièges d'examen ?`;
+    handleSendMessage(prompt);
   };
 
   return (
@@ -730,14 +745,14 @@ export default function LessonPage({ params }: PageProps) {
         {/* Header Bar */}
         <div className="flex items-center justify-between p-4 border-b border-border bg-card shrink-0">
           <div className="flex items-center gap-2.5">
-            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <div className="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
               <Cpu className="h-4 w-4" />
             </div>
             <div>
               <div className="text-xs font-bold text-foreground">{t("lesson.tutor.title")}</div>
-              <div className="text-[10px] font-mono text-emerald-400 flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                Gemma 4 31B • RAG Oran 1
+              <div className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                NVIDIA NIM • RAG Oran 1
               </div>
             </div>
           </div>
@@ -797,6 +812,7 @@ export default function LessonPage({ params }: PageProps) {
               <span>{t("lesson.tutor.loading")}</span>
             </div>
           )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Chat Input Bar - ALWAYS PINNED & VISIBLE AT THE BOTTOM */}

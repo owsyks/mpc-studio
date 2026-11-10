@@ -86,26 +86,88 @@ export class ExerciseGenerator {
   public static generate(
     moduleId: string = "module-1",
     difficulty: "Beginner" | "Easy" | "Medium" | "Hard" | "Exam Level" = "Medium",
-    topic?: string
+    topic?: string,
+    language: "fr" | "en" = "fr"
   ): ExerciseData {
     const seed = Date.now() + Math.floor(Math.random() * 10000);
 
+    let ex: ExerciseData;
     switch (moduleId) {
       case "module-1":
-        return this.generateModule1(difficulty, topic, seed);
+        ex = this.generateModule1(difficulty, topic, seed);
+        break;
       case "module-2":
-        return this.generateModule2(difficulty, topic, seed);
+        ex = this.generateModule2(difficulty, topic, seed);
+        break;
       case "module-3":
-        return this.generateModule3(difficulty, topic, seed);
+        ex = this.generateModule3(difficulty, topic, seed);
+        break;
       case "module-4":
-        return this.generateModule4(difficulty, topic, seed);
+        ex = this.generateModule4(difficulty, topic, seed);
+        break;
       case "module-5":
-        return this.generateModule5(difficulty, topic, seed);
+        ex = this.generateModule5(difficulty, topic, seed);
+        break;
       case "module-6":
-        return this.generateModule6(difficulty, topic, seed);
+        ex = this.generateModule6(difficulty, topic, seed);
+        break;
       default:
-        return this.generateModule1(difficulty, topic, seed);
+        ex = this.generateModule1(difficulty, topic, seed);
+        break;
     }
+
+    if (language === "en") {
+      return this.translateToEnglish(ex);
+    }
+    return ex;
+  }
+
+  private static translateToEnglish(ex: ExerciseData): ExerciseData {
+    const translateText = (txt: string) => {
+      return txt
+        .replace(/Soit\s+/gi, "Let ")
+        .replace(/Soient\s+/gi, "Let ")
+        .replace(/Montrer que\s+/gi, "Prove that ")
+        .replace(/Montrez que\s+/gi, "Show that ")
+        .replace(/Démontrer que\s+/gi, "Demonstrate that ")
+        .replace(/Calculer\s+/gi, "Compute ")
+        .replace(/Déterminer\s+/gi, "Determine ")
+        .replace(/Vérifier que\s+/gi, "Verify that ")
+        .replace(/Justifier\s+/gi, "Justify ")
+        .replace(/Résoudre dans\s+/gi, "Solve in ")
+        .replace(/l'ensemble\s+/gi, "the set ")
+        .replace(/muni de la loi\s+/gi, "equipped with the law ")
+        .replace(/est un sous-groupe de\s+/gi, "is a subgroup of ")
+        .replace(/est un groupe\s+/gi, "is a group ")
+        .replace(/élément neutre\s+/gi, "identity element ")
+        .replace(/symétrique\s+/gi, "inverse element ")
+        .replace(/loi interne\s+/gi, "internal law (closure) ")
+        .replace(/associativité\s+/gi, "associativity ")
+        .replace(/associative\s+/gi, "associative ")
+        .replace(/morphisme de groupes\s+/gi, "group homomorphism ")
+        .replace(/noyau\s+/gi, "kernel ")
+        .replace(/image\s+/gi, "image ")
+        .replace(/injectif\s+/gi, "injective ")
+        .replace(/ordre de\s+/gi, "order of ")
+        .replace(/théorème de Lagrange\s+/gi, "Lagrange's Theorem ")
+        .replace(/petit théorème de Fermat\s+/gi, "Fermat's Little Theorem ")
+        .replace(/théorème d'Euler\s+/gi, "Euler's Totient Theorem ");
+    };
+
+    return {
+      ...ex,
+      title: translateText(ex.title),
+      statement: translateText(ex.statement),
+      hints: ex.hints.map(translateText),
+      solution: {
+        ...ex.solution,
+        steps: ex.solution.steps.map(translateText),
+      },
+      rubric: ex.rubric.map((r) => ({
+        ...r,
+        criterion: translateText(r.criterion),
+      })),
+    };
   }
 
   // --- MODULE 1: Groupes et Sous-groupes ---
