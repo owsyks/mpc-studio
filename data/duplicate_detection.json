@@ -1,0 +1,35 @@
+{
+  "comparison": "fiche-td-2-P1.pdf vs fiche-td-2-révisée.pdf",
+  "duplicate_count": 4,
+  "details": [
+    {
+      "exercise": 1,
+      "source1": "fiche-td-2-P1.pdf",
+      "source2": "fiche-td-2-révisée.pdf",
+      "is_duplicate": true,
+      "notes": "Exact copy across original and revised TD sheets"
+    },
+    {
+      "exercise": 2,
+      "source1": "fiche-td-2-P1.pdf",
+      "source2": "fiche-td-2-révisée.pdf",
+      "is_duplicate": true,
+      "notes": "Exact copy across original and revised TD sheets"
+    },
+    {
+      "exercise": 3,
+      "source1": "fiche-td-2-P1.pdf",
+      "source2": "fiche-td-2-révisée.pdf",
+      "is_duplicate": true,
+      "notes": "Exact copy across original and revised TD sheets"
+    },
+    {
+      "exercise": 4,
+      "source1": "fiche-td-2-P1.pdf",
+      "source2": "fiche-td-2-révisée.pdf",
+      "is_duplicate": true,
+      "notes": "Subtle difference"
+    }
+  ],
+  "resolution": "Use fiche-td-2-révisée.pdf as the canonical revised version containing all exercises 1 through 9, while preserving link to fiche-td-2-P1.pdf for historical traceability."
+}

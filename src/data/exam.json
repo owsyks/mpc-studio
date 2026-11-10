@@ -1,0 +1,162 @@
+{
+  "id": "exam-oran1-ing3-2025",
+  "title": "Test OMC (Outils Mathématiques pour la Cryptographie)",
+  "institution": "Université Oran 1 - Faculté des sciences exactes et appliquées - Département d'informatique",
+  "level": "3ème Année Ingénieur",
+  "durationMinutes": 60,
+  "date": "21 décembre 2025",
+  "totalPoints": 16.0,
+  "sourcePdf": "test-Ing3-corrigé.pdf",
+  "exercises": [
+    {
+      "id": "exam-ex1",
+      "number": 1,
+      "title": "Sous-groupes & Calcul d'inverse",
+      "points": 4.25,
+      "questions": [
+        {
+          "subId": "1-1",
+          "text": "1. Donner les 3 propriétés caractérisant un sous-groupe $H$ d'un groupe $(G, *)$. Quelle propriété unique peut remplacer les propriétés 2 et 3 ?",
+          "points": 3.25,
+          "breakdown": [
+            {
+              "label": "1• Non vacuité (H ≠ ∅, e ∈ H)",
+              "pts": 0.75
+            },
+            {
+              "label": "2• Stabilité par la loi (∀ x, y ∈ H, x * y ∈ H)",
+              "pts": 0.75
+            },
+            {
+              "label": "3• Stabilité par symétrique (∀ x ∈ H, x⁻¹ ∈ H)",
+              "pts": 0.75
+            },
+            {
+              "label": "4• Propriété condensée de remplacement (∀ x, y ∈ H, x * y⁻¹ ∈ H)",
+              "pts": 1.0
+            }
+          ],
+          "officialSolution": "1• $H \\neq \\emptyset$ ($e \\in H$) (0,75 Pt)\n2• $\\forall x, y \\in H, x * y \\in H$ (0,75 Pt)\n3• $\\forall x \\in H, x^{-1} \\in H$ (0,75 Pt)\nPropriété remplaçant 2 et 3 : $\\forall x, y \\in H, x * y^{-1} \\in H$ (1 Pt)"
+        },
+        {
+          "subId": "1-2",
+          "text": "2. Soient $x, y, z \\in G$. Calculer l'inverse de $g = x^{-1} y^{-1} z y z^{-1} x$.",
+          "points": 1.0,
+          "officialSolution": "En utilisant $(uv)^{-1} = v^{-1} u^{-1}$ et $(u^{-1})^{-1} = u$ :\n$$g^{-1} = (x)^{-1} \\cdot (z^{-1})^{-1} \\cdot (y)^{-1} \\cdot (z)^{-1} \\cdot (y^{-1})^{-1} \\cdot (x^{-1})^{-1} = x^{-1} z y^{-1} z^{-1} y x \\quad (1\\text{ Pt})$$"
+        }
+      ]
+    },
+    {
+      "id": "exam-ex2",
+      "number": 2,
+      "title": "Matrices diagonales dans GL2(R)",
+      "points": 4.25,
+      "questions": [
+        {
+          "subId": "2-1",
+          "text": "Soit $(GL_2(\\mathbb{R}), \\times)$ le groupe des matrices inversibles d'ordre 2. On considère $H$ le sous-ensemble des matrices $A = \\begin{pmatrix} a_1 & 0 \\\\ 0 & a_2 \\end{pmatrix}$ avec $a_1 \\neq 0$ et $a_2 \\neq 0$. On pose $X = \\begin{pmatrix} x & 0 \\\\ 0 & y \\end{pmatrix}$ et $I = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$.\n• Résoudre l'équation matricielle : $AX = I$.",
+          "points": 0.75,
+          "officialSolution": "$AX = \\begin{pmatrix} a_1 x & 0 \\\\ 0 & a_2 y \\end{pmatrix} = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} \\implies a_1 x = 1 \\text{ et } a_2 y = 1 \\implies x = 1/a_1, y = 1/a_2$ (0,75 Pt)"
+        },
+        {
+          "subId": "2-2",
+          "text": "• En déduire la matrice inverse de $A$ ($A^{-1}$).",
+          "points": 0.75,
+          "officialSolution": "$AX = I \\implies X = A^{-1} = \\begin{pmatrix} 1/a_1 & 0 \\\\ 0 & 1/a_2 \\end{pmatrix}$ (0,75 Pt)"
+        },
+        {
+          "subId": "2-3",
+          "text": "• Montrer que $H$ est un sous-groupe de $(GL_2(\\mathbb{R}), \\times)$.",
+          "points": 2.75,
+          "breakdown": [
+            {
+              "label": "1• Non vacuité : I ∈ H car 1 ≠ 0",
+              "pts": 0.75
+            },
+            {
+              "label": "2• Stabilité par produit : A × B a coefficients diagonaux a1b1 ≠ 0 et a2b2 ≠ 0",
+              "pts": 1.0
+            },
+            {
+              "label": "3• Stabilité par inverse : A⁻¹ a coefficients 1/a1 ≠ 0 et 1/a2 ≠ 0 ∈ H",
+              "pts": 1.0
+            }
+          ],
+          "officialSolution": "1• $I \\in H \\implies H \\neq \\emptyset$ (0,75 Pt)\n2• Soient $A, B \\in H$. $A \\times B = \\begin{pmatrix} a_1 b_1 & 0 \\\\ 0 & a_2 b_2 \\end{pmatrix}$ avec $a_1 b_1 \\neq 0$ et $a_2 b_2 \\neq 0 \\implies A \\times B \\in H$ (1 Pt)\n3• Pour $A \\in H$, $A^{-1} = \\begin{pmatrix} 1/a_1 & 0 \\\\ 0 & 1/a_2 \\end{pmatrix} \\in H$ car $1/a_1 \\neq 0, 1/a_2 \\neq 0$ (1 Pt)\nConclusion : $H$ est un sous-groupe de $(GL_2(\\mathbb{R}), \\times)$."
+        }
+      ]
+    },
+    {
+      "id": "exam-ex3",
+      "number": 3,
+      "title": "Groupe R*+ x R & Morphismes complexes / additifs",
+      "points": 7.5,
+      "questions": [
+        {
+          "subId": "3-1",
+          "text": "Soit $G = \\mathbb{R}_+^* \\times \\mathbb{R}$ muni de : $(a, b) * (a', b') = (aa', b + b')$. Démontrer que $(G, *)$ est un groupe.",
+          "points": 3.0,
+          "breakdown": [
+            {
+              "label": "Fermeture : aa' ∈ R*+ et b+b' ∈ R",
+              "pts": 0.75
+            },
+            {
+              "label": "Associativité : ((a,b)*(a',b'))*(a'',b'') = (a,b)*((a',b')*(a'',b'')) = (aa'a'', b+b'+b'')",
+              "pts": 0.75
+            },
+            {
+              "label": "Élément neutre : e = (1, 0)",
+              "pts": 0.75
+            },
+            {
+              "label": "Symétrique : (a, b)⁻¹ = (1/a, -b)",
+              "pts": 0.75
+            }
+          ],
+          "officialSolution": "(a) Fermeture : $aa' \\in \\mathbb{R}_+^*$ et $b+b' \\in \\mathbb{R} \\implies *$ est une LCI (0,75 Pt)\n(b) Associativité : $((a,b)*(a',b'))*(a'',b'') = (aa'a'', b+b'+b'') = (a,b)*((a',b')*(a'',b''))$ (0,75 Pt)\n(c) Neutre : $(a,b)*(e_1, e_2) = (ae_1, b+e_2) = (a,b) \\implies e_1=1, e_2=0 \\implies e = (1, 0)$ (0,75 Pt)\n(d) Symétrique : $(a,b)*(a',b') = (1, 0) \\implies aa'=1, b+b'=0 \\implies (a',b') = (1/a, -b)$ (0,75 Pt)"
+        },
+        {
+          "subId": "3-2",
+          "text": "Démontrer que $\\varphi : (G, *) \\to (\\mathbb{C}^*, \\times), (a, b) \\mapsto a e^{ib}$ est un morphisme. Déterminer son noyau et son image.",
+          "points": 2.25,
+          "breakdown": [
+            {
+              "label": "Démonstration du morphisme : φ((a,b)*(a',b')) = aa' e^(i(b+b')) = φ((a,b)) × φ((a',b'))",
+              "pts": 0.75
+            },
+            {
+              "label": "Noyau : Ker φ = {(1, 2kπ), k ∈ Z}",
+              "pts": 0.75
+            },
+            {
+              "label": "Image : Im φ = C* (écriture polaire d'un complexe non nul)",
+              "pts": 0.75
+            }
+          ],
+          "officialSolution": "• Morphisme : $\\varphi((a,b)*(a',b')) = \\varphi(aa', b+b') = aa' e^{i(b+b')} = a e^{ib} a' e^{ib'} = \\varphi((a,b)) \\times \\varphi((a',b'))$ (0,75 Pt)\n• $\\ker \\varphi = \\{(a, b) \\mid a e^{ib} = 1\\} \\implies a=1$ et $b=2k\\pi (k \\in \\mathbb{Z}) \\implies \\ker \\varphi = \\{(1, 2k\\pi), k \\in \\mathbb{Z}\\}$ (0,75 Pt)\n• $\\operatorname{Im} \\varphi = \\mathbb{C}^*$ car tout $z \\in \\mathbb{C}^*$ s'écrit sous forme polaire $r e^{i\\theta}$ avec $r = |z| > 0$ et $\\theta \\in \\mathbb{R}$ (0,75 Pt)"
+        },
+        {
+          "subId": "3-3",
+          "text": "Démontrer que $\\varphi : (\\mathbb{Z}, +) \\to (\\mathbb{R}^*, \\times), n \\mapsto (-1)^n$ est un morphisme. Déterminer son noyau et son image.",
+          "points": 2.25,
+          "breakdown": [
+            {
+              "label": "Démonstration du morphisme : φ(n+m) = (-1)^(n+m) = (-1)^n × (-1)^m = φ(n)φ(m)",
+              "pts": 0.75
+            },
+            {
+              "label": "Noyau : Ker φ = 2Z (entiers pairs)",
+              "pts": 0.75
+            },
+            {
+              "label": "Image : Im φ = {-1, 1}",
+              "pts": 0.75
+            }
+          ],
+          "officialSolution": "• Morphisme : $\\varphi(n+m) = (-1)^{n+m} = (-1)^n \\times (-1)^m = \\varphi(n) \\times \\varphi(m)$ (0,75 Pt)\n• $\\ker \\varphi = \\{n \\in \\mathbb{Z} \\mid (-1)^n = 1\\} = \\{n = 2k, k \\in \\mathbb{Z}\\} = 2\\mathbb{Z}$ (0,75 Pt)\n• $\\operatorname{Im} \\varphi = \\{-1, 1\\}$ (0,75 Pt)"
+        }
+      ]
+    }
+  ]
+}

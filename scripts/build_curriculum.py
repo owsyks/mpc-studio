@@ -1,0 +1,798 @@
+# -*- coding: utf-8 -*-
+"""
+Build complete structured database for MPC Studio:
+- Curriculum (6 modules, 22 lessons)
+- TD Exercises (TD 1, TD 2, Exam test)
+- Document knowledge base chunks for RAG with exact PDF page citations
+"""
+
+import json
+import os
+
+os.makedirs('src/data', exist_ok=True)
+
+# 1. CURRICULUM DEFINITION
+modules = [
+    {
+        "id": "module-1",
+        "title": "Groupes et Sous-groupes",
+        "shortDescription": "Lois de composition interne, axiomes de groupes, propriétés élémentaires et critères de sous-groupes.",
+        "order": 1,
+        "sourcePdf": "cours-mpc-partie1.pdf",
+        "sourcePages": [4, 5, 6, 7, 8],
+        "lessons": [
+            {
+                "id": "lesson-1-1",
+                "moduleId": "module-1",
+                "title": "Notion de groupe & Axiomes fondamentaux",
+                "order": 1,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 5,
+                "objectives": [
+                    "Comprendre la définition d'une loi de composition interne (LCI)",
+                    "Maîtriser les 4 axiomes fondamentaux d'un groupe : fermeture, associativité, neutre, symétrique",
+                    "Distinguer un groupe général d'un groupe abélien (commutatif)",
+                    "Rédiger une démonstration rigoureuse d'une structure de groupe"
+                ],
+                "prerequisites": ["Théorie des ensembles de base", "Opérations arithmétiques usuelles"],
+                "content": {
+                    "intuition": "Un groupe est un ensemble d'éléments muni d'une opération qui permet de combiner deux éléments pour en obtenir un troisième, tout en respectant des règles fondamentales : on ne quitte jamais l'ensemble, l'ordre des parenthèses ne compte pas, il existe un élément qui ne change rien (l'élément neutre), et chaque action peut être annulée (l'élément symétrique).",
+                    "formalDefinition": "Soit $G$ un ensemble non vide et $*$ une loi de composition interne sur $G$. On dit que $(G, *)$ est un **groupe** ssi :\n\n1. **Associativité** : $\\forall x, y, z \\in G, \\quad (x * y) * z = x * (y * z)$\n2. **Élément neutre** : $\\exists e \\in G, \\quad \\forall x \\in G, \\quad x * e = e * x = x$\n3. **Élément symétrique** : $\\forall x \\in G, \\quad \\exists x' \\in G, \\quad x * x' = x' * x = e$\n\nSi de plus la loi vérifie $\\forall x, y \\in G, x * y = y * x$, alors le groupe est dit **commutatif** ou **abélien**.",
+                    "notationGuide": [
+                        {"symbol": "*", "meaning": "Loi de composition interne (application de $G \\times G \\to G$)"},
+                        {"symbol": "e", "meaning": "Élément neutre pour la loi $*$, noté $0$ en notation additive et $1$ en notation multiplicative"},
+                        {"symbol": "x^{-1} \\text{ ou } x'", "meaning": "Élément symétrique ou inverse de $x$ (opposé $-x$ en notation additive)"},
+                        {"symbol": "\\forall, \\exists", "meaning": "Quantificateurs universel ('pour tout') et existentiel ('il existe')" }
+                    ],
+                    "workedExample": {
+                        "statement": "Montrer que $G = ]-1, 1[$ muni de la loi $x * y = \\frac{x+y}{1+xy}$ est un groupe abélien (Fiche TD 1, Exercice 2).",
+                        "steps": [
+                            {"step": "1. Loi interne (Fermeture)", "detail": "Soient $x, y \\in ]-1, 1[$. Montrons que $-1 < \\frac{x+y}{1+xy} < 1$. On a $1 - (x*y) = 1 - \\frac{x+y}{1+xy} = \\frac{(1-x)(1-y)}{1+xy} > 0$ car $1-x > 0, 1-y > 0$ et $1+xy > 0$. De même, $1 + (x*y) = \\frac{(1+x)(1+y)}{1+xy} > 0$. Donc $x * y \\in ]-1, 1[$."},
+                            {"step": "2. Commutativité", "detail": "Pour tous $x, y \\in ]-1, 1[$, $x * y = \\frac{x+y}{1+xy} = \\frac{y+x}{1+yx} = y * x$. La loi est commutative."},
+                            {"step": "3. Associativité", "detail": "Calculons $(x * y) * z = \\frac{\\frac{x+y}{1+xy} + z}{1 + \\frac{x+y}{1+xy}z} = \\frac{x+y+z+xyz}{1+xy+xz+yz}$. Par symétrie évidente des variables, on obtient exactement la même expression pour $x * (y * z)$."},
+                            {"step": "4. Élément neutre", "detail": "Cherchons $e \\in ]-1, 1[$ tel que $x * e = x$. $\\frac{x+e}{1+xe} = x \\iff x+e = x + x^2 e \\iff e(1-x^2) = 0$. Comme $x \\in ]-1, 1[$, $1-x^2 \\neq 0$, donc $e = 0 \\in ]-1, 1[$."},
+                            {"step": "5. Symétrique", "detail": "Pour tout $x \\in ]-1, 1[$, cherchons $x'$ tel que $x * x' = 0$. $\\frac{x+x'}{1+xx'} = 0 \\iff x + x' = 0 \\iff x' = -x$. Comme $x \\in ]-1, 1[$, $-x \\in ]-1, 1[$."},
+                            {"step": "Conclusion", "detail": "Les 5 propriétés étant vérifiées, $(]-1, 1[, *)$ est un groupe abélien."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Quelle condition supplémentaire transforme un groupe en groupe abélien ?",
+                        "options": ["L'inversibilité de tout élément", "La commutativité de la loi", "La finitude du cardinal", "L'associativité"],
+                        "answer": 1,
+                        "explanation": "Un groupe abélien est par définition un groupe dont la loi de composition interne est commutative."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-1-2",
+                "moduleId": "module-1",
+                "title": "Propriétés fondamentales des groupes",
+                "order": 2,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 6,
+                "objectives": [
+                    "Démontrer l'unicité de l'élément neutre",
+                    "Démontrer l'unicité de l'inverse de chaque élément",
+                    "Établir la règle d'inversion d'un produit : $(a * b)^{-1} = b^{-1} * a^{-1}$",
+                    "Appliquer les règles de simplification dans un groupe"
+                ],
+                "prerequisites": ["lesson-1-1"],
+                "content": {
+                    "intuition": "Dans un groupe, rien n'est ambigu : il n'y a qu'un seul élément neutre, chaque élément possède un unique inverse, et pour défaire une suite d'opérations, il faut inverser chaque étape dans l'ordre inverse (comme retirer ses chaussures puis ses chaussettes).",
+                    "formalDefinition": "Dans tout groupe $(G, *)$ :\n\n- **Unicité du neutre** : Si $e$ et $e'$ sont deux éléments neutres, alors $e = e * e' = e'$.\n- **Unicité du symétrique** : Pour tout $x \\in G$, si $x'$ et $x''$ sont deux inverses de $x$, alors $x' = x' * (x * x'') = (x' * x) * x'' = e * x'' = x''$.\n- **Inverse d'un produit** : $\\forall a, b \\in G, \\quad (a * b)^{-1} = b^{-1} * a^{-1}$.\n- **Simplification** : $\\forall a, b, c \\in G$, $a * b = a * c \\implies b = c$, et $b * a = c * a \\implies b = c$.",
+                    "notationGuide": [
+                        {"symbol": "(ab)^{-1}", "meaning": "Inverse du composé de $a$ et $b$, égal à $b^{-1} a^{-1}$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Calculer l'inverse de $g = x^{-1} y^{-1} z y z^{-1} x$ dans un groupe $(G, *)$ (Test Ing 3, Exercice 1, Q2).",
+                        "steps": [
+                            {"step": "Étape 1 : Règle générale", "detail": "Pour tout produit $u \\cdot v$, l'inverse est $(u \\cdot v)^{-1} = v^{-1} \\cdot u^{-1}$. Pour un produit de $n$ termes $(a_1 a_2 \\dots a_n)^{-1} = a_n^{-1} \\dots a_2^{-1} a_1^{-1}$."},
+                            {"step": "Étape 2 : Décomposition", "detail": "Écrivons $g$ sous la forme $g = (x^{-1}) \\cdot (y^{-1}) \\cdot (z) \\cdot (y) \\cdot (z^{-1}) \\cdot (x)$."},
+                            {"step": "Étape 3 : Application terme à terme", "detail": "$g^{-1} = (x)^{-1} \\cdot (z^{-1})^{-1} \\cdot (y)^{-1} \\cdot (z)^{-1} \\cdot (y^{-1})^{-1} \\cdot (x^{-1})^{-1}$."},
+                            {"step": "Étape 4 : Simplification des doubles inverses", "detail": "Comme $(u^{-1})^{-1} = u$, on a : $(x)^{-1} = x^{-1}$, $(z^{-1})^{-1} = z$, $(y)^{-1} = y^{-1}$, $(z)^{-1} = z^{-1}$, $(y^{-1})^{-1} = y$, $(x^{-1})^{-1} = x$."},
+                            {"step": "Résultat final", "detail": "$g^{-1} = x^{-1} z y^{-1} z^{-1} y x$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Que vaut $(a * b)^{-1}$ dans un groupe non nécessairement commutatif ?",
+                        "options": ["$a^{-1} * b^{-1}$", "$b^{-1} * a^{-1}$", "$a * b$", "$(b * a)^{-1}$"],
+                        "answer": 1,
+                        "explanation": "L'inversion renverse l'ordre des facteurs : $(a * b)^{-1} = b^{-1} * a^{-1}$."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-1-3",
+                "moduleId": "module-1",
+                "title": "Sous-groupes et critères de caractérisation",
+                "order": 3,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 7,
+                "objectives": [
+                    "Définir ce qu'est un sous-groupe",
+                    "Connaître le critère standard à 3 propriétés (non vide, stabilité par loi, stabilité par inverse)",
+                    "Utiliser le critère condensé $x * y^{-1} \\in H$",
+                    "Étudier l'intersection de sous-groupes"
+                ],
+                "prerequisites": ["lesson-1-1", "lesson-1-2"],
+                "content": {
+                    "intuition": "Un sous-groupe est un sous-ensemble d'un groupe qui forme lui-même un groupe autonome avec la même opération. Pour le prouver, il suffit de vérifier qu'il n'est pas vide et qu'il ne sort jamais de lui-même par produit et par inversion.",
+                    "formalDefinition": "Soit $(G, *)$ un groupe et $H \\subset G$. On dit que $H$ est un **sous-groupe** de $G$ (noté $H \\le G$) si :\n\n**Caractérisation en 3 points :**\n1. $H \\neq \\emptyset$ (ou de façon équivalente $e \\in H$)\n2. $\\forall x, y \\in H, \\quad x * y \\in H$ (stabilité par la loi)\n3. $\\forall x \\in H, \\quad x^{-1} \\in H$ (stabilité par le symétrique)\n\n**Caractérisation équivalente en 1 point (critère condensé) :**\n$H \\neq \\emptyset \\quad \\text{et} \\quad \\forall x, y \\in H, \\; x * y^{-1} \\in H$.",
+                    "notationGuide": [
+                        {"symbol": "H \\le G", "meaning": "$H$ est un sous-groupe de $G$"},
+                        {"symbol": "x * y^{-1} \\in H", "meaning": "Critère condensé de sous-groupe"}
+                    ],
+                    "workedExample": {
+                        "statement": "Montrer que l'ensemble $H$ des matrices diagonales inversibles d'ordre 2 est un sous-groupe de $(GL_2(\\mathbb{R}), \\times)$ (Test Ing 3, Exercice 2).",
+                        "steps": [
+                            {"step": "1. Non vacuité", "detail": "La matrice identité $I = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$ a ses coefficients diagonaux non nuls ($1 \\neq 0$). Donc $I \\in H$, ce qui prouve $H \\neq \\emptyset$."},
+                            {"step": "2. Stabilité par produit", "detail": "Soient $A = \\begin{pmatrix} a_1 & 0 \\\\ 0 & a_2 \\end{pmatrix}, B = \\begin{pmatrix} b_1 & 0 \\\\ 0 & b_2 \\end{pmatrix} \\in H$. Le produit $A B = \\begin{pmatrix} a_1 b_1 & 0 \\\\ 0 & a_2 b_2 \\end{pmatrix}$. Comme $a_1 \\neq 0, b_1 \\neq 0 \\implies a_1 b_1 \\neq 0$ et de même $a_2 b_2 \\neq 0$, on a $A B \\in H$."},
+                            {"step": "3. Stabilité par inverse", "detail": "Pour $A \\in H$, son inverse est $A^{-1} = \\begin{pmatrix} 1/a_1 & 0 \\\\ 0 & 1/a_2 \\end{pmatrix}$. Puisque $1/a_1 \\neq 0$ et $1/a_2 \\neq 0$, $A^{-1} \\in H$."},
+                            {"step": "Conclusion", "detail": "$H$ vérifie les trois propriétés, c'est donc un sous-groupe de $(GL_2(\\mathbb{R}), \\times)$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Quel critère unique permet de prouver qu'une partie non vide $H$ est un sous-groupe de $(G, *)$ ?",
+                        "options": ["$\\forall x, y \\in H, x * y \\in H$", "$\\forall x, y \\in H, x * y^{-1} \\in H$", "$\\forall x \\in H, x * x = e$", "$H \\cap \\{e\\} = \\emptyset$"],
+                        "answer": 1,
+                        "explanation": "Le critère condensé $x * y^{-1} \\in H$ regroupe simultanément la stabilité par inverse et par produit."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-1-4",
+                "moduleId": "module-1",
+                "title": "Sous-groupes de (Z, +) et division euclidienne",
+                "order": 4,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 8,
+                "objectives": [
+                    "Connaître la forme de tous les sous-groupes de $(\\mathbb{Z}, +)$",
+                    "Comprendre la preuve par division euclidienne",
+                    "Faire le lien avec la divisibilité et le PGCD"
+                ],
+                "prerequisites": ["lesson-1-3"],
+                "content": {
+                    "intuition": "Tout sous-groupe de $(\\mathbb{Z}, +)$ est constitué des multiples d'un certain entier $n$. C'est le plus petit entier strictement positif appartenant au sous-groupe.",
+                    "formalDefinition": "Les sous-groupes de $(\\mathbb{Z}, +)$ sont exactement les sous-ensembles de la forme $n\\mathbb{Z} = \\{nk \\mid k \\in \\mathbb{Z}\\}$, où $n \\in \\mathbb{N}$.",
+                    "notationGuide": [
+                        {"symbol": "n\\mathbb{Z}", "meaning": "Ensemble des multiples de l'entier $n$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Démontrer que tout sous-groupe $H$ de $(\\mathbb{Z}, +)$ est de la forme $n_0\\mathbb{Z}$.",
+                        "steps": [
+                            {"step": "Cas 1 : $H = \\{0\\}$", "detail": "Si $H = \\{0\\}$, alors $H = 0\\mathbb{Z}$ ($n=0$)."},
+                            {"step": "Cas 2 : $H \\neq \\{0\\}$", "detail": "Soit $H \\cap \\mathbb{N}^*$ qui est non vide car si $x \\in H$ est négatif, $-x \\in H$. D'après la propriété du bon ordre sur $\\mathbb{N}$, cet ensemble admet un plus petit élément noté $n_0$."},
+                            {"step": "Inclusion $n_0\\mathbb{Z} \\subset H$", "detail": "$n_0 \\in H$, et par stabilité pour l'addition et la soustraction, tout multiple $k n_0 \\in H$. Donc $n_0\\mathbb{Z} \\subset H$."},
+                            {"step": "Inclusion $H \\subset n_0\\mathbb{Z}$ par division euclidienne", "detail": "Soit $p \\in H$. Effectuons la division euclidienne de $p$ par $n_0$ : $p = q n_0 + r$ avec $0 \\le r < n_0$. Alors $r = p - q n_0$. Comme $p \\in H$ et $q n_0 \\in H$, $r \\in H$. Or $n_0$ était le plus petit entier strictement positif de $H$. Comme $r < n_0$, la seule possibilité est $r = 0$. Donc $p = q n_0 \\in n_0\\mathbb{Z}$."},
+                            {"step": "Conclusion", "detail": "On a $H = n_0\\mathbb{Z}$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Quel est le sous-groupe de $(\\mathbb{Z}, +)$ engendré par 6 et 15 ?",
+                        "options": ["$90\\mathbb{Z}$", "$3\\mathbb{Z}$", "$30\\mathbb{Z}$", "$1\\mathbb{Z}$"],
+                        "answer": 1,
+                        "explanation": "Le sous-groupe engendré par $a$ et $b$ dans $\\mathbb{Z}$ est $\\operatorname{pgcd}(a, b)\\mathbb{Z}$. Ici $\\operatorname{pgcd}(6, 15) = 3$."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "module-2",
+        "title": "Morphismes de groupes",
+        "shortDescription": "Applications préservant la structure algébrique, noyau (Ker), image (Im), et isomorphismes.",
+        "order": 2,
+        "sourcePdf": "cours-mpc-partie1.pdf",
+        "sourcePages": [9, 10, 11, 12],
+        "lessons": [
+            {
+                "id": "lesson-2-1",
+                "moduleId": "module-2",
+                "title": "Définition & Propriétés des morphismes",
+                "order": 1,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 10,
+                "objectives": [
+                    "Définir un morphisme de groupes entre $(G_1, *_1)$ et $(G_2, *_2)$",
+                    "Connaître le vocabulaire : endomorphisme, isomorphisme, automorphisme",
+                    "Démontrer que $f(e_1) = e_2$ et $f(x^{-1}) = (f(x))^{-1}$",
+                    "Vérifier la compatibilité sur les puissances et produits"
+                ],
+                "prerequisites": ["lesson-1-1"],
+                "content": {
+                    "intuition": "Un morphisme est une passerelle qui transporte fidèlement la structure algébrique d'un groupe à un autre. Faire l'opération avant le voyage donne le même résultat que voyager d'abord puis faire l'opération à l'arrivée.",
+                    "formalDefinition": "Soient $(G_1, *_1)$ et $(G_2, *_2)$ deux groupes. Une application $f: G_1 \\to G_2$ est un **morphisme de groupes** ssi :\n$$\\forall x, y \\in G_1, \\quad f(x *_1 y) = f(x) *_2 f(y)$$\n\n- **Endomorphisme** : morphisme de $G$ dans lui-même ($G_1 = G_2$).\n- **Isomorphisme** : morphisme bijectif.\n- **Automorphisme** : endomorphisme bijectif.",
+                    "notationGuide": [
+                        {"symbol": "f(x *_1 y) = f(x) *_2 f(y)", "meaning": "Préservation de la loi"},
+                        {"symbol": "G_1 \\cong G_2", "meaning": "$G_1$ et $G_2$ sont isomorphes"}
+                    ],
+                    "workedExample": {
+                        "statement": "Vérifier que $\\varphi : (\\mathbb{R}, +) \\to (\\mathbb{R}_+^*, \\times), x \\mapsto e^x$ est un morphisme de groupes.",
+                        "steps": [
+                            {"step": "Vérification", "detail": "Soient $x, y \\in \\mathbb{R}$. $\\varphi(x + y) = e^{x+y} = e^x \\times e^y = \\varphi(x) \\times \\varphi(y)$."},
+                            {"step": "Élément neutre", "detail": "$\\varphi(0) = e^0 = 1$ (le neutre multiplicatif)."},
+                            {"step": "Symétrique", "detail": "$\\varphi(-x) = e^{-x} = 1/e^x = (\\varphi(x))^{-1}$."},
+                            {"step": "Bijection", "detail": "La fonction exponentielle étant continue, strictement croissante, de bijection vers $\\mathbb{R}_+^*$, c'est un isomorphisme de $(\\mathbb{R}, +)$ vers $(\\mathbb{R}_+^*, \\times)$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Si $f: G_1 \\to G_2$ est un morphisme, quelle relation lie $f(e_{G_1})$ et $e_{G_2}$ ?",
+                        "options": ["$f(e_{G_1}) = e_{G_2}$", "$f(e_{G_1}) = e_{G_1}$", "$f(e_{G_1}) = 0$", "Aucune relation générale"],
+                        "answer": 0,
+                        "explanation": "Tout morphisme envoie obligatoirement l'élément neutre de départ sur l'élément neutre d'arrivée."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-2-2",
+                "moduleId": "module-2",
+                "title": "Noyau (Ker) & Injectivité",
+                "order": 2,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 11,
+                "objectives": [
+                    "Définir le noyau $\\ker f$ d'un morphisme",
+                    "Démontrer que $\\ker f$ est un sous-groupe de $G_1$",
+                    "Maîtriser le critère fondamental d'injectivité : $f \\text{ injective} \\iff \\ker f = \\{e_1\\}$",
+                    "Calculer le noyau dans des exemples concrets"
+                ],
+                "prerequisites": ["lesson-2-1", "lesson-1-3"],
+                "content": {
+                    "intuition": "Le noyau rassemble tous les éléments du groupe de départ qui sont 'écrasés' sur le neutre du groupe d'arrivée. Si le seul élément écrasé est le neutre d'origine, rien n'est confondu : l'application est injective !",
+                    "formalDefinition": "Soit $f: (G_1, *_1) \\to (G_2, *_2)$ un morphisme. Le **noyau** de $f$, noté $\\ker f$, est :\n$$\\ker f = \\{x \\in G_1 \\mid f(x) = e_2\\}$$\n\n**Théorème :**\n1. $\\ker f$ est un sous-groupe de $G_1$.\n2. $f$ est injective $\\iff \\ker f = \\{e_1\\}$.",
+                    "notationGuide": [
+                        {"symbol": "\\ker f", "meaning": "Noyau du morphisme $f$ (Kernel)"},
+                        {"symbol": "\\{e_1\\}", "meaning": "Sous-groupe trivial de départ"}
+                    ],
+                    "workedExample": {
+                        "statement": "Déterminer le noyau du morphisme $\\varphi : (\\mathbb{Z}, +) \\to (\\mathbb{R}^*, \\times), n \\mapsto (-1)^n$ (Test Ing 3, Exercice 3).",
+                        "steps": [
+                            {"step": "Définition du noyau", "detail": "$\\ker \\varphi = \\{n \\in \\mathbb{Z} \\mid \\varphi(n) = 1\\}$ car 1 est le neutre multiplicatif de $\\mathbb{R}^*$."},
+                            {"step": "Équation", "detail": "$(-1)^n = 1 \\iff n$ est un entier pair."},
+                            {"step": "Conclusion", "detail": "$\\ker \\varphi = \\{2k \\mid k \\in \\mathbb{Z}\\} = 2\\mathbb{Z}$. Comme $\\ker \\varphi \\neq \\{0\\}$, ce morphisme n'est pas injectif."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Un morphisme de groupes $f: G \\to H$ est injectif si et seulement si :",
+                        "options": ["$\\ker f = G$", "$\\ker f = \\{e_G\\}$", "$\\operatorname{Im} f = H$", "$\\ker f = H$"],
+                        "answer": 1,
+                        "explanation": "Le morphisme est injectif si et seulement si son noyau est réduit au neutre de départ $\\{e_G\\}$."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-2-3",
+                "moduleId": "module-2",
+                "title": "Image (Im) & Surjectivité",
+                "order": 3,
+                "sourcePdf": "cours-mpc-partie1.pdf",
+                "sourcePage": 12,
+                "objectives": [
+                    "Définir l'image $\\operatorname{Im} f$ d'un morphisme",
+                    "Démontrer que $\\operatorname{Im} f$ est un sous-groupe de $G_2$",
+                    "Critère de surjectivité : $\\operatorname{Im} f = G_2$",
+                    "Calculer l'image pour des exemples polynomiaux, matriciels ou géométriques"
+                ],
+                "prerequisites": ["lesson-2-1", "lesson-1-3"],
+                "content": {
+                    "intuition": "L'image représente la silhouette du groupe de départ projetée dans le groupe d'arrivée. Cette silhouette hérite toujours d'une structure de groupe parfaite.",
+                    "formalDefinition": "Soit $f: (G_1, *_1) \\to (G_2, *_2)$ un morphisme. L'**image** de $f$, notée $\\operatorname{Im} f$, est :\n$$\\operatorname{Im} f = \\{y \\in G_2 \\mid \\exists x \\in G_1, y = f(x)\\} = f(G_1)$$\n\n**Propriétés :**\n1. $\\operatorname{Im} f$ est un sous-groupe de $G_2$.\n2. $f$ est surjectif $\\iff \\operatorname{Im} f = G_2$.",
+                    "notationGuide": [
+                        {"symbol": "\\operatorname{Im} f", "meaning": "Image du morphisme $f$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Déterminer l'image du morphisme $\\varphi : \\mathbb{R}_+^* \\times \\mathbb{R} \\to \\mathbb{C}^*, (a, b) \\mapsto a e^{ib}$ (Test Ing 3, Exercice 3).",
+                        "steps": [
+                            {"step": "Définition", "detail": "$\\operatorname{Im} \\varphi = \\{z \\in \\mathbb{C}^* \\mid \\exists (a, b) \\in \\mathbb{R}_+^* \\times \\mathbb{R}, z = a e^{ib}\\}$."},
+                            {"step": "Interprétation géométrique", "detail": "Tout nombre complexe non nul $z \\in \\mathbb{C}^*$ admet une écriture polaire unique sous la forme $z = r e^{i\\theta}$ avec $r = |z| > 0$ et $\\theta = \\arg(z) \\in \\mathbb{R}$."},
+                            {"step": "Identification", "detail": "En posant $a = r \\in \\mathbb{R}_+^*$ et $b = \\theta \\in \\mathbb{R}$, on trouve que tout $z \\in \\mathbb{C}^*$ est atteint."},
+                            {"step": "Conclusion", "detail": "$\\operatorname{Im} \\varphi = \\mathbb{C}^*$. Le morphisme est donc surjectif."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Que représente $\\operatorname{Im} f$ pour $f: G_1 \\to G_2$ ?",
+                        "options": ["Un sous-groupe de $G_1$", "Un sous-groupe de $G_2$", "Toujours l'ensemble $G_2$ entier", "Un ensemble sans structure algébrique"],
+                        "answer": 1,
+                        "explanation": "$\\operatorname{Im} f$ est toujours un sous-groupe du groupe d'arrivée $G_2$."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "module-3",
+        "title": "Sous-groupes distingués et groupes quotients",
+        "shortDescription": "Stabilité par conjugaison, classes selon un sous-groupe, construction rigoureuse du quotient G/H.",
+        "order": 3,
+        "sourcePdf": "cours-mpc-partie2 (1).pdf",
+        "sourcePages": [4, 5, 6, 7, 8],
+        "lessons": [
+            {
+                "id": "lesson-3-1",
+                "moduleId": "module-3",
+                "title": "Sous-groupes distingués (normaux)",
+                "order": 1,
+                "sourcePdf": "cours-mpc-partie2 (1).pdf",
+                "sourcePage": 5,
+                "objectives": [
+                    "Comprendre la notion de conjugué d'un sous-groupe : $g H g^{-1}$",
+                    "Définir un sous-groupe distingué (ou normal) : $\\forall g \\in G, g H g^{-1} = H$",
+                    "Savoir que dans un groupe abélien, TOUT sous-groupe est distingué",
+                    "Démontrer que le noyau d'un morphisme est toujours distingué"
+                ],
+                "prerequisites": ["lesson-1-3", "lesson-2-2"],
+                "content": {
+                    "intuition": "Un sous-groupe distingué est invariant par changement de repère (la conjugaison). Il se 'comporte de la même manière' vu de n'importe quel élément du groupe.",
+                    "formalDefinition": "Soit $(G, \\cdot)$ un groupe et $H$ un sous-groupe de $G$. On dit que $H$ est un **sous-groupe distingué** (ou normal) de $G$ (noté $H \\triangleleft G$) ssi :\n$$\\forall g \\in G, \\quad g H g^{-1} \\subset H$$\n(ce qui équivaut à $g H g^{-1} = H$, ou encore $\\forall g \\in G, gH = Hg$).",
+                    "notationGuide": [
+                        {"symbol": "H \\triangleleft G", "meaning": "$H$ est un sous-groupe distingué de $G$"},
+                        {"symbol": "g H g^{-1}", "meaning": "Ensemble des conjugués $\\{ghg^{-1} \\mid h \\in H\\}$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Montrer que pour tout morphisme $f: G_1 \\to G_2$, le noyau $\\ker f$ est un sous-groupe distingué de $G_1$ (Fiche TD 2, Exercice 1).",
+                        "steps": [
+                            {"step": "1. Déjà un sous-groupe", "detail": "On sait déjà que $\\ker f$ est un sous-groupe de $G_1$."},
+                            {"step": "2. Soit $x \\in \\ker f$ et $g \\in G_1$", "detail": "Calculons l'image du conjugué $g x g^{-1}$ par $f$ : $f(g x g^{-1}) = f(g) \\cdot f(x) \\cdot f(g^{-1})$ car $f$ est un morphisme."},
+                            {"step": "3. Remplacement de $f(x)$", "detail": "Comme $x \\in \\ker f$, $f(x) = e_2$. Donc $f(g x g^{-1}) = f(g) \\cdot e_2 \\cdot (f(g))^{-1} = f(g) \\cdot (f(g))^{-1} = e_2$."},
+                            {"step": "Conclusion", "detail": "Donc $g x g^{-1} \\in \\ker f$. Ainsi $\\forall g \\in G_1, g(\\ker f)g^{-1} \\subset \\ker f$, ce qui prouve que $\\ker f \\triangleleft G_1$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Dans un groupe commutatif $G$, quels sont les sous-groupes distingués ?",
+                        "options": ["Uniquement $\\{e\\}$ et $G$", "Aucun", "Tous les sous-groupes de $G$", "Seuls les sous-groupes cycliques"],
+                        "answer": 2,
+                        "explanation": "Dans un groupe commutatif, $g h g^{-1} = g g^{-1} h = h \\in H$ pour tout $g$ et tout $h$. Donc tous les sous-groupes sont automatiquement distingués."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-3-2",
+                "moduleId": "module-3",
+                "title": "Classes d'équivalence & Partitionnement",
+                "order": 2,
+                "sourcePdf": "cours-mpc-partie2 (1).pdf",
+                "sourcePage": 6,
+                "objectives": [
+                    "Définir la relation de congruence modulo un sous-groupe : $x \\sim y \\iff x y^{-1} \\in H$",
+                    "Comprendre la notion de classe à gauche $xH$ et classe à droite $Hx$",
+                    "Visualiser la partition d'un groupe en classes disjointes",
+                    "Constater l'égalité des cardinaux de toutes les classes : $|xH| = |H|$"
+                ],
+                "prerequisites": ["lesson-3-1"],
+                "content": {
+                    "intuition": "Un sous-groupe découpe l'ensemble du groupe en morceaux identiques et disjoints (les classes). Chaque morceau a exactement la même taille que le sous-groupe lui-même.",
+                    "formalDefinition": "Soit $H \\le G$. On définit sur $G$ la relation binaire :\n$$x \\sim_H y \\iff x^{-1} y \\in H$$\nC'est une relation d'équivalence sur $G$.\nLa classe d'équivalence de $x$ est la **classe à gauche** $xH = \\{x h \\mid h \\in H\\}$.\nLes classes forment une partition de $G$ : elles sont disjointes deux à deux et leur réunion vaut $G$.",
+                    "notationGuide": [
+                        {"symbol": "xH", "meaning": "Classe à gauche de $x$ modulo $H$"},
+                        {"symbol": "G/H", "meaning": "Ensemble des classes à gauche modulo $H$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Exemple dans $(\\mathbb{Z}, +)$ avec $H = 7\\mathbb{Z}$ (Cours MPC Partie 2, page 6).",
+                        "steps": [
+                            {"step": "Relation", "detail": "$x \\sim y \\iff x - y \\in 7\\mathbb{Z} \\iff x \\equiv y \\pmod 7$."},
+                            {"step": "Classes", "detail": "Les classes d'équivalence sont les ensembles de restes modulo 7 : $\\overline{0} = 7\\mathbb{Z}, \\overline{1} = 1 + 7\\mathbb{Z}, \\dots, \\overline{6} = 6 + 7\\mathbb{Z}$."},
+                            {"step": "Partition", "detail": "Tout entier appartient à une unique classe parmi ces 7 classes."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Si $H$ est un sous-groupe fini de $G$, quel est le cardinal de chaque classe $xH$ ?",
+                        "options": ["$|x| \\times |H|$", "$|H|$", "$|G| - |H|$", "Cela dépend de $x$"],
+                        "answer": 1,
+                        "explanation": "L'application $h \\mapsto xh$ est une bijection de $H$ sur $xH$, donc $|xH| = |H|$ pour tout $x$."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-3-3",
+                "moduleId": "module-3",
+                "title": "Construction du groupe quotient G/H",
+                "order": 3,
+                "sourcePdf": "cours-mpc-partie2 (1).pdf",
+                "sourcePage": 7,
+                "objectives": [
+                    "Définir la loi sur les classes : $(xH) \\cdot (yH) = (xy)H$",
+                    "Comprendre pourquoi la condition de distinction $H \\triangleleft G$ est INDISPENSABLE pour que la loi soit bien définie",
+                    "Identifier le neutre du quotient (qui est la classe $eH = H$)",
+                    "Théorème d'isomorphisme : $G/\\ker f \\cong \\operatorname{Im} f$"
+                ],
+                "prerequisites": ["lesson-3-1", "lesson-3-2"],
+                "content": {
+                    "intuition": "Pour additionner ou multiplier des classes sans ambiguïté, le résultat ne doit pas dépendre du représentant choisi dans la classe. C'est précisément ce que garantit le fait que le sous-groupe soit distingué !",
+                    "formalDefinition": "Si $H \\triangleleft G$, l'ensemble quotient $G/H$ muni de la loi :\n$$(xH) \\cdot (yH) = (xy)H$$\nest un groupe, appelé **groupe quotient** de $G$ par $H$.\nL'élément neutre est $H$, et l'inverse de $xH$ est $x^{-1}H$.",
+                    "notationGuide": [
+                        {"symbol": "G/H", "meaning": "Groupe quotient"},
+                        {"symbol": "\\pi : G \\to G/H", "meaning": "Surjection canonique $\\pi(x) = xH$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Pourquoi $\\mathbb{Z}/n\\mathbb{Z}$ est-il un groupe quotient ?",
+                        "steps": [
+                            {"step": "Groupe de départ", "detail": "$(\\mathbb{Z}, +)$ est un groupe abélien."},
+                            {"step": "Sous-groupe", "detail": "$H = n\\mathbb{Z}$ est un sous-groupe de $\\mathbb{Z}$. Comme $\\mathbb{Z}$ est abélien, $n\\mathbb{Z}$ est distingué."},
+                            {"step": "Loi quotient", "detail": "La somme de deux classes $\\bar{a} + \\bar{b} = \\overline{a+b}$ est parfaitement définie."},
+                            {"step": "Structure", "detail": "Le groupe quotient $\\mathbb{Z}/n\\mathbb{Z}$ a pour cardinal $n$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Quelle condition sur $H$ est nécessaire et suffisante pour que $G/H$ soit naturellement muni d'une structure de groupe ?",
+                        "options": ["$H$ doit être fini", "$H$ doit être cyclique", "$H$ doit être distingué dans $G$", "$G$ doit être abélien"],
+                        "answer": 2,
+                        "explanation": "La distinction ($H \\triangleleft G$) garantit que le produit de deux classes ne dépend pas du choix des représentants."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "module-4",
+        "title": "Groupes monogènes et cycliques",
+        "shortDescription": "Générateurs, ordre d'un élément, sous-groupes cycliques finis et infinis, isomorphismes avec Z/nZ.",
+        "order": 4,
+        "sourcePdf": "cours-mpc-partie2 (1).pdf",
+        "sourcePages": [9, 10],
+        "lessons": [
+            {
+                "id": "lesson-4-1",
+                "moduleId": "module-4",
+                "title": "Sous-groupe engendré & Notion d'ordre",
+                "order": 1,
+                "sourcePdf": "cours-mpc-partie2 (1).pdf",
+                "sourcePage": 9,
+                "objectives": [
+                    "Définir le sous-groupe engendré par un élément : $\\langle g \\rangle = \\{g^k \\mid k \\in \\mathbb{Z}\\}$",
+                    "Définir l'ordre d'un élément $g$ : plus petit entier $k \\ge 1$ tel que $g^k = e$",
+                    "Distinguer ordre fini et ordre infini",
+                    "Calculer l'ordre d'éléments dans des groupes additifs et multiplicatifs"
+                ],
+                "prerequisites": ["lesson-1-1"],
+                "content": {
+                    "intuition": "Prenez un élément et appliquez l'opération encore et encore. La liste des résultats forme un cercle (si vous revenez au point de départ) ou une ligne infinie. Le nombre de pas nécessaires pour revenir au neutre s'appelle l'ordre de l'élément.",
+                    "formalDefinition": "Soit $(G, \\cdot)$ un groupe et $g \\in G$ :\n\n- Le **sous-groupe engendré par $g$** est $\\langle g \\rangle = \\{g^k \\mid k \\in \\mathbb{Z}\\}$ (en notation additive : $\\{kg \\mid k \\in \\mathbb{Z}\\}$).\n- L'**ordre** de $g$, noté $\\operatorname{ord}(g)$ ou $|g|$, est le cardinal de $\\langle g \\rangle$ :\n  $$\\operatorname{ord}(g) = \\min\\{k \\in \\mathbb{N}^* \\mid g^k = e\\}$$\n  Si un tel entier n'existe pas, $g$ est dit d'ordre infini.",
+                    "notationGuide": [
+                        {"symbol": "\\langle g \\rangle", "meaning": "Sous-groupe engendré par $g$"},
+                        {"symbol": "\\operatorname{ord}(g)", "meaning": "Ordre de l'élément $g$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Quel est l'ordre de 9 dans $(\\mathbb{Z}/12\\mathbb{Z}, +)$ ? (Fiche TD 2 révisée, Exercice 5).",
+                        "steps": [
+                            {"step": "Compréhension de la loi", "detail": "La loi est l'addition modulo 12, le neutre est $\\bar{0}$. Cherchons le plus petit $k \\ge 1$ tel que $k \\times 9 \\equiv 0 \\pmod{12}$."},
+                            {"step": "Calcul des multiples successifs", "detail": "$1 \\times 9 = 9 \\not\\equiv 0$,\n$2 \\times 9 = 18 \\equiv 6 \\not\\equiv 0$,\n$3 \\times 9 = 27 \\equiv 3 \\not\\equiv 0$,\n$4 \\times 9 = 36 = 3 \\times 12 \\equiv 0 \\pmod{12}$."},
+                            {"step": "Formule générale", "detail": "Dans $(\\mathbb{Z}/n\\mathbb{Z}, +)$, l'ordre de $a$ est donné par $\\frac{n}{\\operatorname{pgcd}(a, n)}$. Ici $\\frac{12}{\\operatorname{pgcd}(9, 12)} = \\frac{12}{3} = 4$."},
+                            {"step": "Conclusion", "detail": "L'ordre de 9 dans $\\mathbb{Z}/12\\mathbb{Z}$ est donc 4."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Dans $(\\mathbb{Z}/15\\mathbb{Z}, +)$, quel est l'ordre de 10 ?",
+                        "options": ["3", "5", "10", "15"],
+                        "answer": 0,
+                        "explanation": "L'ordre est $15 / \\operatorname{pgcd}(10, 15) = 15 / 5 = 3$."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-4-2",
+                "moduleId": "module-4",
+                "title": "Groupes monogènes vs Groupes cycliques",
+                "order": 2,
+                "sourcePdf": "cours-mpc-partie2 (1).pdf",
+                "sourcePage": 10,
+                "objectives": [
+                    "Distinguer groupe monogène (engendré par un seul élément) et groupe cyclique (monogène ET fini)",
+                    "Connaître l'isomorphisme fondamental : tout groupe cyclique d'ordre $n$ est isomorphe à $\\mathbb{Z}/n\\mathbb{Z}$",
+                    "Tout groupe monogène infini est isomorphe à $(\\mathbb{Z}, +)$",
+                    "Déterminer les générateurs d'un groupe cyclique"
+                ],
+                "prerequisites": ["lesson-4-1", "lesson-2-1"],
+                "content": {
+                    "intuition": "Un groupe monogène est un groupe qui peut être entièrement exploré par un unique générateur. S'il est de surcroît fini, on l'appelle cyclique, et il possède exactement la même géométrie qu'une horloge à $n$ heures.",
+                    "formalDefinition": "- Un groupe $G$ est dit **monogène** s'il existe $g \\in G$ tel que $G = \\langle g \\rangle$.\n- Un groupe est dit **cyclique** s'il est monogène et fini.\n\n**Théorème de classification :**\n- Si $G$ est monogène infini, $G \\cong (\\mathbb{Z}, +)$.\n- Si $G$ est cyclique d'ordre $n$, $G \\cong (\\mathbb{Z}/n\\mathbb{Z}, +)$.",
+                    "notationGuide": [
+                        {"symbol": "G = \\langle g \\rangle", "meaning": "$g$ est un générateur de $G$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Quels sont les générateurs de $(\\mathbb{Z}/6\\mathbb{Z}, +)$ ?",
+                        "steps": [
+                            {"step": "Critère", "detail": "Dans $(\\mathbb{Z}/n\\mathbb{Z}, +)$, un élément $k$ est un générateur ssi $\\operatorname{pgcd}(k, n) = 1$."},
+                            {"step": "Éléments premiers avec 6", "detail": "Les entiers entre 1 et 5 premiers avec 6 sont 1 et 5."},
+                            {"step": "Vérification", "detail": "$\\langle 1 \\rangle = \\{0, 1, 2, 3, 4, 5\\} = \\mathbb{Z}/6\\mathbb{Z}$ et $\\langle 5 \\rangle = \\{0, 5, 4, 3, 2, 1\\} = \\mathbb{Z}/6\\mathbb{Z}$."},
+                            {"step": "Nombre de générateurs", "detail": "Le nombre de générateurs est donné par l'indicatrice d'Euler $\\varphi(6) = 6(1 - 1/2)(1 - 1/3) = 2$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Combien de générateurs possède un groupe cyclique d'ordre 10 ?",
+                        "options": ["2", "4", "5", "9"],
+                        "answer": 1,
+                        "explanation": "Le nombre de générateurs est $\\varphi(10) = \\varphi(2) \\times \\varphi(5) = 1 \\times 4 = 4$ (ce sont 1, 3, 7, 9)."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-4-3",
+                "moduleId": "module-4",
+                "title": "Produit direct de groupes & Ordre dans G x H",
+                "order": 3,
+                "sourcePdf": "cours-mpc-part3.pdf",
+                "sourcePage": 5,
+                "objectives": [
+                    "Définir le groupe produit $G \\times H$ muni de la loi composante par composante",
+                    "Calculer l'ordre d'un couple $(g, h)$ : $\\operatorname{ord}((g, h)) = \\operatorname{ppcm}(\\operatorname{ord}(g), \\operatorname{ord}(h))$",
+                    "Caractériser quand un produit de groupes cycliques est cyclique (lemme chinois)",
+                    "Résoudre l'exercice sur $(\\mathbb{Z}/20\\mathbb{Z})^\\times$"
+                ],
+                "prerequisites": ["lesson-4-1", "lesson-4-2"],
+                "content": {
+                    "intuition": "Dans un produit direct, deux pendules tournent indépendamment. Le couple d'aiguilles ne reviendra à la position de départ que lorsque le temps écoulé sera un multiple commun des deux périodes : le PPCM !",
+                    "formalDefinition": "Soient $(G, \\cdot)$ et $(H, \\cdot)$ deux groupes. Le produit cartésien $G \\times H$ muni de $(g, h) * (g', h') = (gg', hh')$ est un groupe.\n\n**Ordre d'un élément :**\nSi $g \\in G$ est d'ordre $p$ et $h \\in H$ est d'ordre $q$, alors :\n$$\\operatorname{ord}((g, h)) = \\operatorname{ppcm}(p, q)$$\n\n**Condition de cyclicité :**\n$\\mathbb{Z}/a\\mathbb{Z} \\times \\mathbb{Z}/b\\mathbb{Z}$ est cyclique ssi $\\operatorname{pgcd}(a, b) = 1$.",
+                    "notationGuide": [
+                        {"symbol": "\\operatorname{ppcm}(p, q)", "meaning": "Plus petit commun multiple de $p$ et $q$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Soit $G = (\\mathbb{Z}/20\\mathbb{Z})^\\times$. Est-il cyclique ? (Fiche TD 2 révisée, Exercice 9).",
+                        "steps": [
+                            {"step": "1. Liste des éléments", "detail": "Ce sont les éléments premiers avec 20 : $G = \\{1, 3, 7, 9, 11, 13, 17, 19\\}$, donc $|G| = \\varphi(20) = 8$."},
+                            {"step": "2. Calcul des ordres des éléments", "detail": "Ordre de 1 : 1.\n$3^2 = 9, 3^4 = 81 \\equiv 1 \\implies \\operatorname{ord}(3) = 4$.\n$7^2 = 49 \\equiv 9, 7^4 = 81 \\equiv 1 \\implies \\operatorname{ord}(7) = 4$.\n$9^2 = 81 \\equiv 1 \\implies \\operatorname{ord}(9) = 2$.\n$11^2 = 121 \\equiv 1 \\implies \\operatorname{ord}(11) = 2$.\n$13 \\equiv -7 \\implies \\operatorname{ord}(13) = 4$.\n$17 \\equiv -3 \\implies \\operatorname{ord}(17) = 4$.\n$19 \\equiv -1 \\implies \\operatorname{ord}(19) = 2$."},
+                            {"step": "3. Conclusion sur la cyclicité", "detail": "L'ordre maximal d'un élément dans $G$ est 4. Aucun élément n'est d'ordre 8 (le cardinal du groupe). Donc $G$ n'est PAS cyclique. En fait $G \\cong \\mathbb{Z}/2\\mathbb{Z} \\times \\mathbb{Z}/4\\mathbb{Z}$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Le groupe $\\mathbb{Z}/2\\mathbb{Z} \\times \\mathbb{Z}/3\\mathbb{Z}$ est-il cyclique ?",
+                        "options": ["Oui, car $\\operatorname{pgcd}(2, 3) = 1$", "Non, aucun produit n'est cyclique", "Oui, mais uniquement d'ordre 5", "Non, car 2 et 3 sont des nombres premiers"],
+                        "answer": 0,
+                        "explanation": "D'après le théorème des restes chinois, $\\mathbb{Z}/2\\mathbb{Z} \\times \\mathbb{Z}/3\\mathbb{Z} \\cong \\mathbb{Z}/6\\mathbb{Z}$ car $\\operatorname{pgcd}(2, 3) = 1$."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "module-5",
+        "title": "Théorèmes fondamentaux (Lagrange, Euler, Fermat)",
+        "shortDescription": "Divisibilité des ordres, structure des sous-groupes, théorème d'Euler et petit théorème de Fermat.",
+        "order": 5,
+        "sourcePdf": "cours-mpc-part3.pdf",
+        "sourcePages": [7, 8],
+        "lessons": [
+            {
+                "id": "lesson-5-1",
+                "moduleId": "module-5",
+                "title": "Théorème de Lagrange & Conséquences",
+                "order": 1,
+                "sourcePdf": "cours-mpc-part3.pdf",
+                "sourcePage": 7,
+                "objectives": [
+                    "Énoncer et démontrer le Théorème de Lagrange",
+                    "Comprendre l'indice d'un sous-groupe $[G:H] = |G|/|H|$",
+                    "Démontrer que l'ordre de tout élément divise l'ordre du groupe",
+                    "Conclure que tout groupe de cardinal premier est cyclique"
+                ],
+                "prerequisites": ["lesson-3-2", "lesson-4-1"],
+                "content": {
+                    "intuition": "Puisque les classes à gauche modulo $H$ découpent le groupe $G$ en morceaux de même taille $|H|$ sans aucun chevauchement, la taille totale $|G|$ est obligatoirement un multiple de $|H|$ !",
+                    "formalDefinition": "**Théorème de Lagrange :**\nSoit $(G, \\cdot)$ un groupe fini et $H$ un sous-groupe de $G$. Alors le cardinal de $H$ divise le cardinal de $G$ :\n$$|H| \\text{ divise } |G|$$\nOn note $[G:H] = \\frac{|G|}{|H|}$ le nombre de classes (appelé indice de $H$ dans $G$).\n\n**Corollaires fondamentaux :**\n1. Pour tout $g \\in G$, l'ordre $\\operatorname{ord}(g)$ divise $|G|$.\n2. Par conséquent, pour tout $g \\in G$, $g^{|G|} = e$.\n3. Si $|G| = p$ est un nombre premier, $G$ n'a aucun sous-groupe non trivial et est cyclique : $G \\cong \\mathbb{Z}/p\\mathbb{Z}$.",
+                    "notationGuide": [
+                        {"symbol": "[G:H]", "meaning": "Indice du sous-groupe $H$ dans $G$ ($|G|/|H|$)"},
+                        {"symbol": "g^{|G|} = e", "meaning": "Tout élément élevé à la puissance de l'ordre du groupe donne le neutre"}
+                    ],
+                    "workedExample": {
+                        "statement": "Quels sont les ordres possibles des sous-groupes de $(\\mathbb{Z}/25\\mathbb{Z}, +)$ ? (Cours MPC Partie 3, page 7).",
+                        "steps": [
+                            {"step": "Cardinal du groupe", "detail": "Le cardinal est $|\\mathbb{Z}/25\\mathbb{Z}| = 25$."},
+                            {"step": "Diviseurs", "detail": "Les diviseurs de 25 sont 1, 5 et 25."},
+                            {"step": "Application de Lagrange", "detail": "D'après Lagrange, tout sous-groupe $H$ a pour ordre 1, 5 ou 25."},
+                            {"step": "Sous-groupes stricts", "detail": "Les sous-groupes stricts non triviaux ont donc nécessairement 5 éléments (c'est le sous-groupe engendré par $\\bar{5}$ : $\\{0, 5, 10, 15, 20\\}$)."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Un groupe de cardinal 17 peut-il posséder un sous-groupe d'ordre 4 ?",
+                        "options": ["Non, car 4 ne divise pas 17 (17 est premier)", "Oui, si le groupe est abélien", "Oui, selon le lemme chinois", "Seulement s'il n'est pas cyclique"],
+                        "answer": 0,
+                        "explanation": "D'après le théorème de Lagrange, l'ordre d'un sous-groupe doit diviser l'ordre du groupe. Comme 17 est premier, ses seuls sous-groupes sont d'ordre 1 et 17."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-5-2",
+                "moduleId": "module-5",
+                "title": "Théorème d'Euler & Petit Théorème de Fermat",
+                "order": 2,
+                "sourcePdf": "cours-mpc-part3.pdf",
+                "sourcePage": 8,
+                "objectives": [
+                    "Appliquer le corollaire de Lagrange au groupe multiplicatif $(\\mathbb{Z}/n\\mathbb{Z})^\\times$",
+                    "Énoncer et démontrer le Théorème d'Euler : $a^{\\varphi(n)} \\equiv 1 \\pmod n$",
+                    "En déduire le Petit Théorème de Fermat pour $p$ premier : $a^{p-1} \\equiv 1 \\pmod p$",
+                    "Comprendre l'application directe en cryptographie RSA"
+                ],
+                "prerequisites": ["lesson-5-1", "lesson-4-3"],
+                "content": {
+                    "intuition": "Lagrange nous dit que $x^{|G|} = e$. Si nous prenons pour groupe les nombres inversibles modulo $n$, dont la taille est donnée par la fonction d'Euler $\\varphi(n)$, alors tout nombre premier avec $n$ élevé à la puissance $\\varphi(n)$ redonne 1 !",
+                    "formalDefinition": "**Théorème d'Euler :**\nPour tout $n \\ge 2$ et tout $a \\in \\mathbb{Z}$ premier avec $n$ ($\\operatorname{pgcd}(a, n) = 1$) :\n$$a^{\\varphi(n)} \\equiv 1 \\pmod n$$\n\n**Petit Théorème de Fermat :**\nSi $p$ est un nombre premier et $a$ un entier non divisible par $p$ :\n$$a^{p-1} \\equiv 1 \\pmod p$$\n(ou encore pour tout entier $a$, $a^p \\equiv a \\pmod p$).",
+                    "notationGuide": [
+                        {"symbol": "\\varphi(n)", "meaning": "Indicatrice d'Euler (nombre d'entiers entre 1 et $n-1$ premiers avec $n$)"},
+                        {"symbol": "a^{p-1} \\equiv 1 \\pmod p", "meaning": "Petit théorème de Fermat"}
+                    ],
+                    "workedExample": {
+                        "statement": "Calculer $3^{2026} \\pmod{10}$.",
+                        "steps": [
+                            {"step": "Calcul de $\\varphi(10)$", "detail": "$\\varphi(10) = 10 \\times (1 - 1/2) \\times (1 - 1/5) = 4$."},
+                            {"step": "Application d'Euler", "detail": "Comme $\\operatorname{pgcd}(3, 10) = 1$, d'après Euler, $3^4 \\equiv 1 \\pmod{10}$."},
+                            {"step": "Division de l'exposant", "detail": "$2026 = 4 \\times 506 + 2$."},
+                            {"step": "Calcul", "detail": "$3^{2026} = (3^4)^{506} \\times 3^2 \\equiv 1^{506} \\times 9 \\equiv 9 \\pmod{10}$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Que vaut $7^{12} \\pmod{13}$ ?",
+                        "options": ["1", "7", "12", "0"],
+                        "answer": 0,
+                        "explanation": "Puisque 13 est un nombre premier et 7 n'est pas multiple de 13, par Fermat $7^{13-1} = 7^{12} \\equiv 1 \\pmod{13}$."
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "module-6",
+        "title": "Congruences et Z/nZ",
+        "shortDescription": "Arithmétique modulaire, éléments inversibles, diviseurs de zéro, Bézout et calcul de clés cryptographiques.",
+        "order": 6,
+        "sourcePdf": "cours-mpc-part3.pdf",
+        "sourcePages": [9, 10, 11],
+        "lessons": [
+            {
+                "id": "lesson-6-1",
+                "moduleId": "module-6",
+                "title": "L'anneau Z/nZ & Opérations modulaires",
+                "order": 1,
+                "sourcePdf": "cours-mpc-part3.pdf",
+                "sourcePage": 9,
+                "objectives": [
+                    "Définir la relation de congruence $a \\equiv b \\pmod n$",
+                    "Comprendre la structure de l'ensemble quotient $\\mathbb{Z}/n\\mathbb{Z}$",
+                    "Maîtriser les opérations modulaires d'addition et de multiplication",
+                    "Distinguer l'opposé $-a$ et l'inverse $a^{-1}$"
+                ],
+                "prerequisites": ["lesson-1-1", "lesson-3-2"],
+                "content": {
+                    "intuition": "Calculer dans $\\mathbb{Z}/n\\mathbb{Z}$, c'est faire des mathématiques sur une horloge à $n$ heures. Tous les nombres qui diffèrent d'un tour complet (un multiple de $n$) sont considérés comme identiques.",
+                    "formalDefinition": "Pour $n \\in \\mathbb{N}, n > 1$ et $a, b \\in \\mathbb{Z}$ :\n$$a \\equiv b \\pmod n \\iff n \\mid (a - b) \\iff \\exists k \\in \\mathbb{Z}, a - b = kn$$\nL'ensemble $\\mathbb{Z}/n\\mathbb{Z} = \\{\\bar{0}, \\bar{1}, \\dots, \\overline{n-1}\\}$ est muni de deux opérations :\n$$\\bar{a} + \\bar{b} = \\overline{a+b}, \\qquad \\bar{a} \\times \\bar{b} = \\overline{ab}$$",
+                    "notationGuide": [
+                        {"symbol": "a \\equiv b \\pmod n", "meaning": "$a$ congru à $b$ modulo $n$"},
+                        {"symbol": "\\bar{a}", "meaning": "Classe d'équivalence de l'entier $a$"}
+                    ],
+                    "workedExample": {
+                        "statement": "Résoudre $5x + 3 \\equiv 2 \\pmod 7$.",
+                        "steps": [
+                            {"step": "Soustraction", "detail": "$5x \\equiv 2 - 3 \\equiv -1 \\equiv 6 \\pmod 7$."},
+                            {"step": "Recherche de l'inverse de 5 mod 7", "detail": "On cherche $u$ tel que $5u \\equiv 1 \\pmod 7$. Comme $5 \\times 3 = 15 = 2 \\times 7 + 1$, l'inverse de 5 est 3 mod 7."},
+                            {"step": "Multiplication par l'inverse", "detail": "$x \\equiv 3 \\times 6 = 18 \\equiv 4 \\pmod 7$."},
+                            {"step": "Vérification", "detail": "$5 \\times 4 + 3 = 20 + 3 = 23 = 3 \\times 7 + 2 \\equiv 2 \\pmod 7$."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Dans $\\mathbb{Z}/8\\mathbb{Z}$, quel est l'opposé de 5 pour l'addition ?",
+                        "options": ["3", "-5", "1/5", "7"],
+                        "answer": 0,
+                        "explanation": "L'opposé de $\\bar{5}$ est $8 - 5 = 3$, car $5 + 3 = 8 \\equiv 0 \\pmod 8$."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-6-2",
+                "moduleId": "module-6",
+                "title": "Éléments inversibles & Théorème de Bézout",
+                "order": 2,
+                "sourcePdf": "cours-mpc-part3.pdf",
+                "sourcePage": 10,
+                "objectives": [
+                    "Caractériser les éléments inversibles de $\\mathbb{Z}/n\\mathbb{Z}$",
+                    "Démontrer le théorème : $\\bar{a}$ inversible $\\iff \\operatorname{pgcd}(a, n) = 1$",
+                    "Appliquer l'identité de Bézout $as + nt = 1$ pour trouver l'inverse",
+                    "Calculer l'inverse avec l'algorithme d'Euclide étendu"
+                ],
+                "prerequisites": ["lesson-6-1"],
+                "content": {
+                    "intuition": "Contrairement aux nombres réels où tout nombre non nul est inversible, dans $\\mathbb{Z}/n\\mathbb{Z}$ un nombre ne possède un inverse que s'il ne partage aucun diviseur commun avec $n$.",
+                    "formalDefinition": "**Théorème fondamental d'inversibilité :**\nSoit $\\bar{a} \\in \\mathbb{Z}/n\\mathbb{Z}$. $\\bar{a}$ est inversible dans $(\\mathbb{Z}/n\\mathbb{Z}, \\times)$ si et seulement si $a$ est premier avec $n$ :\n$$\\bar{a} \\in (\\mathbb{Z}/n\\mathbb{Z})^\\times \\iff \\operatorname{pgcd}(a, n) = 1$$\n\n**Preuve par Bézout :**\n$\\operatorname{pgcd}(a, n) = 1 \\iff \\exists s, t \\in \\mathbb{Z}, as + nt = 1 \\iff as - 1 = -nt \\iff as \\equiv 1 \\pmod n$. L'inverse de $\\bar{a}$ est alors la classe $\\bar{s}$.",
+                    "notationGuide": [
+                        {"symbol": "(\\mathbb{Z}/n\\mathbb{Z})^\\times", "meaning": "Groupe des unités (éléments inversibles) modulo $n$"},
+                        {"symbol": "as + nt = 1", "meaning": "Identité de Bachet-Bézout"}
+                    ],
+                    "workedExample": {
+                        "statement": "Calculer l'inverse de 7 modulo 26.",
+                        "steps": [
+                            {"step": "Algorithme d'Euclide", "detail": "$26 = 7 \\times 3 + 5$\n$7 = 5 \\times 1 + 2$\n$5 = 2 \\times 2 + 1$\n$2 = 1 \\times 2 + 0$. Le PGCD est 1, donc 7 est inversible mod 26."},
+                            {"step": "Remontée d'Euclide (Bézout)", "detail": "$1 = 5 - 2 \\times 2$\n$1 = 5 - 2 \\times (7 - 5 \\times 1) = 3 \\times 5 - 2 \\times 7$\n$1 = 3 \\times (26 - 7 \\times 3) - 2 \\times 7 = 3 \\times 26 - 11 \\times 7$."},
+                            {"step": "Conclusion modulo 26", "detail": "$-11 \\times 7 \\equiv 1 \\pmod{26}$. Or $-11 \\equiv 26 - 11 = 15 \\pmod{26}$."},
+                            {"step": "Vérification", "detail": "$7 \\times 15 = 105 = 4 \\times 26 + 1 \\equiv 1 \\pmod{26}$. L'inverse de 7 modulo 26 est 15."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "L'élément 6 est-il inversible dans $\\mathbb{Z}/15\\mathbb{Z}$ ?",
+                        "options": ["Oui, son inverse est 6", "Non, car $\\operatorname{pgcd}(6, 15) = 3 \\neq 1$", "Oui, car $6 < 15$", "Non, car 15 est impair"],
+                        "answer": 1,
+                        "explanation": "Puisque $\\operatorname{pgcd}(6, 15) = 3 \\neq 1$, 6 n'est pas inversible dans $\\mathbb{Z}/15\\mathbb{Z}$ (c'est un diviseur de zéro)."
+                    }
+                ]
+            },
+            {
+                "id": "lesson-6-3",
+                "moduleId": "module-6",
+                "title": "Diviseurs de zéro & Le corps Z/pZ",
+                "order": 3,
+                "sourcePdf": "cours-mpc-part3.pdf",
+                "sourcePage": 10,
+                "objectives": [
+                    "Définir un diviseur de zéro dans $\\mathbb{Z}/n\\mathbb{Z}$",
+                    "Comprendre la partition : dans $\\mathbb{Z}/n\\mathbb{Z}$, tout élément non nul est soit inversible, soit diviseur de zéro",
+                    "Théorème : $\\mathbb{Z}/p\\mathbb{Z}$ est un corps commutatif si et seulement si $p$ est premier",
+                    "Comprendre l'impact sur la sécurité cryptographique"
+                ],
+                "prerequisites": ["lesson-6-2"],
+                "content": {
+                    "intuition": "Dans les nombres ordinaires, si $a \\times b = 0$, alors $a = 0$ ou $b = 0$. Dans l'arithmétique modulaire, deux nombres non nuls peuvent s'associer pour donner zéro (comme $2 \\times 3 = 6 \\equiv 0 \\pmod 6$) ! Mais si le module est premier, cette anomalie disparaît complètement.",
+                    "formalDefinition": "Un élément non nul $\\bar{a} \\in \\mathbb{Z}/n\\mathbb{Z}$ est un **diviseur de zéro** ssi :\n$$\\exists \\bar{b} \\neq \\bar{0}, \\quad \\bar{a} \\times \\bar{b} = \\bar{0}$$\n\n**Théorème :**\nDans $\\mathbb{Z}/n\\mathbb{Z}$, tout élément non nul est soit inversible (si $\\operatorname{pgcd}(a, n) = 1$), soit un diviseur de zéro (si $\\operatorname{pgcd}(a, n) > 1$).\nPar conséquent, **$\\mathbb{Z}/p\\mathbb{Z}$ est un corps** si et seulement si $p$ est premier.",
+                    "notationGuide": [
+                        {"symbol": "\\mathbb{F}_p \\text{ ou } \\mathbb{Z}/p\\mathbb{Z}", "meaning": "Corps fini à $p$ éléments ($p$ premier)"}
+                    ],
+                    "workedExample": {
+                        "statement": "Identifier les inversibles et les diviseurs de zéro dans $\\mathbb{Z}/12\\mathbb{Z}$.",
+                        "steps": [
+                            {"step": "Éléments", "detail": "$\\mathbb{Z}/12\\mathbb{Z} = \\{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11\\}$."},
+                            {"step": "Inversibles $(\\mathbb{Z}/12\\mathbb{Z})^\\times$", "detail": "Ceux qui sont premiers avec 12 : $\\{1, 5, 7, 11\\}$."},
+                            {"step": "Diviseurs de zéro", "detail": "Ceux non nuls ayant un facteur commun avec 12 : $\\{2, 3, 4, 6, 8, 9, 10\\}$. Par exemple $2 \\times 6 = 12 \\equiv 0$, $3 \\times 4 = 12 \\equiv 0$."},
+                            {"step": "Conclusion", "detail": "La partition de $\\mathbb{Z}/12\\mathbb{Z} \\setminus \\{0\\}$ en inversibles et diviseurs de zéro est complète."}
+                        ]
+                    }
+                },
+                "quiz": [
+                    {
+                        "question": "Pour quelle valeur de $n$ l'anneau $\\mathbb{Z}/n\\mathbb{Z}$ est-il un corps ?",
+                        "options": ["Pour tout entier pair", "Pour tout entier $n$ premier", "Pour tout entier impair", "Pour tout $n \\ge 2$"],
+                        "answer": 1,
+                        "explanation": "$\\mathbb{Z}/n\\mathbb{Z}$ est un corps si et seulement si tout élément non nul est inversible, ce qui exige que $n$ soit un nombre premier."
+                    }
+                ]
+            }
+        ]
+    }
+]
+
+# Write curriculum to JSON
+with open('src/data/curriculum.json', 'w', encoding='utf-8') as f:
+    json.dump(modules, f, ensure_ascii=False, indent=2)
+
+print(f"Curriculum written: {len(modules)} modules, {sum(len(m['lessons']) for m in modules)} lessons.")

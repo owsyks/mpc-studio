@@ -1,0 +1,527 @@
+[
+  {
+    "id": "cours1-p4",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 4,
+    "moduleId": "module-1",
+    "chapter": "Chapitre 1 : Groupes et Sous-groupes",
+    "title": "Notion de groupe, Loi interne, Associativité, Neutre, Symétrique",
+    "content": "Chapitre 1\nGroupes et Sous-groupes\n2",
+    "latex": [
+      "(G, *)",
+      "\\forall x, y \\in G, x * y \\in G",
+      "(x * y) * z = x * (y * z)",
+      "x * e = e * x = x",
+      "x * x' = x' * x = e"
+    ],
+    "keywords": [
+      "groupe",
+      "axiomes",
+      "associativité",
+      "élément neutre",
+      "symétrique",
+      "abélien",
+      "commutatif"
+    ]
+  },
+  {
+    "id": "cours1-p5",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 5,
+    "moduleId": "module-1",
+    "chapter": "Chapitre 1 : Groupes et Sous-groupes",
+    "title": "Notion de groupe, Loi interne, Associativité, Neutre, Symétrique",
+    "content": "1.1\nNotion de groupe\n1.1.1\nDéﬁnitions\ndéﬁnition 1\nSoit G un ensemble non vide. On appelle loi de composition interne dans G, toute application :\n∗: GxG −→G\n(x, y) −→x ∗y\nUne telle loi permet d’associer à tout couple (x, y) d’éléments de G un autre élément de G, noté\nx ∗y et appelé le produit de x par y pour la loi ∗\ndéﬁnition 2\nOn appelle groupe tout ensemble non vide G muni d’une loi de composition interne ∗, vériﬁant\nles trois propriétés suivantes (appelées axiomes de la structure de groupe) :\nA1 :\nLa loi est associative dans G : ∀x, y, z ∈G : x ∗(y ∗z) = (x ∗y) ∗z\nA2 :\nLa loi admet un élément neutre dans G : ∃e ∈G, ∀x ∈G, x ∗e = e ∗x = x\nA3 :\nTout élément dans G admet un symétrique dans G pour ∗: ∀x ∈G, ∃x\n′ ∈G : x ∗x\n′ =\nx\n′ ∗x = e\ndéﬁnition 3\nOn appelle groupe commutatif ou groupe abélien tout groupe G dont la loi ∗vériﬁe de plus la\ncondition supplémentaire de commutativité : ∀x, y ∈G, x ∗y = y ∗x\n1.1.2\nExemples\n1. Pour tout ensemble X, l’ensemble S(X) des bijections de X dans X muni de la loi \"o\" de\ncomposition des bijections, est un groupe, appelé groupe symétrique sur X.\n— Associativité (la composition d’applications est associative)\n— L’élément neutre est l’identité sur X (IdX), car foIdX = idXof, ∀f ∈S(X)\n— Le symétrique de f pour la loi o est f −1 (la bijection réciproque), car : fof −1 = f −1of =\nIdX, ∀f ∈S(X)\n2. ∀n ≥1,, l’ensemble GLn(R) des matrices carrées d’ordre n inversibles à coeﬃcients réels,\nest un groupe pour la miltiplication des matrices.\n— Associativité (le produit matriciel est associatif)\n— L’élément neutre est la matrice identité (In), car M × In = In × M = M, ∀M ∈GLn(R)\nitem Le symétrique de M pour la loi × est la matrice inverse M −1, car M × M −1 =\nM −1 × M = In ∀M ∈GLn(R)\n3. L’ensemble C des nombres complexes, muni de l’addition est un groupe abélien.\n— Associativité (l’addition est associative dans C)\n— L’élément neutre est le complexe nul (0), car Z + 0 = 0 + Z = Z, ∀Z ∈C\n— Le symétrique de Z pour la loi + est (−Z), car Z + (−Z) = (−Z) + Z = 0, ∀Z ∈C\n4. L’ensemble C des nombres complexes privé du complexe 0, muni de la multiplication (.) est\nun groupe abélien.\n— Associativité (la multiplication est associative dans C)\n— L’élément neutre est le complexe (1), car Z.1 = 1.Z = Z, ∀Z ∈C s\n— Le symétrique de Z pour la loi (.) est (Z−1) car, Z.(Z−1) = (Z−1).Z = 1, ∀Z ∈C\n5. Groupes additifs : (Z, +), (Q, +), (R, +), (F(E, R), +), (Rn, +)\n6. Groupes multiplicatifs : (Q∗, ×), (R∗, ×), (U, ×) avec U = {Z ∈C, |Z| = 1}\n1er décembre 2025\n3/ ??",
+    "latex": [
+      "(G, *)",
+      "\\forall x, y \\in G, x * y \\in G",
+      "(x * y) * z = x * (y * z)",
+      "x * e = e * x = x",
+      "x * x' = x' * x = e"
+    ],
+    "keywords": [
+      "groupe",
+      "axiomes",
+      "associativité",
+      "élément neutre",
+      "symétrique",
+      "abélien",
+      "commutatif"
+    ]
+  },
+  {
+    "id": "cours1-p6",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 6,
+    "moduleId": "module-1",
+    "chapter": "Chapitre 1 : Groupes et Sous-groupes",
+    "title": "Propriétés fondamentales : Unicité du neutre et du symétrique, Inversion d'un produit",
+    "content": "1.2\nPropriétés\nSoit (G,*) un groupe.\n1. Un groupe est non vide.\nIl contient au moins son élément neutre.\n2. L’élément neutre d’un groupe est unique.\nSupposons que e et e\n′ sont deux éléments neutres alors :\nSi e\n′ élément neutre : e ∗e\n′ = e\n′ ∗e = e\n′\nSi e élément neutre : e ∗e\n′ = e\n′ ∗e = e\n=⇒e = e\n′\n3. Le symétrique d’un élément est unique.\nSoit x un élément possédant deux inverses x\n′ et x\n′′, alors on a :\nx ∗x\n′ = e et x\n′′ ∗x = e.\n=⇒x\n′′ ∗x ∗x\n′ = x\n′′ ∗e\n=⇒e ∗x\n′ = x\n′′ ∗e\n=⇒x\n′ = x\n′′\n4. Si x admet un inverse x−1 alors (x−1)−1 = x\nx−1 est l’inverse de x : x ∗x−1 = x−1 ∗x = e.\nx\n′ = (x−1)−1 est l’inverse de x−1 : x−1 ∗x\n′ = x\n′ ∗x−1 = e\nComme l’inverse d’un élément est unique (propriété 3) : x\n′ = (x−1)−1 = x\n5. Soient a, b ∈G et a−1, b−1 ∈G leurs inverses respectifs, alors : (a ∗b)−1 = b−1 ∗a−1\n(G, ∗) est un groupe =⇒a∗b ∈G et admet un inverse unique u avec u∗(a∗b) = (a∗b)∗u = e\nMontrons que u = b−1 ∗a−1 :\n(a ∗b) ∗b−1 ∗a−1 = a ∗b ∗b−1 ∗a−1 = a ∗e ∗a−1 = a ∗a−1 = e\nb−1 ∗a−1 ∗(a ∗b) = b−1 ∗a−1 ∗a ∗b = b−1 ∗e ∗b = b−1 ∗b = e\nb−1 ∗a−1 = u\n6. ∀a, x, y ∈G, a ∗x = a ∗y =⇒x = y\na−1 ∗a ∗x = a−1 ∗a ∗y =⇒e ∗x = e ∗y =⇒x = y\n7. ∀a, b, x ∈G, a ∗x = b =⇒x = a−1 ∗b\na−1 ∗a ∗x = a−1 ∗b =⇒e ∗x = a−1 ∗b =⇒x = a−1 ∗b\n8. (a ∗b)−1 = b−1 ∗a−1\n(a ∗b) ∗(b−1 ∗a−1) = a ∗b ∗b−1 ∗a−1 = a ∗e ∗a−1 = a ∗a−1 = e\n1.3\nNotion de sous-groupe\n1.3.1\nDéﬁnition\nSoient (G, ∗) un groupe et H une partie non vide de G. On dit que H est un sous groupe de G\nssi :\n1. H est non vide.\n2. ∀x, y ∈H, x ∗y ∈H (Stabilité par la loi ∗)\n3. ∀x ∈H, x−1 ∈H (Stabilité par l′inverse)\nRemarque\nun sous groupe muni de la loi du groupe forme une structure de groupe (H, ∗).\ni) Comme H est non vide, soit x ∈H, on a :\nx−1 ∈H (Propriété 3 des sous groupes) ; ainsi x ∗x−1 ∈H =⇒e ∈H\nii) \"*\" est associative dans G elle l’est particulièrement dans les éléments de H.\niii) Soit x ∈H, propriété 3 =⇒x−1∃dansH =⇒chaque élément de H admet un inverse.\nConclusion : (H, ∗) est bien un groupe.\n1er décembre 2025\n4/ ??",
+    "latex": [
+      "(a * b)^{-1} = b^{-1} * a^{-1}",
+      "a * b = a * c \\implies b = c"
+    ],
+    "keywords": [
+      "unicité",
+      "symétrique",
+      "inverse",
+      "produit",
+      "simplification",
+      "régulier"
+    ]
+  },
+  {
+    "id": "cours1-p7",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 7,
+    "moduleId": "module-1",
+    "chapter": "Chapitre 1 : Groupes et Sous-groupes",
+    "title": "Sous-groupes, Critères de caractérisation, Sous-groupes de (Z, +)",
+    "content": "1.3.2\nExemples :\n• (e, ∗) et (G, ∗) sont des sous-groupes de G\n• L’intersection de deux sous-groupes de G est un sous-groupe de G\n• U = {z ∈C, |z| = 1} est un sous groupe de (C, ×)\n• Un = {z ∈C, zn = 1} est un sous groupe de (U, ×)\n• L’ensemble des suites convergentes est un sous-groupe de (RN , +)\n• L’ensemble des fonctions continues est un sous-groupe de (RR, +)\n1.3.3\nProposition\nSoit H une partie non vide d’un groupe (G, ∗). Alors, H est un sous groupe de G ssi :\n∀x, y ∈H, x ∗y−1 ∈H\nPreuve :\n1. H un sous-groupe =⇒∀x, y ∈H, x ∗y−1 ∈H\nSoient x, y ∈H =⇒x, y−1 ∈H =⇒x ∗y−1 ∈H\n2. ∀x, y ∈H, x ∗y−1 ∈H =⇒H est un sous-groupe de G\na) H est non vide (e ∈H)\nb) Soient e, x ∈H, e ∗x−1 ∈H =⇒x−1 ∈H\nc) Soient x, y ∈H =⇒x, y−1 ∈H =⇒x ∗(y−1)−1 ∈H =⇒x ∗y ∈H\n1.4\nSous-groupes de (Z, +)\n1.4.1\nThéorème\n1. Pour tout n ∈Z, l’ensemble nZ des multiples de n est un sous-groupe de (Z, +)\n2. Tout sous-groupe de (Z, +) est de la forme nZ\nPreuve :\n1. ∀n ∈Z, nZ est un sous-groupe de (Z, +) ?\n• nZ̸ = ∅(0 ∈nZ)\n• nZ est stable par l’addition ?\nEn eﬀet, soient na, nb ∈nZ : na + nb = n(a + b) est dans nZ\n• nZ contient les opposés de tous ses éléments.\nEn eﬀet, si na est un élément de nZ alors −na = n(−a) est dans nZ.\nConclusion : nZ est un sous-groupe de (Z, +)\n2. Réciproquement, tout sous-groupe de (Z, +) est de la forme nZ ?\nSoit H un sous groupe de (Z, +).\n• Si H = {0} =⇒H = nZ\n• Si H̸ = {0}, pour tout n non nul de H, |n| ∈H et |n| > 0\nL’ensemble des éléments strictement positifs de H est une partie non vide de N qui\npossède un plus petit élément n0. Montrons que : H = n0Z (H ⊂n0Z et n0Z ⊂H)\na) n0Z ⊂H ?\nSoit x ∈n0Z, ∃a ∈Z et x = n0a\nx ∈n0Z, ∃a ∈Z et x = n0a\n\n\n\n\n\n\n\nx =\na fois\nz\n}|\n{\nn0 + n0 + .. + n0\nsi a > 0\nx = −n0 −n0 −.. −n0 = −(n0 + n0 + .. + n0\n|\n{z\n}\na fois\n)\nsi a < 0\nn0 ∈H, à cause de la stabilité par la somme et par l’inverse dans H, x ∈H\n1er décembre 2025\n5/ ??",
+    "latex": [
+      "H \\le G",
+      "x * y^{-1} \\in H",
+      "n_0 \\mathbb{Z}"
+    ],
+    "keywords": [
+      "sous-groupe",
+      "critère",
+      "division euclidienne",
+      "Z",
+      "multiples",
+      "intersection"
+    ]
+  },
+  {
+    "id": "cours1-p8",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 8,
+    "moduleId": "module-1",
+    "chapter": "Chapitre 1 : Groupes et Sous-groupes",
+    "title": "Sous-groupes, Critères de caractérisation, Sous-groupes de (Z, +)",
+    "content": "b) H ⊂n0Z ?\nSoit p ∈H ; eﬀectuons la division euclidienne de p par n0 :\n=⇒p = an0 + q, avec 0 ≤r < n0\nComme ]0, n0[∩H = ∅=⇒r = 0, d’où : p = n0q ∈n0Z\n1er décembre 2025\n6/ ??",
+    "latex": [
+      "H \\le G",
+      "x * y^{-1} \\in H",
+      "n_0 \\mathbb{Z}"
+    ],
+    "keywords": [
+      "sous-groupe",
+      "critère",
+      "division euclidienne",
+      "Z",
+      "multiples",
+      "intersection"
+    ]
+  },
+  {
+    "id": "cours1-p9",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 9,
+    "moduleId": "module-2",
+    "chapter": "Chapitre 2 : Morphisme de groupes",
+    "title": "Définition de morphisme, Endomorphisme, Isomorphisme, Automorphisme",
+    "content": "Chapitre 2\nMorphisme de groupes\n7",
+    "latex": [
+      "f(x * y) = f(x) * f(y)",
+      "f(e) = e'",
+      "f(x^{-1}) = f(x)^{-1}"
+    ],
+    "keywords": [
+      "morphisme",
+      "homomorphisme",
+      "isomorphisme",
+      "endomorphisme",
+      "automorphisme"
+    ]
+  },
+  {
+    "id": "cours1-p10",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 10,
+    "moduleId": "module-2",
+    "chapter": "Chapitre 2 : Morphisme de groupes",
+    "title": "Définition de morphisme, Endomorphisme, Isomorphisme, Automorphisme",
+    "content": "2.1\nMorphisme\n2.1.1\nDéﬁnition\nOn appelle morphisme d’un groupe (G1, ∗1) vers un groupe (G2, ∗2), toute application f de G1\ndans G2 telle que :\n∀(x, y) ∈G2\n1 : f(x ∗1 y) = f(x) ∗2 f(y)\nExemples :\n1. f : (Z, +) −→(R∗\n+, ×)\nn −→2n\nEn eﬀet : f(n + m) = 2n+m = 2n × 2m = f(n) + f(m)\n2. f : (R∗\n+, ×) −→(R, +)\nx −→log(x)\nf(x × y) = log(x × y) = log(x) + log(y) = f(x) + f(y)\n3. f : (C∗, ×) −→(C, ×)\nx −→log(x)\nf(x × y) = log(x × y) = log(x) + log(y) = f(x) + f(y)\n2.1.2\nMorphismes particuliers\n1. Endomorphisme : C’est un morphisme d’un groupe vers lui même (munis de la même loi de\ncomposition interne).\n2. Isomorphisme : C’est un morphisme bijectif.\n• La bijection réciproque d’un isomorphisme est un isomorphisme.\n• Deux groupes sont dits isomorphes s’il existe un isomorphisme de l’un dans l’autre.\n3. Automorphisme : C’est un endomorphisme bijectif.\n2.1.3\ncomposition de morphismes\nLa composée de deux morphismes est un morphisme. Eneﬀet :\nSoient (G1, ∗1), (G2, ∗2) et (G3, ∗3) des groupes et soient f et h des morphismes de groupes res-\npectivement de (G1, ∗1) vers (G2, ∗2) et de (G2, ∗2) vers (G3, ∗3). hof est un morphisme.\nOn a ∀(x, y) ∈G1\n:\n(hof)(x ∗1 y) = h(f(x ∗1 y)) = h(f(x) ∗2 f(y)) = h(f(x)) ∗3 h(f(y)) =\n(hof)(x) ∗3 (hof)(y)\n2.1.4\nProposition\nSi f est un morphisme d’un groupe (G1, ∗1) vers un groupe (G2, ∗2) alors,\n1. f(eG1) = eG2\n2. ∀x ∈G1; f(x−1) = (f(x))−1\nPreuve :\n1. f(eG1) = f(eG1 ∗1 eG1) = f(eG1) ∗2 [f(eG1)]\nf(eG1) = f(eG1 ∗1 eG1) = [f(eG1)] ∗2 f(eG1) =⇒\nf(eG1) ∗2 [f(eG1)] = [f(eG1)] ∗2 f(eG1) = f(eG1) =⇒\n[f(eG1)] = eG2\n2. Soit x ∈G1, x−1 ∈G1etx ∗1 x−1 = eG1 =⇒\nf(x ∗1 x−1) = f(x) ∗2 [f(x−1)] = f(eG1) = eG2\nf(x−1 ∗1 x) = [f(x−1)] ∗2 f(x) = f(eG1) = eG2\nf(x) ∗2 [f(x−1)] = [f(x−1)] ∗2 f(x) = eG2 =⇒[f(x−1)] = [f(x)]−1\n1er décembre 2025\n8/ ??",
+    "latex": [
+      "f(x * y) = f(x) * f(y)",
+      "f(e) = e'",
+      "f(x^{-1}) = f(x)^{-1}"
+    ],
+    "keywords": [
+      "morphisme",
+      "homomorphisme",
+      "isomorphisme",
+      "endomorphisme",
+      "automorphisme"
+    ]
+  },
+  {
+    "id": "cours1-p11",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 11,
+    "moduleId": "module-2",
+    "chapter": "Chapitre 2 : Morphisme de groupes",
+    "title": "Noyau (Ker) et Image (Im), Caractérisation de l'injectivité et de la surjectivité",
+    "content": "2.2\nNoyau d’un morphisme de groupes\n2.2.1\nDéﬁnition\nSoit f un morphisme d’un groupe (G1, ∗1) dans un groupe (G2, ∗2) d’éléments neutres respectifs\neG1, eG2. On appelle noyau de f que l’on note Ker(f), l’ensemble des éléments de G1 qui ont pour\nimage l’élément neutre de G2 (eG1).\nKer(f) = {x ∈G1 tels que f(x) = eG2} = f −1(eG2)\n2.2.2\nExemple :\nf : (R, +) −→(C∗, ×)\nx −→eix\nf est un morphisme de groupes dont le noyau est :\nKer(f) = {x ∈R, eix = 1} = 2πZ\n2.2.3\nProposition\nPour tout morphisme f du groupe (G1, ∗1) dans le groupe (G2, ∗2), on a :\n1. Ker(f) est un sous-groupe de (G1, ∗1)\n2. Ker(f) = {eG1} ⇐⇒f est injectif.\nPreuve :\n1. Ker(f) est un sous-groupe de G1, ∗1) ?\n• f(eG1) = eG2 =⇒eG1 ∈Ker(f) =⇒Ker(f)̸ = ∅\n• ∀x, y ∈Ker(f) : x ∗1 y ∈Ker(f)?\nSoit x, y ∈Ker(f), f(x ∗1 y) = f(x) ∗2 f(y) = eG2 ∗2 eG2 = eG2 =⇒x ∗1 y ∈Ker(f)\n• ∀x ∈Ker(f), x−1 ∈? Ker(f)?\nSoit x ∈Ker(f), f(x ∗1 x−1) = f(eG1) =⇒f(x) ∗2 f(x−1) = eG2\n=⇒eG2 ∗2 f(x−1) = eG2 =⇒f(x−1) = eG2 =⇒x−1 ∈Ker(f)\n2. a) f est injectif =⇒? Ker(f) = {eG1} ?\nSoit x ∈Ker(f) =⇒f(x) = eG2 = f(eG1)\nOr f injectif =⇒f(x) = f(eG1) =⇒x = eG1 =⇒Ker(f) ⊂eG1\ncomme eG1 ⊂Ker(f) =⇒Ker(f) = eG1\nb) Ker(f) = {eG1} =⇒? f est injectif ?\nSoient x, y ∈G2\n1 tels que f(x) = f(y), f(x) ∗2 [f(x)]−1 = f(x) ∗2 [f(y)]−1 = eG2\n=⇒f(x) ∗2 f(y−1) = eG2 =⇒f(x ∗1 y−1) = eG2 =⇒x ∗1 y−1 ∈Ker(f)\nx ∗1 y−1 = eG1 (car Ker(f) = {eG1}) =⇒y−1 = x−1 =⇒x = y =⇒f injectif\n2.3\nImage d’un morphisme de groupes\n2.3.1\nDéﬁnition\nSoit f un morphisme d’un groupe (G1, ∗1) dans un groupe (G2, ∗2). On appelle image de f\nl’ensemble des éléments de G2 qui ont un antécédent dans G1, on le note Im(f).\nIm(f) = {y ∈G2, ∃x ∈G1, y = f(x)} = f(G1)\n2.3.2\nExemple :\nf : (R, +) −→(C∗, ×)\nx −→eix\nf est un morphisme de groupes dont l’image est :\nIm(f) = {eix, x ∈R} = {z ∈C∗, |z| = 1}\n1er décembre 2025\n9/ ??",
+    "latex": [
+      "\\ker f = \\{x \\in G_1 \\mid f(x) = e_2\\}",
+      "\\operatorname{Im} f = \\{f(x) \\mid x \\in G_1\\}",
+      "\\ker f = \\{e_1\\} \\iff f \\text{ injectif}"
+    ],
+    "keywords": [
+      "noyau",
+      "image",
+      "ker",
+      "im",
+      "injectif",
+      "surjectif",
+      "bijectif"
+    ]
+  },
+  {
+    "id": "cours1-p12",
+    "sourcePdf": "cours-mpc-partie1.pdf",
+    "page": 12,
+    "moduleId": "module-2",
+    "chapter": "Chapitre 2 : Morphisme de groupes",
+    "title": "Noyau (Ker) et Image (Im), Caractérisation de l'injectivité et de la surjectivité",
+    "content": "2.3.3\nProposition\nPour tout morphisme f du groupe (G1, ∗1) dans le groupe (G2, ∗2), on a :\n1. Im(f) est un sous-groupe de (G2, ∗2)\n2. Im(f) = G2 ⇐⇒f est surjectif.\nPreuve :\n1. Montrons que Im(f) est un sous-groupe de (G2, ∗2) ?\n• f(eG1) = eG2 =⇒eG2 ∈Im(f) =⇒Im(f)̸ = ∅\n• ∀y, y\n′ ∈Im(f) : y ∗2 y\n′ ∈Im(f)?\nSoient y, y\n′ ∈Im(f), ∃x, x\n′ ∈G1 tels que y = f(x) et f(x\n′) = y\n′ =⇒\ny ∗2 y\n′ = f(x) ∗2 f(x\n′) = f(x ∗1 x\n′) =⇒y ∗2 y\n′ ∈Im(f)\n• ∀y ∈Im(f), y−1 ∈? Im(f)?\nSoit y ∈Im(f), ∃x ∈G1 et y = f(x), ∃x−1 ∈G1 et x ∗1 x−1 = x−1 ∗1 x = eG1\n=⇒f(x)∗2f(x−1) = f(x)−1∗2f(x) = f(eG1) = eG2 =⇒y∗2f(x−1) = f(x−1)∗2y = eG2\n=⇒f(x−1) = y−1 =⇒y−1 ∈Im(f)\n2. f est surjectif ⇐⇒? Im(f) = G2 ?\nEvident, découle de la déﬁnition de Im(f) et de la surjection.\n1er décembre 2025\n10/ ??",
+    "latex": [
+      "\\ker f = \\{x \\in G_1 \\mid f(x) = e_2\\}",
+      "\\operatorname{Im} f = \\{f(x) \\mid x \\in G_1\\}",
+      "\\ker f = \\{e_1\\} \\iff f \\text{ injectif}"
+    ],
+    "keywords": [
+      "noyau",
+      "image",
+      "ker",
+      "im",
+      "injectif",
+      "surjectif",
+      "bijectif"
+    ]
+  },
+  {
+    "id": "cours2-p4",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 4,
+    "moduleId": "module-3",
+    "chapter": "Chapitre 1 : Sous-groupes distingués et groupes quotients",
+    "title": "Définition de sous-groupe distingué (normal)",
+    "content": "Chapitre 1\nSous-ous-groupes distingués et\ngroupes quotients\n2",
+    "latex": [
+      "g H g^{-1} = H",
+      "\\forall g \\in G, \\forall h \\in H, g h g^{-1} \\in H",
+      "H \\triangleleft G"
+    ],
+    "keywords": [
+      "sous-groupe distingué",
+      "normal",
+      "conjugué",
+      "invariance",
+      "abélien"
+    ]
+  },
+  {
+    "id": "cours2-p5",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 5,
+    "moduleId": "module-3",
+    "chapter": "Chapitre 1 : Sous-groupes distingués et groupes quotients",
+    "title": "Définition de sous-groupe distingué (normal)",
+    "content": "1.1\nSous-groupe ditingué\n1.1.1\nDéﬁnition\nSoit (G, .) un groupe et H un sous-groupe de G. On dit que H est un sous-groupe distingué\n(ou normal) si et seulement si :\n∀x ∈G, x−1.H.x = H\n1.2\nGroupe Quotient\n1.2.1\nIntroduction\nEtant donné un groupe (G, .) et un sous-groupe H de G. On souhaite déﬁnir une relation\nd’équivalence R dans G telle que l’ensemble quotient obtenu G/R muni d’une certaine loi de\ncomposition interne \"¯.\" forme un groupe (G/R,¯.). On examinera dans cette section dans quelles\nconditions celà est-il possible.\n1.2.2\nRappels sur l’ensemble quotient\nMultiple d’un entier\nQuestion fondamentale : 826 est-il un multiple de 7 ? 925 est-il un multiple de 7 ?\n• 826 −700 = 126\n126 −70 = 56\n56 −56 (On le retrouve dans la table de multiplication : 8 × 7) = 0 .\n• 925 −700 = 225\n225 −210 = 15\n15 = −14 = 1.\nConjecture :\nQuelquesoit le nombre entier, à force d’en retrancher des multiples de 7, on va\ntomber à la ﬁn sur un reste égal 0, 1 , 2, 3, 4, 5, ou 6.\n0\n1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13\n14\n15\n16\n17\n18\n19\n20\n21\n22\n23\n24\n25\n26\n27\n...\n...\n...\n...\n...\n...\n...\n126\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n826\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n...\n925\n...\n...\n...\n...\n...\nl’idée est de scinder l’ensemble en tranches : tranche0,...., tranche6.\nL’ensemble des entiers a été scindé en 6 tranches appelé l’ensemble quotient.\nRemarque :\n[826] = [126] = [56] = [0] veut dire que la tranche de 826 est celle de 126 ...etc\n1er décembre 2025\n3/ ??",
+    "latex": [
+      "g H g^{-1} = H",
+      "\\forall g \\in G, \\forall h \\in H, g h g^{-1} \\in H",
+      "H \\triangleleft G"
+    ],
+    "keywords": [
+      "sous-groupe distingué",
+      "normal",
+      "conjugué",
+      "invariance",
+      "abélien"
+    ]
+  },
+  {
+    "id": "cours2-p6",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 6,
+    "moduleId": "module-3",
+    "chapter": "Chapitre 1 : Sous-groupes distingués et groupes quotients",
+    "title": "Relations d'équivalence, Classes modulo H, Construction du quotient G/H",
+    "content": "Eléments d’algèbre inhérents\n• Sur N, la relation binaire déﬁnie par :\n∀(x, y) ∈N 2 : x ∼y ⇐⇒∃k ∈Z et x −y = 7k\nest une relation d’équivalence sur N. x et y sont en relation s’ils sont séparés par un multiple\nde 7.\n• Une tranche est une classe d’équivalence pour la relation ∼.\nPar exemple : [3] = {x ∈N / x ∼3} = {3, 10, 17, 24, ...}\n• L’ensemble des classes d’équivalence pour ∼est noté N/ ∼\nOn a : N/ ∼= {[0], [1], [2], [3], [4], [5], [6]}\n• Sur Z, la relation binaire déﬁnie par :\n∀(x, y) ∈Z2 : x ∼y ⇐⇒∃k ∈Z et x −y ∈nZ.\nest une relation d’équivalence sur Z.\nL’ensemble des classes d’équivalence pour ∼est noté Z/nZ plutôt que Z/ ∼˙\n1.2.3\nProposition\nSoit (G, .) un groupe et H un sous-groupe de G. La relation binaire R (respectivement R\n′)\ndéﬁnie sur G par :\nxRy ⇐⇒x.y−1 ∈H\nrespectivement,\nxR\n′y ⇐⇒x−1.y ∈H\nest une relation d’équivalence sur G et on a en plus :\n∀x ∈G, [x] = H.x\nrespectivement,\n∀x ∈G, [x] = x.H\nPreuve :\n1. Montrons que R est une relation d’équivalence\na) R est réﬂexive : ∀x ∈G, xRx ?\nSoit x ∈G : x ∗x−1 = e ∈H (car G est un groupe) =⇒xRx\nb) R est symétrique : ∀x, y ∈G, xRy =⇒? yRx ?\nSoient x, y ∈G tels que : xRy =⇒def x.y−1 ∈H =⇒(H s/g) (x.y−1)−1 ∈H\n=⇒(y−1)−1.x−1 ∈H =⇒y.x−1 ∈H\nc) R est transitive : ∀x, y, z ∈G, xRy et yRz =⇒? xRz ?\nSoient x, y, z ∈G tels que (xRy) et (yRz) =⇒(x.y−1) ∈H et (y.z−1) ∈H\n(x.y−1).(y.z−1) ∈H =⇒((.) associative) x.(y−1.y).z−1 ∈H =⇒x.e.z−1 ∈H\n=⇒x.z−1 ∈H =⇒xRz\n2. Montrons que : ∀x ∈G, [x] = H.x, avec [x] = {y ∈G : xRy} = {y ∈G : x.y−1 ∈H}\nMontrons la double inclusion ([x] ⊂H.x et H.x ⊂[x])\na) Soit y ∈[x] =⇒x.y−1 ∈H =⇒∃h ∈H, x.y−1 = h =⇒x−1.x.y−1 = x−1.h\n=⇒(e.y−1=y−1) y−1 = x−1.h =⇒(y−1)−1 = (x−1.h)−1\n=⇒y = h−1.(x−1)−1 =⇒y = h−1.x (h−1 ∈H) =⇒y ∈H.x\n=⇒[x] ⊂H.x\nb) Soit x ∈G et h ∈H =⇒x ∈G et h−1 ∈H =⇒h−1.x ∈H.x\nPosons y = h−1.x =⇒y = h−1.(x−1)−1 =⇒y = (x−1.h)−1 =⇒y−1 = x−1.h\n=⇒x.y−1 = x.x−1.h = h ∈H =⇒x.y−1 ∈H =⇒xRy =⇒y ∈[x]\n=⇒H.x ⊂[x]\n1er décembre 2025\n4/ ??",
+    "latex": [
+      "x \\sim y \\iff x y^{-1} \\in H",
+      "xH = \\{xh \\mid h \\in H\\}",
+      "(xH)(yH) = (xy)H"
+    ],
+    "keywords": [
+      "relation d'équivalence",
+      "classes à gauche",
+      "partition",
+      "quotient",
+      "G/H"
+    ]
+  },
+  {
+    "id": "cours2-p7",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 7,
+    "moduleId": "module-3",
+    "chapter": "Chapitre 1 : Sous-groupes distingués et groupes quotients",
+    "title": "Relations d'équivalence, Classes modulo H, Construction du quotient G/H",
+    "content": "Discussion :\nCette proposition permet d’envisager le partitionnement de G modulo le sous-\ngroupe H. En eﬀet, comme le montre le graphique, ci-dessus, Les parties autres que H constituant\nG\nH\n1\nx\nx’\ny\ny’\nx.x’\ny.y’\ny.y’\nG, deux à deux disjointes appelées classes à gauche de H forment une partitition de G, par construc-\ntion (G/R). On ne regroupe dans une classe que les éléments en relation les uns avec les autres.\nEn plus de ce partitionnement, on souhaite avoir sur le nouvel enesemble quotient obtenu une\nstructure de groupe en y associant une loi interne dérivée de celle de G, à la manière de (Z/nZ, ¯+)\nqui est un groupe :\n¯x¯+¯y = x + y\nEst-ce qu’on peut faire ça dans notre ensemble G/R, autrement dit, si on se réfère au graphique,\nest ce que le produit de la classe bleue et la classe jaune nous donne toujours la classe verte. Pour\ncelà, il faudrait que quelquesoient les éléments respectifs de la classe bleue et la classe jaune, leur\nproduit est dans la classe verte :\nxRx\n′ et yRy\n′ =⇒x.yRx\n′.y\n′\nC’est une condition nécessaire pour que la loi de composition recherchée soit bien déﬁnie. On dira\nque la relation d’équivalence est compatible avec la loi de groupes.\nLa question qui se pose est : sous quelles conditions sur H la relation d’équivalence déﬁnie plus\nhaut est-elle compatible avec la loi de groupe, qui sera déﬁnie dans ce cas sur l’ensemble G/R) qui\nsera noté désormais G/H.\n1.2.4\nDéﬁnition\nSoit (G, .) un groupe et R une relation d’équivalence sur G. On dit que R est compatible avec\nla loi de groupes si et seulement si :\n∀x, x′, y, y′ ∈G : xRx\n′ et yRy\n′ =⇒x.yRx\n′.y\n′\nRemarque :\nSi R est compatible avec la loi de groupes, alors l’opération ’¯.’ déﬁnie par :\n¯x ¯. ¯y = x.y\n1.2.5\nProposition\nSoit H un sous groupe distingué de G. Alors la relation de congruence modulo H est compatible\navec la loi de groupes et (G/H,¯.) est un groupe d’élément neutre ’¯1’\nPreuve :\n1. H distingué =⇒∀x, x′, y, y′ ∈G : xRx\n′ et yRy\n′ =⇒x.yRx\n′.y\n′\nSoient x, x′, y, y′ ∈G : xRx\n′ et yRy\n′ =⇒? x.yRx\n′.y\n′\nxRx\n′ =⇒x.(x\n′)−1 ∈H\nyRy\n′ =⇒y.(y\n′)−1 ∈H\n1er décembre 2025\n5/ ??",
+    "latex": [
+      "x \\sim y \\iff x y^{-1} \\in H",
+      "xH = \\{xh \\mid h \\in H\\}",
+      "(xH)(yH) = (xy)H"
+    ],
+    "keywords": [
+      "relation d'équivalence",
+      "classes à gauche",
+      "partition",
+      "quotient",
+      "G/H"
+    ]
+  },
+  {
+    "id": "cours2-p8",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 8,
+    "moduleId": "module-3",
+    "chapter": "Chapitre 1 : Sous-groupes distingués et groupes quotients",
+    "title": "Relations d'équivalence, Classes modulo H, Construction du quotient G/H",
+    "content": "Examinons (x.y).(x\n′.y\n′)−1 ? ∈? H\n(x.y).(x\n′.y\n′)−1 = (x.y).(y\n′−1.x\n′−1) =⇒associativité x.y.y\n′−1.x\n′−1\n= x.\ny.y\n′−1\n| {z }\n∈H(car yRy′)\n.e.x\n′−1 =\nx.y.y\n′−1.x−1\n|\n{z\n}\n∈H(car H distingué)\n.\nx.x\n′−1\n| {z }\n∈H(car xRx′)\n=⇒(x.y).(x\n′.y\n′)−1 ∈H =⇒(x.y)R(x\n′.y\n′)−1\n2. (G/H,¯.) est un groupe d’élément neutre ’¯1’\n— Associativité : ∀¯x, ¯y, ¯z ∈G/H : (¯x.¯y).¯z = ¯x.(¯y.¯z)\n(¯x.¯y).¯z = x.y.¯z = x.y.z = x.(y.z) = ¯x.(y.z) = ¯x.(¯y.¯z)\n— L’élément neutre : ∃¯e, ∀¯x ∈G/H : ¯x.¯e = ¯e.¯x = ¯x\n¯x.¯e = x.e = ¯x = x.1 = ¯x.¯1 =⇒\n1er décembre 2025\n6/ ??",
+    "latex": [
+      "x \\sim y \\iff x y^{-1} \\in H",
+      "xH = \\{xh \\mid h \\in H\\}",
+      "(xH)(yH) = (xy)H"
+    ],
+    "keywords": [
+      "relation d'équivalence",
+      "classes à gauche",
+      "partition",
+      "quotient",
+      "G/H"
+    ]
+  },
+  {
+    "id": "cours2-p9",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 9,
+    "moduleId": "module-4",
+    "chapter": "Chapitre 2 : Groupes monogènes et cycliques",
+    "title": "Sous-groupes monogènes, Ordre d'un élément, Définition d'un groupe cyclique",
+    "content": "Chapitre 2\nGroupes monogène et groupes\ncycliques\n2.1\nExemples introductifs\n1. Soit l’entier 3 ∈(Z, +). Question : quel est le plus petit sous-groupe H contenant 3 ?\n0 ∈H, 3 ∈H, −3 ∈H, 3 + 3 ∈H, −3 −3 ∈H, ....\nLe sous-groupe recherché est H = 3Z ⊂Z, on note < 3 >= 3Z ou gr(3) = Z.\n2. U = {z ∈C∗, |z| = 1}. C’est un sous-groupe de (C∗, ×).\nquel est le plus petit sous-groupe H contenant i ? 1 ∈H, i ∈H, −1 ∈H et −i ∈H\n< i >= {1, i, −1, −i}\n3. par le processus similaire à l’exemple 1, dans (Z, +) < {3, 5} >= Z\n2.1.1\nSous-groupe engendré par une partie\nSoit (G, ∗) un groupe et A une partie de G (A ⊂G). Le sous-groupe engendré par A est le plus\npetit sous groupe de G contenant A. Il est noté par gr(A) ou < A >.\n2.1.2\nSous-groupe engendré par un élément\nSoit (G, ∗) un groupe et g un élément de G (g ∈G). On appelle sous-groupe engendré par g le\nplus petit sous groupe de G contenant g, et on note gr(g) ou < g >.\n2.1.3\nOrdre d’un élément\nSoit (G, ∗) un groupe et g un élément de G (g ∈G). L’ordre de g est la cardinalité de < g > si\nce sous-groupe est ﬁni, ∞si non.\nExemples\n1. Dans C∗les éléments d’ordre ﬁni sont les complexes z racines nièmes de l’unité.\nA priori, < z >= {....., zn, z−n+1..., z−2, z−1, 1, z, z2, z3, ...., zn−1, zn, ..., } =⇒| < z > | = ∞\nPar contre, si zn = 1 =⇒< z >= {1, z, z2, z3, ...., zn−1} =⇒| < z > | = n,\ncar zn = 1, zn+1 = zn.z = z, zn+2 = z2, ... et z−i = (zi)−1 = zi (car [(zi)−1].zi = 1 ∀i ∈N)\n2. U6 = {1, e\n2πi\n6 , (e\n2πi\n6 )2, (e\n2πi\n6 )3, (e\n2πi\n6 )4, (e\n2πi\n6 )5}\nU6 = {1, e\n2πi\n6 , e\n4πi\n6 , −1, e\n−2πi\n6 , e\n−4πi\n6 }\n< 1 >= {1} =⇒| < 1 > | = 1 =⇒ordre(1) = 1\n< e\n2πi\n6 >= {1, e\n2πi\n6 , e\n4πi\n6 , −1, e\n−2πi\n6 , e\n−4πi\n6 } =⇒| < e\n2πi\n6 > | = 6 =⇒ordre(e\n2πi\n6 ) = 6\n< e\n4πi\n6 >= {1, e\n4πi\n6 , e\n−4πi\n6 } =⇒| < e\n4πi\n6 > | = 3 =⇒ordre(e\n4πi\n6 ) = 3\n7",
+    "latex": [
+      "\\langle g \\rangle = \\{g^k \\mid k \\in \\mathbb{Z}\\}",
+      "\\operatorname{ord}(g) = |\\langle g \\rangle|"
+    ],
+    "keywords": [
+      "monogène",
+      "cyclique",
+      "générateur",
+      "ordre",
+      "puissances"
+    ]
+  },
+  {
+    "id": "cours2-p10",
+    "sourcePdf": "cours-mpc-partie2 (1).pdf",
+    "page": 10,
+    "moduleId": "module-4",
+    "chapter": "Chapitre 2 : Groupes monogènes et cycliques",
+    "title": "Sous-groupes monogènes, Ordre d'un élément, Définition d'un groupe cyclique",
+    "content": "< −1 >= {−1, 1} =⇒| < −1 > | = 2 =⇒ordre(−1) = 2\n< e\n−2πi\n6\n>= {1, e\n2πi\n6 , e\n4πi\n6 , −1, e\n−2πi\n6 , e\n−4πi\n6 } =⇒| < e\n2πi\n6 > | = 6 =⇒ordre(e\n2πi\n6 ) = 6\n< e\n−4πi\n6\n>= {1, e\n4πi\n6 , e\n−4πi\n6 } =⇒| < e\n4πi\n6 > | = 3 =⇒ordre(e\n−4πi\n6 ) = 3\nAinsi l’ordre d’un élément de U6 est 1, 2, 3 et 6\nRemarque :\n• Lorsque l’ordre d’un élément g est ﬁni, alors cet ordre est le premier entier n ∈N tel que\ngn = 1.\n• Dans un groupe ﬁni, l’ordre d’un élément divise l’ordre du groupe (U6, ×) par exemple).\n2.2\nGroupe monogène\nDéﬁnition\nUn groupe (G, .) est dit monogène s’il existe un élément g ∈G tel que G =< g >. On dit que\ng est un générateur de G ou un élément primitif de G.\n2.3\nGroupe cyclique\nDéﬁnition\nUn groupe G est dit cyclique s’il est monogène et ﬁni.\nRemarque :\nPour montrer qu’un groupe ﬁni est cyclique, il suﬃt de trouver un élément g ∈G tel que\nordre(g)=ordre(G).\nExemples :\n• Z =< 1 >=< −1 >.\nZ est monogène mais pas ﬁni.\n• Ωn = Un = {1, e\n2πi\nn , (e\n2πi\nn )2, (e\n2πi\nn )3, ..., (e\n2πi\nn )n−1}\nordre(e\n2πi\nn ) = ordre(Ωn) = n =⇒Ωn est ﬁni et monogène. Il est donc cyclique.\n• Z/nZ = {¯0, ¯1, ¯2, ...,\n¯\nn −1}\nZ/nZ =< ¯1 >=< ¯2 >= ... =<\n¯\nn −1 >\nordre(¯1) = ordre(Z/nZ) = n =⇒Z/nZ est ﬁni et monogène. Il est donc cyclique.\n1er décembre 2025\n8/ ??",
+    "latex": [
+      "\\langle g \\rangle = \\{g^k \\mid k \\in \\mathbb{Z}\\}",
+      "\\operatorname{ord}(g) = |\\langle g \\rangle|"
+    ],
+    "keywords": [
+      "monogène",
+      "cyclique",
+      "générateur",
+      "ordre",
+      "puissances"
+    ]
+  },
+  {
+    "id": "cours3-p4",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 4,
+    "moduleId": "module-4",
+    "chapter": "Chapitre 1 : Structure des groupes cycliques & Produit de groupes",
+    "title": "Isomorphisme avec Z/nZ, Sous-groupes d'un groupe cyclique, Ordre dans un produit G x H",
+    "content": "Chapitre 1\nSuite du chapitre précédent\n1.1\nLa structure des groupes cycliques\nSoit (G, .) un groupe (1 le neutre de (G, .)) et g un élément de G (g ∈G). Considérons l’appli-\ncation φ déﬁnie par :\nφ : Z −→< g >\nk −→gk\n• φ est un morphisme de groupe de (Z, +) dans (< g >, .)\n∀k, l ∈Z, φ(k + l) = gk+l = gk.gl = φ(k).φ(l)\n• φ est surjectif par construction.\n• φ injectif ? :\n• Si oui : =⇒φ est un isomorphisme et < g > ∼= (isomorphe à) Z\n• Si non : φ n’est pas injectif =⇒Ker(φ)̸ = ∅=⇒∃k ∈Z∗et gk = 1(g−k = 1 aussi).\nNous allons montrer dans ce cas que < g > ∼= Z/nZ\n1.1.1\nUne autre déﬁnition de l’ordre d’un élément\nSoit (G, .) un groupe et g ∈G. Si ∃k ∈Z∗et gk = 1, alors on dit que g est d’ordre ﬁni et\nl’entier n = min{k ∈N ∗et gk = 1} est appelé l’ordre de g (| < g > |).\n1.2\nSous groupe monogène ﬁni\n1.2.1\nProposition\nSoit (G, .) un groupe et g ∈G un élément d’ordre n. Alors, on a :\n< g >= {1, g, g2, ... , gn−1} et card(< g >) = n (ou | < g > | = n).\nPreuve :\n< g >=? {1, g, g2, ... , gn−1}\n1. {1, g, g2, ... , gn−1} ⊂?< g >\nPar construction (par déﬁnition) < g >= {....., g−2, g−1, 1, g, g2, ... , gn−1, gn, ...} =⇒\n{1, g, g2, ... , gn−1} ⊂< g >\n2. < g > ⊂? {1, g, g2, ... , gn−1}\nRéciproquement, soit x ∈< g >=⇒∃a ∈Z tel que x = ga.\nEﬀectuons la division de a par n : a = qn + r avec 0 ≤r < n\nx = gqn+r = (gn)q.gr = 1q.gr = gr ∈{1, g, g2, ... , gn−1} =⇒x ∈{1, g, g2, ... , gn−1}\n=⇒< g > ⊂{1, g, g2, ... , gn−1}\n3. Il reste à montrer que : 1̸ = g̸ = g2̸ = ........̸ = gn−1 =⇒card(< g >) = n\nSoient a, b tels que ga = gb et 0 ≤a ≤b ≤n −1\nga.g−a = ga.g−a =⇒gb−a = 1 avec 0 ≤b −a < n\n=⇒b −a < n =⇒b −a = 0 (car n est le plus petit k tel que gk = 1) =⇒b = a\n2",
+    "latex": [
+      "\\langle g \\rangle \\cong \\mathbb{Z}/n\\mathbb{Z}",
+      "\\operatorname{ord}((g, h)) = \\operatorname{ppcm}(\\operatorname{ord}(g), \\operatorname{ord}(h))"
+    ],
+    "keywords": [
+      "cyclique",
+      "isomorphisme",
+      "Z/nZ",
+      "produit direct",
+      "ppcm",
+      "générateur"
+    ]
+  },
+  {
+    "id": "cours3-p5",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 5,
+    "moduleId": "module-4",
+    "chapter": "Chapitre 1 : Structure des groupes cycliques & Produit de groupes",
+    "title": "Isomorphisme avec Z/nZ, Sous-groupes d'un groupe cyclique, Ordre dans un produit G x H",
+    "content": "< g > est un groupe cyclique de cardinal n. il est isomorphe à Z/nZ :\n{1, g, g2, ... , gn−1} ←→{¯0, ¯1, ...,\n¯\nn −1}\n1.3\nProduit de groupes\nsoit g ∈(G, .) d’ordre p et soit h ∈(H, .) d’ordre q ((G, .) et (H, .) sont des groupes) :\n∀k ∈Z, gk = 1 ⇐⇒k multiple de p\n∀k\n′ ∈Z, hk\n′\n= 1 ⇐⇒k\n′ multiple de q\nSoit x = (g, h) ∈G × H =⇒x2 = (g2, h2), ..., xk = (gk, hk)\nL’ordre de x c’est xk = (1, 1) ⇐⇒k multiple de p et q.\nL’ordre de x est le ppcm(p, q).\nConséquence :\nSoient (G, .) et (H, .) deux groupes cycliques ﬁnis de cardinaux respectifs p et q. Si p et q sont\npremiers entre eux alors G × H est cyclique.\nSi p et q sont deux entiers premiers entre eux : Z/pZ × Z/qZ ∼= Z/pqZ\njustiﬁcation :\nN’importe quel groupe ﬁni cyclique d’ordre p est isomorphe à Z/pZ.\n(G, ×) ∼= Z/pZ et (H, ×) ∼= Z/qZ =⇒\n(G × H, ×) ∼= Z/pZ × Z/qZ\n=⇒(G × H, ×) ∼= Z/pqZ\nEt si p et q ne sont pas premiers entre eux ? −→pas forcément\nContre exemple :\nZ/2Z × Z/2Z = {(¯0 , ¯0), (¯0 , ¯1), (¯1, ¯0), (¯1 , ¯1)}\n< (¯0 , ¯0) >= {(¯0 , ¯0)}\n< (¯0 , ¯1) >= {(¯0 , ¯1) , (¯0 , ¯0)}\n< (¯1 , ¯1) >= {(¯1 , ¯0) , (¯0 , ¯0)}\n< (¯1 , ¯1) >= {(¯1 , ¯1) , (¯0 , ¯0)}\nAucun élément de Z/2Z × Z/2Z ne génère ce dernier =⇒Z/2Z × Z/2Z n’est pas cyclique.\n1.4\nSous-groupe d’un groupe cyclique\n1.4.1\nProposition :\nSoit (G, .) un groupe cyclique. Tout sous-groupe de G est cyclique\nPreuve :\n∃g ∈G tel que G =< g > et H un sous-groupe de G.\nSi H̸ = {1} le sous-groupe trivial ({eG}), ∃k > 0, et gk ∈H,\nsoit m = min{k ∈N ∗, gk ∈H}, Montrons que H =< gm > :\n14 décembre 2025\n3/ 9",
+    "latex": [
+      "\\langle g \\rangle \\cong \\mathbb{Z}/n\\mathbb{Z}",
+      "\\operatorname{ord}((g, h)) = \\operatorname{ppcm}(\\operatorname{ord}(g), \\operatorname{ord}(h))"
+    ],
+    "keywords": [
+      "cyclique",
+      "isomorphisme",
+      "Z/nZ",
+      "produit direct",
+      "ppcm",
+      "générateur"
+    ]
+  },
+  {
+    "id": "cours3-p6",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 6,
+    "moduleId": "module-4",
+    "chapter": "Chapitre 1 : Structure des groupes cycliques & Produit de groupes",
+    "title": "Isomorphisme avec Z/nZ, Sous-groupes d'un groupe cyclique, Ordre dans un produit G x H",
+    "content": "1. < gm > ⊂? H\ngm ∈H =⇒< gm > ⊂H,\nTrivial, car < gm > est un sous ensemble dont les éléments sont obtenus par la composition\nde gm avec lui même autant de fois qu’on veut. Cette composition reste dans H car ce\ndernier est un sous-groupe.\n2. Réciproquement, H ⊂? < gm >\nSoit h ∈H, ∃p ∈Zeth = gp.\nEﬀectuons la division euclidenne de p par m : ∃q, r tels que : p = qm + r avec 0 ≤r < m\nh = gqm+r = gqm.gr = (gm)q.gr\n(gm)−q.h = gqm+r = (gm)−q(gm)q.gr = gr =⇒gr = (gm)−q.h ∈H\nm étant le plus petit entier tel que gm ∈H =⇒r = 0\n=⇒h = (gm)q ∈< gm >=⇒H ⊂< gm >\n1.4.2\nCommutativité\nProposition\nUn groupe cyclique est commutatif.\npreuve :\nSoit (G, .) un groupe cyclique et g ∈G un générateur de G.\n∀x, y ∈G, ∃a, b ∈Z, x = ga et y = gb\nx.y = ga.gb = ga+b = gb+a = gb.ga = y.x\n14 décembre 2025\n4/ 9",
+    "latex": [
+      "\\langle g \\rangle \\cong \\mathbb{Z}/n\\mathbb{Z}",
+      "\\operatorname{ord}((g, h)) = \\operatorname{ppcm}(\\operatorname{ord}(g), \\operatorname{ord}(h))"
+    ],
+    "keywords": [
+      "cyclique",
+      "isomorphisme",
+      "Z/nZ",
+      "produit direct",
+      "ppcm",
+      "générateur"
+    ]
+  },
+  {
+    "id": "cours3-p7",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 7,
+    "moduleId": "module-5",
+    "chapter": "Chapitre 1 : Théorème de Lagrange",
+    "title": "Théorème de Lagrange, Divisibilité des ordres, Théorème d'Euler, Fermat",
+    "content": "1.5\nThéorème de Lagrange sur les groupes\nSoit (G, .) un groupe ﬁni et H un sous groupe de G.\nLe cardinal de H divise le cardinal de G.\nConséquences :\n1. Les sous-groupes stricts non-triviaux de (Z/25Z, +) ont 5 éléments.\nEn eﬀet, 25 n’est divisible que par 1, 5 et 25\n2. Si le cardinal d’un groupe G est un nombre premier, alors les seuls sous-groupes de G sont\nles sous-groupes triviaux {eG} et G.\n(Z/13Z, +) n’admet comme sous groupe que {¯0} et Z/13Z\nPreuve :\nL’idée de la preuve consiste en la partition du groupe G en un ensemble {H, Hx1, Hx2, ..., Hxm−1}\nd’ensembles tous de même taille que H (|H| = |Hxi|, ∀i ∈{1, 2, ..., m −1}). avec :\n• H ∪Hx1 ∪Hx2 ∪... ∪Hxm−1 = G\n• H ∩Hxi = ∅, ∀i ∈{1, 2, ..., m −1} et Hxi ∩Hxj = ∅, ∀i, j ∈{1, 2, ..., m −1}\nOn voit bien que : |G| = m.|H| par construction.\n— Soit x ∈G, x /∈H ; Hx = {h.x, h ∈H}\n• Montrons que H ∩Hx = ∅:\nSoit y = hx =⇒y ∈Hx avec h ∈H\nSi y ∈H alors h−1y = x ∈H =⇒contradiction. =⇒Hx ∩H = ∅\n• Montrons que : card(Hx) = card(H), soit φ déﬁnie par :\nφ : H −→Hx\nh −→hx\n• φ est surjective par construction\n• φ est elle injective ?\nh1x = h2x =⇒h1x.x−1 = h2x.x−1 =⇒h1 = h2, oui φ est injective φ est bijective.\nNous avons trouvé une bijection entre H et Hx, ils ont alors, le même nombre d’élémnts.\n— Soit y ∈G, y /∈H et y /∈Hx\nOn sait déjà que H ∩Hy = ∅, Montrons que Hx ∩Hy = ∅:\nSupposons que z ∈Hx et z ∈Hy =⇒∃h1, h2 ∈H, z = h1x et z = h2y =⇒\nh1x = h2y =⇒h−1\n2 h1x = h−1\n2 h2y = y =⇒y ∈Hx =⇒contradiction. =⇒Hx ∩Hy = ∅\n— On réitère le processus jusqu’à épuisement de tous les éléments de G. Comme G est ﬁni le\nprocessus s’arrête après un nombre ﬁni d’étapes et donc card(G) = m × card(H)\nProposition\nSoit (G, .) un groupe ﬁni de cardinal p ∈N ∗. Si p est un nombre premier, alors G est cyclique.\nPreuve :\nSoit x ∈G, avec x̸ = e.\nLe sous-groupe < x > engendré par x n’est pas réduit à l’élément neutre. Le seul sous-groupe\npossible restant est G.\n14 décembre 2025\n5/ 9",
+    "latex": [
+      "|H| \\mid |G|",
+      "\\operatorname{ord}(g) \\mid |G|",
+      "g^{|G|} = e",
+      "a^{\\varphi(n)} \\equiv 1 [n]",
+      "a^{p-1} \\equiv 1 [p]"
+    ],
+    "keywords": [
+      "lagrange",
+      "diviseur",
+      "ordre",
+      "euler",
+      "fermat",
+      "nombre premier"
+    ]
+  },
+  {
+    "id": "cours3-p8",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 8,
+    "moduleId": "module-5",
+    "chapter": "Chapitre 1 : Théorème de Lagrange",
+    "title": "Théorème de Lagrange, Divisibilité des ordres, Théorème d'Euler, Fermat",
+    "content": "Proposition\nL’ordre de tout élément d’un groupe ﬁni est un diviseur de l’ordre (du cardinal) du groupe.\nPreuve :\nconséquence du théorème de Lagrange : l’ordre d’un élément est le cardinal du sous groupe engendré\npar cet élément qui est ﬁni aussi.\nEn eﬀet, soit (G, .) un groupe ﬁni d’ordre n et g ∈G d’ordre ﬁni m = min{k ∈N ∗, gk = 1}.\nm divise n car < g > est un sous groupe de G.\n1.6\nThéorème d’Euler\nSoit (G, .) un groupe ﬁni de cardinal n. Alors : ∀g ∈G, gn = 1.\nPreuve :\nD’après la proposition précédente : | < g > | = m et m divise n =⇒\n(gm = 1) et (∃k ∈Z∗, n = k.m). Calculons gn :\ngn = gkm =⇒gn = (gm)k = 1k = 1 =⇒gn = 1\n1.7\nPetit théorème de Fermat\nSi p est un nombre premier, si a est un entier non divisible par p alors,\nap−1 −1 est un multiple de p\nExemples :\n• a = 2 et p = 7 −→27−1 −1 = 64 −1 = 63 = 7 × 9\n• a = 3 et p = 5 −→35−1 −1 = 81 −1 = 80 = 5 × 16\n• a = 11 et p = 3 −→113−1 −1 = 112 −1 = 120 = 3 × 40\nPreuve :\nConsidérons le groupe multiplicatif ((Z/pZ)×, ×), où (Z/pZ)× représente l’ensemble des inver-\nsibles de (Z/pZ, +) −{0}.\nComme p est premier, les nombres {¯1, ¯2, ... ,\n¯\np −1} sont tous inversibles car ils sont tous premiers\navec p.\n=⇒(Z/pZ)× = {¯1, ¯2, ... ,\n¯\np −1}}\nComme a n’est pas divisible par p, la classe de a = ¯a est dans {¯1, ¯2, ... ,\n¯\np −1}}\nl’ordre de ¯a = | < ¯a > | = m divise l’ordre de (Z/pZ)× = p −1\n=⇒T h.Euler (¯a)(p−1) = ¯1 =⇒(¯a)(p−1) −¯1 = ¯0\nCeci est vrai quelquesoit l’élément de la classe de a, en particulier a lui même.\n14 décembre 2025\n6/ 9",
+    "latex": [
+      "|H| \\mid |G|",
+      "\\operatorname{ord}(g) \\mid |G|",
+      "g^{|G|} = e",
+      "a^{\\varphi(n)} \\equiv 1 [n]",
+      "a^{p-1} \\equiv 1 [p]"
+    ],
+    "keywords": [
+      "lagrange",
+      "diviseur",
+      "ordre",
+      "euler",
+      "fermat",
+      "nombre premier"
+    ]
+  },
+  {
+    "id": "cours3-p9",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 9,
+    "moduleId": "module-6",
+    "chapter": "Chapitre 2 : Z/nZ, les nombres de la cryptographie",
+    "title": "Arithmétique modulaire, Inversibles (Z/nZ)*, Théorème de Bézout, Diviseurs de zéro",
+    "content": "Chapitre 2\nZ/nZ, les nombres de la\ncryptographie\nDans ce chapitre, nous allons revoir l’ensemble Z/nZ sous un angle diﬀérent.\n2.1\nCongruence\nSoit n ∈N, n > 1. Soient a et b ∈Z, on dit que a et b sont congrus modulo n lorsque a −b est\nmultiple de n. On note alors : a ≡b [n].\n2.1.1\nFormulations équivalentes\na ≡b [n] ⇐⇒a et b ont le même reste dans la division par n ⇐⇒\n∃k ∈Z, a = b + kn.\n2.1.2\nC’est une relation d’équivalence\nLa relation de congruence est une relation d’équivalence sur Z.\nDéﬁnition\nSoit n ∈N, n > 1. On note Z/nZ l’ensemble des classes d’équivalence de la relation de congruence\nmodulo n.\nZ/nZ = {¯0, ¯1, ¯2, ...,\n¯\nn −1}, où ¯a est l’ensemble des entiers congrus à a modulo n.\n2.2\nAddition et multiplication dans Z/nZ\n2.2.1\nAddition\n1. Dans Z/nZ, on peut déﬁnir une addition par : ¯a + ¯b =\n¯\na + b\n2. si ¯x = ¯a et ¯y = ¯b alors ¯x + ¯y = ¯a + ¯b\n3. (Z/nZ, +) est un groupe commutatif.\n2.2.2\nMultiplication\n1. Dans Z/nZ, on peut déﬁnir une multiplication par : ¯a × ¯b =\n¯\na × b\n2. ∀¯a,¯b, ¯c ∈Z/nZ, ¯a × (¯b × ¯c) = (¯a × ¯b) × ¯c, la multiplication est associative.\n3. ∀¯a,¯b ∈Z/nZ, ¯a × ¯b = ¯b × ¯a, la multiplication est commutative.\n4. ∀¯a,¯b, ¯c ∈Z/nZ, ¯a × (¯b + ¯c) = ¯a × ¯b + ¯a × ¯c, la multiplication est distributive.\n5. ∀¯a ∈Z/nZ, ¯a × ¯1 = ¯a, ¯1 est un élément neutre pour la multiplication.\n6. (Z/nZ, +, ×) est un anneau commutatif.\n7",
+    "latex": [
+      "a \\equiv b \\pmod n",
+      "\\bar{a} \\in (\\mathbb{Z}/n\\mathbb{Z})^\\times \\iff \\operatorname{pgcd}(a, n) = 1",
+      "as + nt = 1"
+    ],
+    "keywords": [
+      "congruence",
+      "modulaire",
+      "inversible",
+      "bézout",
+      "diviseur de zéro",
+      "corps"
+    ]
+  },
+  {
+    "id": "cours3-p10",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 10,
+    "moduleId": "module-6",
+    "chapter": "Chapitre 2 : Z/nZ, les nombres de la cryptographie",
+    "title": "Arithmétique modulaire, Inversibles (Z/nZ)*, Théorème de Bézout, Diviseurs de zéro",
+    "content": "2.2.3\nDéﬁnitions\n• Tous les éléments de Z/nZ ont un opposé mais pas forcément un inverse.\n• Soit ¯a un élément de Z/nZ. On dit que ¯a est inversible ssi ∃¯b ∈Z/nZ tel que ¯a × ¯b = 1\n• On appelle ¯b l’inverse de ¯a et on le note ¯a−1\n• L’ensemble des éléments inversibles de Z/nZ est noté (Z/nZ)×.\n• Soit ¯a un élément de Z/nZ. On dit que ¯a est un diviseur de zéro ssi :\n• ¯a̸ = 0\n• ∃¯b ∈Z/nZ,¯b̸ = 0 et ¯a × ¯b = ¯0\n2.2.4\nEquation du 1er degré\nResoudre dans Z/20Z les équations suivantes :\n1. ¯3x = ¯9 =⇒¯7 × ¯3x = ¯7 × ¯9 =⇒¯1 × x = ¯3 =⇒x = ¯3\n2. ¯3x = ¯4 =⇒¯7 × ¯3x = ¯7 × ¯4 =⇒¯1 × x = ¯8 =⇒x = ¯8\n3. ¯4x = ¯3 Il n’y a pas de solutions, car 4x = 3 + 20n =⇒4x −20n = 3 =⇒4(x −5n) = 3 =⇒\naucune paire d’entiers (x, n) ne vériﬁent cette équation (un nombre pair=un nombre impair)\n4. ¯4x = ¯8 4x = 8 + 20n =⇒4x −20n = 8 =⇒4(x −5n) = 8 =⇒x = 2 + 5n =⇒\nSolutions : {¯2, ¯7, ¯12, ¯17}\nConclusion :\n• Dans les deux premiers cas une solution unique car ¯3 est inversible dans Z/20Z\n• Dans les deux cas suivants pas de solutions ou solution multiple car ¯4 n’est pas inversible\ndans Z/20Z\n2.3\nInverse d’un élément dans Z/nZ\nExercice :\nDonner les éléments inversibles de Z/5Z et de Z/6Z (notés respectivement : (Z/5Z)×, (Z/6Z)×)\n• Dans Z/nZ, ¯1 et ¯\n−1 sont toujours leurs propres inverses.\n• Dans Z/5Z, (Z/5Z)× = {¯1, ¯2, ¯3, ¯4}\n• Dans Z/6Z,\nX\n0\n1\n2\n3\n4\n5\n0\n0\n0\n0\n0\n0\n0\n1\n0\n1\n2\n3\n4\n5\n2\n0\n2\n4\n0\n2\n4\n3\n0\n3\n0\n3\n0\n3\n4\n0\n4\n2\n0\n4\n2\n5\n0\n5\n4\n3\n2\n1\nDans la table de multiplication, nous remarquons que seuls ¯1 et ¯5 sont inversibles et leurs\ninverses sont eux même. (Z/6Z)× = {¯1, ¯5}\nAstuce :\nUn diviseur de zéro de Z/nZ ne peut pas être inversible.\nPar exemple pour trouver (Z/30Z)× on élimine les diviseurs de zéro :\na, b̸ = 0, ¯a × ¯b = ¯0, ie : a × b multiple de 30\n(Z/30Z)× = {¯1, ¯7, ¯11, ¯13 ¯17, ¯19, ¯23, ¯29}\n14 décembre 2025\n8/ 9",
+    "latex": [
+      "a \\equiv b \\pmod n",
+      "\\bar{a} \\in (\\mathbb{Z}/n\\mathbb{Z})^\\times \\iff \\operatorname{pgcd}(a, n) = 1",
+      "as + nt = 1"
+    ],
+    "keywords": [
+      "congruence",
+      "modulaire",
+      "inversible",
+      "bézout",
+      "diviseur de zéro",
+      "corps"
+    ]
+  },
+  {
+    "id": "cours3-p11",
+    "sourcePdf": "cours-mpc-part3.pdf",
+    "page": 11,
+    "moduleId": "module-6",
+    "chapter": "Chapitre 2 : Z/nZ, les nombres de la cryptographie",
+    "title": "Arithmétique modulaire, Inversibles (Z/nZ)*, Théorème de Bézout, Diviseurs de zéro",
+    "content": "2.3.1\nThéorème\nSoit ¯a un élément de Z/nZ,\n¯a est inversible ⇐⇒a est premier avec n\nPreuve :\nLa preuve repose sur le théorème de Bachet-Bézout :\na est premier avec n ⇐⇒∃s, t ∈Z, as + nt = 1\n⇐⇒∃s, t ∈Z, as −1 = nt\n⇐⇒∃s ∈Z, ¯a¯s −¯1 = ¯0\n⇐⇒∃s ∈Z, ¯a¯s = ¯1\n⇐⇒¯a est inversible\n2.3.2\nCas particulier : Z/pZ avec p premier\nSoit p ∈N, un nombre premier.\n∀a ∈{1, 2, ...., p −1}, a est premier avec p ; donc ¯a est inversible dans Z/pZ\n(Z/pZ)× = Z/pZ −{¯0}\nExercice :\nCalculons l’inverse de ¯37 dans Z/63Z.\nIl s’agit de trouver une relation de Bachet-Bézout entre 37 et 63 (as+nt = 1, avec a = 37 et n = 63).\nsoit s = −17 et t = 10 =⇒37.(−17) + 63.10 = 1\nOn en déduit que dans Z/63Z on a : −¯17 × ¯37 = ¯1\nL’inverse de ¯37 est −¯17 = ¯46\nD’où vient la relation de Bézout ?\nOn applique l’algorithme d’Euclide à 63 et 37 (divisions euclidiennes succéssives).\n1 = 10 × 63 −17 × 37\n63 = 1 × 37 + 26\n1 = −7 × 37 + 10 × (63 −1 × 37) = 10 × 63 −17 × 37\n37 = 1 × 26 + 11\n1 = 3 × 26 −7 × (37 −1 × 26) = −7 × 37 + 10 × 26\n26 = 2 × 11 + 4\n1 = 3 × (26 −2 × 11) −1 × 11 = 3 × 26 −7 × 11\n11 = 2 × 4 + 3\n1 = 4 −1 × (11 −2 × 4) = 3 × 4 −1 × 11\n4 = 1 × 3 + 1 =⇒\nOn remonte : 1 = 4 −1 × 3\n14 décembre 2025\n9/ 9",
+    "latex": [
+      "a \\equiv b \\pmod n",
+      "\\bar{a} \\in (\\mathbb{Z}/n\\mathbb{Z})^\\times \\iff \\operatorname{pgcd}(a, n) = 1",
+      "as + nt = 1"
+    ],
+    "keywords": [
+      "congruence",
+      "modulaire",
+      "inversible",
+      "bézout",
+      "diviseur de zéro",
+      "corps"
+    ]
+  }
+]

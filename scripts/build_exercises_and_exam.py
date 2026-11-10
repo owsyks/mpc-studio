@@ -1,0 +1,508 @@
+# -*- coding: utf-8 -*-
+"""
+Build complete exercises database, exam dataset, and knowledge base chunks.
+"""
+
+import json
+import os
+
+exercises = [
+    # --- FICHE TD 1 ---
+    {
+        "id": "td1-ex1",
+        "sheet": "TD 1",
+        "exerciseNumber": 1,
+        "title": "Groupe affine sur R* x R",
+        "moduleId": "module-1",
+        "sourcePdf": "fiche-td-1.pdf",
+        "sourcePage": 1,
+        "difficulty": "Medium",
+        "type": "proof",
+        "statement": "On définit, pour $(x, y)$ et $(x', y')$ dans $\\mathbb{R}^* \\times \\mathbb{R}$, $(x, y) * (x', y') = (xx', xy' + y)$. Démontrer que $(\\mathbb{R}^* \\times \\mathbb{R}, *)$ est un groupe. Est-il commutatif ?",
+        "normalizedLatex": "(x, y) * (x', y') = (xx', xy' + y) \\quad \\text{sur } \\mathbb{R}^* \\times \\mathbb{R}",
+        "hints": [
+            "Hint 1 : Vérifiez d'abord la fermeture : si $x, x' \\in \\mathbb{R}^*$, que dire de $xx'$ ? Ensuite calculez $((x, y)*(x', y'))*(x'', y'')$ et $(x, y)*((x', y')*(x'', y''))$.",
+            "Hint 2 : Pour l'élément neutre $(e_1, e_2)$, posez $(x, y)*(e_1, e_2) = (x, y)$ et résolvez pour $e_1$ et $e_2$.",
+            "Hint 3 : Pour la commutativité, comparez $(x, y)*(x', y') = (xx', xy' + y)$ avec $(x', y')*(x, y) = (x'x, x'y + y')$. Sont-ils toujours égaux ?"
+        ],
+        "solution": {
+            "isGroup": True,
+            "isAbelian": False,
+            "neutralElement": "(1, 0)",
+            "inverseElement": "(1/x, -y/x)",
+            "steps": [
+                "1. Fermeture : Si $x, x' \\in \\mathbb{R}^*$, alors $xx' \\in \\mathbb{R}^*$ et $xy'+y \\in \\mathbb{R}$. Donc la loi est interne.",
+                "2. Associativité : $((x, y)*(x', y'))*(x'', y'') = (xx', xy'+y)*(x'', y'') = (xx'x'', (xx')y'' + xy' + y)$. De même, $(x, y)*((x', y')*(x'', y'')) = (x, y)*(x'x'', x'y''+y') = (x(x'x''), x(x'y''+y')+y) = (xx'x'', xx'y''+xy'+y)$. L'égalité est vérifiée.",
+                "3. Neutre : $(x, y)*(e_1, e_2) = (xe_1, xe_2+y) = (x, y) \\implies xe_1=x \\implies e_1=1$ et $xe_2=0 \\implies e_2=0$. On vérifie $(1, 0)*(x, y) = (1\\cdot x, 1\\cdot y + 0) = (x, y)$. Donc $e = (1, 0)$.",
+                "4. Inverse : $(x, y)*(x', y') = (1, 0) \\implies xx'=1 \\implies x'=1/x$ et $xy'+y=0 \\implies y'=-y/x$. L'inverse de $(x, y)$ est $(1/x, -y/x)$.",
+                "5. Commutativité : $(1, 2)*(2, 1) = (2, 1\\cdot 1 + 2) = (2, 3)$, alors que $(2, 1)*(1, 2) = (2, 2\\cdot 2 + 1) = (2, 5)$. Comme $(2, 3) \\neq (2, 5)$, le groupe n'est pas commutatif."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Vérification de la fermeture (LCI)", "points": 1.0},
+            {"criterion": "Démonstration rigoureuse de l'associativité", "points": 1.5},
+            {"criterion": "Calcul et vérification bilatérale de l'élément neutre (1, 0)", "points": 1.0},
+            {"criterion": "Calcul de l'élément symétrique (1/x, -y/x)", "points": 1.0},
+            {"criterion": "Justification de la non-commutativité (contre-exemple)", "points": 0.5}
+        ]
+    },
+    {
+        "id": "td1-ex2",
+        "sheet": "TD 1",
+        "exerciseNumber": 2,
+        "title": "Groupe relativiste sur ]-1, 1[",
+        "moduleId": "module-1",
+        "sourcePdf": "fiche-td-1.pdf",
+        "sourcePage": 1,
+        "difficulty": "Medium",
+        "type": "proof",
+        "statement": "Montrer que la loi suivante munit l'ensemble $G = ]-1, 1[$ d'une structure de groupe, et préciser s'il est abélien :\n$$x * y = \\frac{x + y}{1 + xy}$$",
+        "normalizedLatex": "x * y = \\frac{x + y}{1 + xy} \\quad \\text{sur } ]-1, 1[",
+        "hints": [
+            "Hint 1 : Pour la stabilité, étudiez $1 - x*y$ et $1 + x*y$ en factorisant pour montrer qu'ils restent strictement positifs.",
+            "Hint 2 : La commutativité est immédiate par symétrie de l'addition et de la multiplication dans $\\mathbb{R}$.",
+            "Hint 3 : Le neutre est $e=0$, et le symétrique de $x$ est $-x$."
+        ],
+        "solution": {
+            "isGroup": True,
+            "isAbelian": True,
+            "neutralElement": "0",
+            "inverseElement": "-x",
+            "steps": [
+                "1. Stabilité : Si $x, y \\in ]-1, 1[$, alors $1+xy > 0$. $1 - (x*y) = \\frac{(1-x)(1-y)}{1+xy} > 0$ et $1 + (x*y) = \\frac{(1+x)(1+y)}{1+xy} > 0$. Donc $-1 < x*y < 1$.",
+                "2. Commutativité : $x*y = \\frac{x+y}{1+xy} = \\frac{y+x}{1+yx} = y*x$.",
+                "3. Associativité : $(x*y)*z = x*(y*z) = \\frac{x+y+z+xyz}{1+xy+xz+yz}$.",
+                "4. Neutre : $x*e = x \\iff \\frac{x+e}{1+xe} = x \\iff x+e = x+x^2 e \\iff e(1-x^2) = 0 \\implies e = 0$.",
+                "5. Inverse : $x*x' = 0 \\iff x+x'=0 \\iff x' = -x \\in ]-1, 1[$."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Preuve de stabilité par factorisation de 1-(x*y) et 1+(x*y)", "points": 1.5},
+            {"criterion": "Preuve de l'associativité", "points": 1.0},
+            {"criterion": "Identification du neutre e=0", "points": 0.75},
+            {"criterion": "Identification de l'inverse x'=-x", "points": 0.75},
+            {"criterion": "Preuve de la commutativité", "points": 0.5}
+        ]
+    },
+    {
+        "id": "td1-ex3",
+        "sheet": "TD 1",
+        "exerciseNumber": 3,
+        "title": "Groupe des fonctions affines",
+        "moduleId": "module-1",
+        "sourcePdf": "fiche-td-1.pdf",
+        "sourcePage": 1,
+        "difficulty": "Easy",
+        "type": "proof",
+        "statement": "Soit $G$ l'ensemble des fonctions de $\\mathbb{R} \\to \\mathbb{R}$ définies par $x \\mapsto ax + b$, avec $a \\in \\mathbb{R}^*$ et $b \\in \\mathbb{R}$, muni de la loi de composition $\\circ$. $(G, \\circ)$ est-il un groupe ?",
+        "normalizedLatex": "f_{a, b}(x) = ax + b, \\quad a \\in \\mathbb{R}^*, b \\in \\mathbb{R}",
+        "hints": [
+            "Hint 1 : Composez $f_{a,b}$ et $f_{c,d}$ : $(f_{a,b} \\circ f_{c,d})(x) = a(cx+d)+b = (ac)x + (ad+b)$.",
+            "Hint 2 : Comme $ac \\neq 0$, la composée est encore dans $G$.",
+            "Hint 3 : Le neutre est la fonction identité $x \\mapsto 1x + 0$."
+        ],
+        "solution": {
+            "isGroup": True,
+            "isAbelian": False,
+            "neutralElement": "f_{1, 0} = \\text{id}",
+            "inverseElement": "f_{1/a, -b/a}",
+            "steps": [
+                "1. Stabilité : $(f_{a, b} \\circ f_{c, d})(x) = f_{a, b}(cx+d) = a(cx+d)+b = (ac)x + (ad+b)$. Puisque $a, c \\in \\mathbb{R}^*$, $ac \\in \\mathbb{R}^*$, donc $f_{a,b} \\circ f_{c,d} \\in G$.",
+                "2. Associativité : La composition d'applications est toujours associative.",
+                "3. Neutre : Pour $a=1, b=0$, $f_{1, 0}(x) = x = \\operatorname{id}_{\\mathbb{R}} \\in G$.",
+                "4. Inverse : $f_{a, b} \\circ f_{c, d} = \\operatorname{id} \\iff ac=1$ et $ad+b=0 \\iff c=1/a$ et $d=-b/a$. Comme $a \\neq 0$, $f_{1/a, -b/a} \\in G$.",
+                "5. Conclusion : $(G, \\circ)$ est un groupe (non commutatif car $ad+b \\neq cb+d$ en général)."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Calcul de la composée et stabilité", "points": 1.25},
+            {"criterion": "Associativité de la composition", "points": 0.5},
+            {"criterion": "Neutre id", "points": 0.75},
+            {"criterion": "Inverse explicite", "points": 1.0}
+        ]
+    },
+    {
+        "id": "td1-ex6",
+        "sheet": "TD 1",
+        "exerciseNumber": 6,
+        "title": "Critère de sous-groupe : Exemples classiques",
+        "moduleId": "module-1",
+        "sourcePdf": "fiche-td-1.pdf",
+        "sourcePage": 1,
+        "difficulty": "Easy",
+        "type": "step-by-step",
+        "statement": "Déterminer si la partie $H$ est un sous-groupe du groupe $G$ :\n1. $G = (\\mathbb{Z}, +)$ ; $H = \\text{nombres pairs}$\n2. $G = (\\mathbb{Z}, +)$ ; $H = \\text{nombres impairs}$\n3. $G = (\\mathbb{R}, +)$ ; $H = [-1, +\\infty[$\n4. $G = (\\mathbb{R}^*, \\times)$ ; $H = \\mathbb{Q}^*$\n5. $G = (\\operatorname{Bij}(E), \\circ)$ ; $H = \\{f \\in G \\mid f(x) = x\\}$ ($x \\in E$ fixé)\n6. $G = (\\operatorname{Bij}(E), \\circ)$ ; $H = \\{f \\in G \\mid f(x) = y\\}$ ($x, y \\in E, x \\neq y$)",
+        "normalizedLatex": "H \\le G \\iff (H \\neq \\emptyset \\land \\forall x, y \\in H, x * y^{-1} \\in H)",
+        "hints": [
+            "Hint 1 : Vérifiez d'abord si l'élément neutre appartient à $H$. Pour les impairs dans $(\\mathbb{Z}, +)$, 0 est-il impair ?",
+            "Hint 2 : Pour $[-1, +\\infty[$, l'opposé d'un élément positif ou nul est-il toujours dans l'ensemble ? (Exemple : opposé de 2).",
+            "Hint 3 : Le fixateur d'un point $f(x)=x$ est le stabilisateur, qui est toujours un sous-groupe."
+        ],
+        "solution": {
+            "results": [
+                {"part": "1", "isSubgroup": True, "reason": "$H = 2\\mathbb{Z}$, c'est un sous-groupe de $\\mathbb{Z}$ (somme et opposé de nombres pairs sont pairs, $0 \\in 2\\mathbb{Z}$)."},
+                {"part": "2", "isSubgroup": False, "reason": "$0 \\notin H$ (0 n'est pas impair), et la somme de deux impairs est paire ($1+1=2 \\notin H$)."},
+                {"part": "3", "isSubgroup": False, "reason": "Pas stable par symétrique : $2 \\in H$, mais son symétrique $-2 \\notin [-1, +\\infty[$."},
+                {"part": "4", "isSubgroup": True, "reason": "$1 \\in \\mathbb{Q}^*$, produit de rationnels non nuls est rationnel, inverse $1/q \\in \\mathbb{Q}^*$."},
+                {"part": "5", "isSubgroup": True, "reason": "C'est le stabilisateur de $x$. $\\operatorname{id}(x)=x$, si $f(x)=x$ et $g(x)=x$, $(f \\circ g)(x)=f(g(x))=f(x)=x$, et $f^{-1}(x)=x$."},
+                {"part": "6", "isSubgroup": False, "reason": "L'identité $\\operatorname{id}$ n'appartient pas à $H$ car $\\operatorname{id}(x) = x \\neq y$."}
+            ]
+        },
+        "rubric": [
+            {"criterion": "Questions 1 et 2 correctement justifiées", "points": 1.0},
+            {"criterion": "Question 3 (contre-exemple inverse)", "points": 0.5},
+            {"criterion": "Question 4 (propriétés de Q*)", "points": 0.75},
+            {"criterion": "Questions 5 et 6 (stabilisateur vs non-neutre)", "points": 1.25}
+        ]
+    },
+    {
+        "id": "td1-ex8",
+        "sheet": "TD 1",
+        "exerciseNumber": 8,
+        "title": "Identification des morphismes de groupes",
+        "moduleId": "module-2",
+        "sourcePdf": "fiche-td-1.pdf",
+        "sourcePage": 2,
+        "difficulty": "Medium",
+        "type": "step-by-step",
+        "statement": "Les applications $\\varphi : G \\to H$ définies ci-dessous sont-elles des morphismes de groupes ?\n1. $G = (GL_n(\\mathbb{R}), \\times), H = (\\mathbb{R}, +), \\varphi(A) = \\operatorname{tr}(A)$\n2. $G = (M_n(\\mathbb{R}), +), H = (\\mathbb{R}, +), \\varphi(A) = \\operatorname{tr}(A)$\n3. $G = (\\mathbb{R}^*, \\times), H = (\\mathbb{R}^*, \\times), \\varphi(x) = |x|$\n4. $G = (\\mathbb{R}^*, \\times), H = (\\mathbb{R}^*, \\times), \\varphi(x) = 2x$\n5. $G = (\\mathbb{R}, +), H = (GL_2(\\mathbb{R}), \\times), \\varphi(x) = \\begin{pmatrix} 1 & x \\\\ 0 & 1 \\end{pmatrix}$",
+        "normalizedLatex": "\\varphi(x *_G y) = \\varphi(x) *_H \\varphi(y)",
+        "hints": [
+            "Hint 1 : Pour la trace, est-ce que $\\operatorname{tr}(AB) = \\operatorname{tr}(A) + \\operatorname{tr}(B)$ ? Testez avec $A=I, B=I$.",
+            "Hint 2 : Pour $\\varphi(x) = 2x$, vérifiez si $\\varphi(xy) = \\varphi(x)\\varphi(y)$.",
+            "Hint 3 : Pour les matrices unipotentes $\\begin{pmatrix} 1 & x \\\\ 0 & 1 \\end{pmatrix}$, multipliez deux matrices."
+        ],
+        "solution": {
+            "results": [
+                {"part": "1", "isMorphism": False, "reason": "Pour $A = I_n, B = I_n$, $\\varphi(AB) = \\operatorname{tr}(I_n) = n$, alors que $\\varphi(A) + \\varphi(B) = n + n = 2n$. Pour $n \\ge 1$, $n \\neq 2n$."},
+                {"part": "2", "isMorphism": True, "reason": "La trace est linéaire : $\\operatorname{tr}(A + B) = \\operatorname{tr}(A) + \\operatorname{tr}(B)$."},
+                {"part": "3", "isMorphism": True, "reason": "$|xy| = |x| \\times |y|$ pour tous $x, y \\in \\mathbb{R}^*$."},
+                {"part": "4", "isMorphism": False, "reason": "$\\varphi(xy) = 2xy$, alors que $\\varphi(x)\\varphi(y) = (2x)(2y) = 4xy \\neq 2xy$."},
+                {"part": "5", "isMorphism": True, "reason": "$\\begin{pmatrix} 1 & x \\\\ 0 & 1 \\end{pmatrix} \\begin{pmatrix} 1 & y \\\\ 0 & 1 \\end{pmatrix} = \\begin{pmatrix} 1 & x+y \\\\ 0 & 1 \\end{pmatrix} = \\varphi(x+y)$."}
+            ]
+        },
+        "rubric": [
+            {"criterion": "Trace multiplicative (faux, contre-exemple)", "points": 0.75},
+            {"criterion": "Trace additive (vrai, linéarité)", "points": 0.75},
+            {"criterion": "Valeur absolue (vrai)", "points": 0.5},
+            {"criterion": "Homothétie x -> 2x (faux)", "points": 0.5},
+            {"criterion": "Matrice unipotente (vrai, produit explicite)", "points": 1.0}
+        ]
+    },
+
+    # --- FICHE TD 2 RÉVISÉE ---
+    {
+        "id": "td2-ex1",
+        "sheet": "TD 2 (Révisée)",
+        "exerciseNumber": 1,
+        "title": "Propriétés des sous-groupes distingués et morphismes",
+        "moduleId": "module-3",
+        "sourcePdf": "fiche-td-2-révisée.pdf",
+        "sourcePage": 1,
+        "difficulty": "Hard",
+        "type": "proof",
+        "statement": "Soit $f : (G_1, *_1) \\to (G_2, *_2)$ un morphisme de groupes et $H_2$ un sous-groupe distingué de $G_2$.\n1. Montrer que $f^{-1}(H_2)$ est un sous-groupe distingué de $G_1$.\n2. En déduire que le noyau de $f$ est un sous-groupe distingué de $G_1$.\n3. Soient $H_1$ et $K_1$ deux sous-groupes de $G_1$ tels que $H_1$ est distingué dans $G_1$. Montrer que $H_1 K_1$ est un sous-groupe de $G_1$.",
+        "normalizedLatex": "f^{-1}(H_2) \\triangleleft G_1 \\quad \\text{et} \\quad H_1 K_1 \\le G_1",
+        "hints": [
+            "Hint 1 : Pour la question 1, montrez d'abord que $f^{-1}(H_2)$ est un sous-groupe (non vide, stable par produit et inverse), puis que pour $x \\in f^{-1}(H_2)$ et $g \\in G_1$, $g x g^{-1} \\in f^{-1}(H_2)$ en calculant son image par $f$.",
+            "Hint 2 : Pour la question 2, remarquez que $\\ker f = f^{-1}(\\{e_2\\})$ et que $\\{e_2\\} \\triangleleft G_2$.",
+            "Hint 3 : Pour la question 3, montrez que $h k = k (k^{-1} h k)$ pour exprimer le produit dans l'ordre voulu."
+        ],
+        "solution": {
+            "steps": [
+                "1. $f^{-1}(H_2) \\triangleleft G_1$ :\n- Comme $e_2 \\in H_2$ et $f(e_1) = e_2$, $e_1 \\in f^{-1}(H_2) \\neq \\emptyset$.\n- Si $x, y \\in f^{-1}(H_2)$, $f(x y^{-1}) = f(x) f(y)^{-1} \\in H_2$ car $H_2 \\le G_2$. Donc $x y^{-1} \\in f^{-1}(H_2)$ (c'est un sous-groupe).\n- Pour tout $g \\in G_1$ et $x \\in f^{-1}(H_2)$ : $f(g x g^{-1}) = f(g) f(x) f(g)^{-1}$. Comme $f(x) \\in H_2$ et $H_2 \\triangleleft G_2$, $f(g) f(x) f(g)^{-1} \\in H_2$. Donc $g x g^{-1} \\in f^{-1}(H_2)$. Ainsi $f^{-1}(H_2) \\triangleleft G_1$.",
+                "2. Noyau $\\ker f$ :\n$\\ker f = \\{x \\in G_1 \\mid f(x) = e_2\\} = f^{-1}(\\{e_2\\})$. Comme le sous-groupe trivial $\\{e_2\\}$ est distingué dans $G_2$ ($g e_2 g^{-1} = e_2$), par la question 1, $\\ker f \\triangleleft G_1$.",
+                "3. Produit $H_1 K_1 \\le G_1$ :\n$e = e\\cdot e \\in H_1 K_1 \\neq \\emptyset$.\nSoient $x = h k$ et $y = h' k' \\in H_1 K_1$. Alors $x y^{-1} = h k (k'^{-1} h'^{-1}) = h (k k'^{-1}) h'^{-1}$. Posons $k'' = k k'^{-1} \\in K_1$. Alors $x y^{-1} = h k'' h'^{-1} = h (k'' h'^{-1} k''^{-1}) k''$. Comme $H_1 \\triangleleft G_1$, $k'' h'^{-1} k''^{-1} = h'' \\in H_1$. Donc $x y^{-1} = (h h'') k'' \\in H_1 K_1$. Ainsi $H_1 K_1$ est un sous-groupe."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Preuve de sous-groupe pour image réciproque", "points": 1.25},
+            {"criterion": "Preuve de la distinction de f^{-1}(H_2)", "points": 1.25},
+            {"criterion": "Déduction pour le noyau", "points": 0.75},
+            {"criterion": "Preuve que H_1 K_1 est un sous-groupe", "points": 1.75}
+        ]
+    },
+    {
+        "id": "td2-ex2",
+        "sheet": "TD 2 (Révisée)",
+        "exerciseNumber": 2,
+        "title": "Groupe de Heisenberg et son centre",
+        "moduleId": "module-1",
+        "sourcePdf": "fiche-td-2-révisée.pdf",
+        "sourcePage": 1,
+        "difficulty": "Medium",
+        "type": "proof",
+        "statement": "Montrer que l'ensemble $G$ des matrices de la forme\n$$M(x, y, z) = \\begin{pmatrix} 1 & x & z \\\\ 0 & 1 & y \\\\ 0 & 0 & 1 \\end{pmatrix}$$\navec $x, y, z \\in \\mathbb{R}$ est un groupe pour le produit matriciel. Déterminer son centre $Z(G)$, c'est-à-dire les matrices $A \\in G$ telles que $AB = BA$ pour tout $B \\in G$.",
+        "normalizedLatex": "M(x, y, z) = \\begin{pmatrix} 1 & x & z \\\\ 0 & 1 & y \\\\ 0 & 0 & 1 \\end{pmatrix}, \\quad x, y, z \\in \\mathbb{R}",
+        "hints": [
+            "Hint 1 : Multipliez deux matrices $M(x, y, z)$ et $M(x', y', z')$ pour obtenir la formule de composition : $(x+x', y+y', z+z'+xy')$.",
+            "Hint 2 : L'inverse de $M(x, y, z)$ est $M(-x, -y, -z+xy)$.",
+            "Hint 3 : Pour le centre, écrivez $M(x, y, z) M(x', y', z') = M(x', y', z') M(x, y, z)$ et identifiez la condition pour que ce soit vrai pour TOUS $x', y'$."
+        ],
+        "solution": {
+            "isGroup": True,
+            "neutralElement": "I_3 = M(0, 0, 0)",
+            "inverseFormula": "M(-x, -y, -z + xy)",
+            "center": "Z(G) = \\{M(0, 0, z) \\mid z \\in \\mathbb{R}\\}",
+            "steps": [
+                "1. Produit : $M(x, y, z) M(x', y', z') = \\begin{pmatrix} 1 & x+x' & z+z'+xy' \\\\ 0 & 1 & y+y' \\\\ 0 & 0 & 1 \\end{pmatrix} = M(x+x', y+y', z+z'+xy') \\in G$.",
+                "2. Neutre : $M(0, 0, 0) = I_3 \\in G$.",
+                "3. Inverse : En résolvant $x+x'=0, y+y'=0, z+z'+xy'=0$, on trouve $x'=-x, y'=-y, z'=-z+xy$. La matrice inverse est $M(-x, -y, -z+xy) \\in G$.",
+                "4. Centre $Z(G)$ : $M(x, y, z) \\in Z(G) \\iff \\forall (x', y', z'), xy'=x'y$. En prenant $x'=1, y'=0$, on a $x \\times 0 = 1 \\times y \\implies y = 0$. En prenant $x'=0, y'=1$, on a $x \\times 1 = 0 \\times y \\implies x = 0$.",
+                "5. Conclusion : Le centre est constitué des matrices où $x=y=0$, c'est-à-dire $Z(G) = \\left\\{ \\begin{pmatrix} 1 & 0 & z \\\\ 0 & 1 & 0 \\\\ 0 & 0 & 1 \\end{pmatrix} \\mid z \\in \\mathbb{R} \\right\\}$."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Formule du produit matriciel", "points": 1.0},
+            {"criterion": "Neutre et inverse", "points": 1.0},
+            {"criterion": "Mise en équation du centre", "points": 1.0},
+            {"criterion": "Résolution x=0 et y=0", "points": 1.0}
+        ]
+    },
+    {
+        "id": "td2-ex5",
+        "sheet": "TD 2 (Révisée)",
+        "exerciseNumber": 5,
+        "title": "Ordre de 9 dans (Z/12Z, +)",
+        "moduleId": "module-4",
+        "sourcePdf": "fiche-td-2-révisée.pdf",
+        "sourcePage": 1,
+        "difficulty": "Easy",
+        "type": "computation",
+        "statement": "Quel est l'ordre de 9 dans $(\\mathbb{Z}/12\\mathbb{Z}, +)$ ?",
+        "normalizedLatex": "\\operatorname{ord}(9) \\quad \\text{dans } (\\mathbb{Z}/12\\mathbb{Z}, +)",
+        "hints": [
+            "Hint 1 : Rappelez-vous que dans un groupe additif $(\\mathbb{Z}/n\\mathbb{Z}, +)$, l'ordre d'un élément $a$ est donné par $\\frac{n}{\\operatorname{pgcd}(a, n)}$.",
+            "Hint 2 : Calculez le PGCD de 9 et 12.",
+            "Hint 3 : Divisez 12 par ce PGCD."
+        ],
+        "solution": {
+            "order": 4,
+            "steps": [
+                "1. Définition de l'ordre : c'est le plus petit entier $k \\ge 1$ tel que $k \\times 9 \\equiv 0 \\pmod{12}$.",
+                "2. Équation de divisibilité : $12 \\mid 9k \\iff 12 / \\operatorname{pgcd}(9, 12) \\mid k \\times (9 / \\operatorname{pgcd}(9, 12))$.",
+                "3. PGCD : $\\operatorname{pgcd}(9, 12) = 3$.",
+                "4. Calcul de l'ordre : $\\operatorname{ord}(9) = \\frac{12}{\\operatorname{pgcd}(9, 12)} = \\frac{12}{3} = 4$.",
+                "5. Vérification directe : $1 \\times 9 = 9, 2 \\times 9 = 18 \\equiv 6, 3 \\times 9 = 27 \\equiv 3, 4 \\times 9 = 36 \\equiv 0 \\pmod{12}$."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Formule ou énumération des multiples", "points": 1.0},
+            {"criterion": "Calcul du PGCD(9, 12) = 3", "points": 1.0},
+            {"criterion": "Résultat ord(9) = 4", "points": 1.0}
+        ]
+    },
+    {
+        "id": "td2-ex8",
+        "sheet": "TD 2 (Révisée)",
+        "exerciseNumber": 8,
+        "title": "Groupes d'exposant 2",
+        "moduleId": "module-4",
+        "sourcePdf": "fiche-td-2-révisée.pdf",
+        "sourcePage": 2,
+        "difficulty": "Medium",
+        "type": "proof",
+        "statement": "Soit $G$ un groupe dont tous les éléments (sauf l'élément neutre) sont d'ordre au plus 2. Démontrer que $G$ est abélien.",
+        "normalizedLatex": "\\forall x \\in G, \\; x^2 = e \\implies G \\text{ est abélien}",
+        "hints": [
+            "Hint 1 : Que signifie $x^2 = e$ pour l'inverse $x^{-1}$ de $x$ ?",
+            "Hint 2 : Si chaque élément est son propre inverse ($x = x^{-1}$), que dire de l'élément composé $x y$ ?",
+            "Hint 3 : Utilisez la règle d'inversion d'un produit $(x y)^{-1} = y^{-1} x^{-1}$."
+        ],
+        "solution": {
+            "steps": [
+                "1. Hypothèse : Pour tout $x \\in G$, $x^2 = e \\iff x \\cdot x = e \\iff x^{-1} = x$. Tout élément est son propre symétrique.",
+                "2. Soient $x, y \\in G$. Comme $G$ est un groupe, le produit $x y \\in G$.",
+                "3. En appliquant la propriété à l'élément $x y$, on a : $(x y)^{-1} = x y$.",
+                "4. D'autre part, la formule générale de l'inverse d'un produit donne : $(x y)^{-1} = y^{-1} x^{-1}$.",
+                "5. Comme $y^{-1} = y$ et $x^{-1} = x$, il vient : $(x y)^{-1} = y x$.",
+                "6. En égalant les deux expressions : $x y = y x$.",
+                "7. Cela étant valable pour tous $x, y \\in G$, le groupe $G$ est abélien."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Déduction que x = x^{-1}", "points": 1.0},
+            {"criterion": "Application à xy: (xy)^{-1} = xy", "points": 1.0},
+            {"criterion": "Utilisation de (xy)^{-1} = y^{-1}x^{-1}", "points": 1.0},
+            {"criterion": "Conclusion xy = yx", "points": 1.0}
+        ]
+    },
+    {
+        "id": "td2-ex9",
+        "sheet": "TD 2 (Révisée)",
+        "exerciseNumber": 9,
+        "title": "Structure du groupe des inversibles (Z/20Z)*",
+        "moduleId": "module-4",
+        "sourcePdf": "fiche-td-2-révisée.pdf",
+        "sourcePage": 2,
+        "difficulty": "Hard",
+        "type": "step-by-step",
+        "statement": "Soit $G = (\\mathbb{Z}/20\\mathbb{Z})^\\times$ le groupe des éléments inversibles de $\\mathbb{Z}/20\\mathbb{Z}$.\n1. Donner la liste de tous les éléments de $G$.\n2. $\\forall a \\in G$, déterminer le sous-groupe $\\langle a \\rangle$ engendré par $a$.\n3. Déterminer un ensemble minimal de générateurs de $(G, \\cdot)$.\n4. $(G, \\cdot)$ est-il un groupe cyclique ?\n5. Déterminer tous les sous-groupes de $G$.\n6. Parmi les sous-groupes de $(G, \\cdot)$, lesquels sont isomorphes à un groupe additif $(\\mathbb{Z}/k\\mathbb{Z}, +)$ ?",
+        "normalizedLatex": "G = (\\mathbb{Z}/20\\mathbb{Z})^\\times = \\{a \\in \\{1, \\dots, 19\\} \\mid \\operatorname{pgcd}(a, 20) = 1\\}",
+        "hints": [
+            "Hint 1 : Les inversibles sont les entiers non divisibles par 2 ni par 5.",
+            "Hint 2 : Calculez les puissances successives modulo 20 pour chaque élément.",
+            "Hint 3 : Si l'ordre maximal d'un élément est strictement inférieur à 8, le groupe ne peut pas être cyclique."
+        ],
+        "solution": {
+            "elements": [1, 3, 7, 9, 11, 13, 17, 19],
+            "cardinal": 8,
+            "orders": {
+                "1": 1,
+                "3": 4,
+                "7": 4,
+                "9": 2,
+                "11": 2,
+                "13": 4,
+                "17": 4,
+                "19": 2
+            },
+            "subgroups": {
+                "order1": ["{1}"],
+                "order2": ["{1, 9}", "{1, 11}", "{1, 19}"],
+                "order4": ["<3> = {1, 3, 9, 7}", "<13> = {1, 13, 9, 17}", "{1, 9, 11, 19} (groupe de Klein)"],
+                "order8": ["G"]
+            },
+            "isCyclic": False,
+            "minimalGenerators": ["{3, 11}"],
+            "steps": [
+                "1. Éléments premiers avec 20 : $G = \\{1, 3, 7, 9, 11, 13, 17, 19\\}$. Cardinal : $\\varphi(20) = 20(1/2)(4/5) = 8$.",
+                "2. Sous-groupes monogènes : $\\langle 1 \\rangle = \\{1\\}$, $\\langle 9 \\rangle = \\{1, 9\\}$, $\\langle 11 \\rangle = \\{1, 11\\}$, $\\langle 19 \\rangle = \\{1, 19\\}$, $\\langle 3 \\rangle = \\langle 7 \\rangle = \\{1, 3, 9, 7\\}$, $\\langle 13 \\rangle = \\langle 17 \\rangle = \\{1, 13, 9, 17\\}$.",
+                "3. Cyclicité : Les ordres possibles des éléments sont 1, 2, 4. Aucun élément n'a un ordre égal à 8. Donc $G$ n'est pas cyclique.",
+                "4. Générateurs minimaux : $\\{3, 11\\}$ car $\\langle 3 \\rangle$ contient 4 éléments, et $11 \\notin \\langle 3 \\rangle$, donc $\\langle 3, 11 \\rangle = G$.",
+                "5. Isomorphismes avec $(\\mathbb{Z}/k\\mathbb{Z}, +)$ : Tout sous-groupe cyclique d'ordre $k$ est isomorphe à $(\\mathbb{Z}/k\\mathbb{Z}, +)$. Donc $\\langle 1 \\rangle \\cong \\mathbb{Z}/1\\mathbb{Z}$, $\\langle 9 \\rangle, \\langle 11 \\rangle, \\langle 19 \\rangle \\cong \\mathbb{Z}/2\\mathbb{Z}$, et $\\langle 3 \\rangle, \\langle 13 \\rangle \\cong \\mathbb{Z}/4\\mathbb{Z}$."
+            ]
+        },
+        "rubric": [
+            {"criterion": "Liste correcte des 8 éléments", "points": 1.0},
+            {"criterion": "Calcul des sous-groupes monogènes et ordres", "points": 1.5},
+            {"criterion": "Démonstration de la non-cyclicité", "points": 1.0},
+            {"criterion": "Ensemble minimal de générateurs {3, 11}", "points": 1.0},
+            {"criterion": "Identification des sous-groupes isomorphes à Z/kZ", "points": 0.5}
+        ]
+    }
+]
+
+# Write exercises to JSON
+with open('src/data/exercises.json', 'w', encoding='utf-8') as f:
+    json.dump(exercises, f, ensure_ascii=False, indent=2)
+
+print(f"Exercises written: {len(exercises)} detailed TD exercises.")
+
+# 2. OFFICIAL EXAM RECREATION (test-Ing3-corrigé.pdf)
+exam_data = {
+    "id": "exam-oran1-ing3-2025",
+    "title": "Test OMC (Outils Mathématiques pour la Cryptographie)",
+    "institution": "Université Oran 1 - Faculté des sciences exactes et appliquées - Département d'informatique",
+    "level": "3ème Année Ingénieur",
+    "durationMinutes": 60,
+    "date": "21 décembre 2025",
+    "totalPoints": 16.0,
+    "sourcePdf": "test-Ing3-corrigé.pdf",
+    "exercises": [
+        {
+            "id": "exam-ex1",
+            "number": 1,
+            "title": "Sous-groupes & Calcul d'inverse",
+            "points": 4.25,
+            "questions": [
+                {
+                    "subId": "1-1",
+                    "text": "1. Donner les 3 propriétés caractérisant un sous-groupe $H$ d'un groupe $(G, *)$. Quelle propriété unique peut remplacer les propriétés 2 et 3 ?",
+                    "points": 3.25,
+                    "breakdown": [
+                        {"label": "1• Non vacuité (H ≠ ∅, e ∈ H)", "pts": 0.75},
+                        {"label": "2• Stabilité par la loi (∀ x, y ∈ H, x * y ∈ H)", "pts": 0.75},
+                        {"label": "3• Stabilité par symétrique (∀ x ∈ H, x⁻¹ ∈ H)", "pts": 0.75},
+                        {"label": "4• Propriété condensée de remplacement (∀ x, y ∈ H, x * y⁻¹ ∈ H)", "pts": 1.0}
+                    ],
+                    "officialSolution": "1• $H \\neq \\emptyset$ ($e \\in H$) (0,75 Pt)\n2• $\\forall x, y \\in H, x * y \\in H$ (0,75 Pt)\n3• $\\forall x \\in H, x^{-1} \\in H$ (0,75 Pt)\nPropriété remplaçant 2 et 3 : $\\forall x, y \\in H, x * y^{-1} \\in H$ (1 Pt)"
+                },
+                {
+                    "subId": "1-2",
+                    "text": "2. Soient $x, y, z \\in G$. Calculer l'inverse de $g = x^{-1} y^{-1} z y z^{-1} x$.",
+                    "points": 1.0,
+                    "officialSolution": "En utilisant $(uv)^{-1} = v^{-1} u^{-1}$ et $(u^{-1})^{-1} = u$ :\n$$g^{-1} = (x)^{-1} \\cdot (z^{-1})^{-1} \\cdot (y)^{-1} \\cdot (z)^{-1} \\cdot (y^{-1})^{-1} \\cdot (x^{-1})^{-1} = x^{-1} z y^{-1} z^{-1} y x \\quad (1\\text{ Pt})$$"
+                }
+            ]
+        },
+        {
+            "id": "exam-ex2",
+            "number": 2,
+            "title": "Matrices diagonales dans GL2(R)",
+            "points": 4.25,
+            "questions": [
+                {
+                    "subId": "2-1",
+                    "text": "Soit $(GL_2(\\mathbb{R}), \\times)$ le groupe des matrices inversibles d'ordre 2. On considère $H$ le sous-ensemble des matrices $A = \\begin{pmatrix} a_1 & 0 \\\\ 0 & a_2 \\end{pmatrix}$ avec $a_1 \\neq 0$ et $a_2 \\neq 0$. On pose $X = \\begin{pmatrix} x & 0 \\\\ 0 & y \\end{pmatrix}$ et $I = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix}$.\n• Résoudre l'équation matricielle : $AX = I$.",
+                    "points": 0.75,
+                    "officialSolution": "$AX = \\begin{pmatrix} a_1 x & 0 \\\\ 0 & a_2 y \\end{pmatrix} = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} \\implies a_1 x = 1 \\text{ et } a_2 y = 1 \\implies x = 1/a_1, y = 1/a_2$ (0,75 Pt)"
+                },
+                {
+                    "subId": "2-2",
+                    "text": "• En déduire la matrice inverse de $A$ ($A^{-1}$).",
+                    "points": 0.75,
+                    "officialSolution": "$AX = I \\implies X = A^{-1} = \\begin{pmatrix} 1/a_1 & 0 \\\\ 0 & 1/a_2 \\end{pmatrix}$ (0,75 Pt)"
+                },
+                {
+                    "subId": "2-3",
+                    "text": "• Montrer que $H$ est un sous-groupe de $(GL_2(\\mathbb{R}), \\times)$.",
+                    "points": 2.75,
+                    "breakdown": [
+                        {"label": "1• Non vacuité : I ∈ H car 1 ≠ 0", "pts": 0.75},
+                        {"label": "2• Stabilité par produit : A × B a coefficients diagonaux a1b1 ≠ 0 et a2b2 ≠ 0", "pts": 1.0},
+                        {"label": "3• Stabilité par inverse : A⁻¹ a coefficients 1/a1 ≠ 0 et 1/a2 ≠ 0 ∈ H", "pts": 1.0}
+                    ],
+                    "officialSolution": "1• $I \\in H \\implies H \\neq \\emptyset$ (0,75 Pt)\n2• Soient $A, B \\in H$. $A \\times B = \\begin{pmatrix} a_1 b_1 & 0 \\\\ 0 & a_2 b_2 \\end{pmatrix}$ avec $a_1 b_1 \\neq 0$ et $a_2 b_2 \\neq 0 \\implies A \\times B \\in H$ (1 Pt)\n3• Pour $A \\in H$, $A^{-1} = \\begin{pmatrix} 1/a_1 & 0 \\\\ 0 & 1/a_2 \\end{pmatrix} \\in H$ car $1/a_1 \\neq 0, 1/a_2 \\neq 0$ (1 Pt)\nConclusion : $H$ est un sous-groupe de $(GL_2(\\mathbb{R}), \\times)$."
+                }
+            ]
+        },
+        {
+            "id": "exam-ex3",
+            "number": 3,
+            "title": "Groupe R*+ x R & Morphismes complexes / additifs",
+            "points": 7.5,
+            "questions": [
+                {
+                    "subId": "3-1",
+                    "text": "Soit $G = \\mathbb{R}_+^* \\times \\mathbb{R}$ muni de : $(a, b) * (a', b') = (aa', b + b')$. Démontrer que $(G, *)$ est un groupe.",
+                    "points": 3.0,
+                    "breakdown": [
+                        {"label": "Fermeture : aa' ∈ R*+ et b+b' ∈ R", "pts": 0.75},
+                        {"label": "Associativité : ((a,b)*(a',b'))*(a'',b'') = (a,b)*((a',b')*(a'',b'')) = (aa'a'', b+b'+b'')", "pts": 0.75},
+                        {"label": "Élément neutre : e = (1, 0)", "pts": 0.75},
+                        {"label": "Symétrique : (a, b)⁻¹ = (1/a, -b)", "pts": 0.75}
+                    ],
+                    "officialSolution": "(a) Fermeture : $aa' \\in \\mathbb{R}_+^*$ et $b+b' \\in \\mathbb{R} \\implies *$ est une LCI (0,75 Pt)\n(b) Associativité : $((a,b)*(a',b'))*(a'',b'') = (aa'a'', b+b'+b'') = (a,b)*((a',b')*(a'',b''))$ (0,75 Pt)\n(c) Neutre : $(a,b)*(e_1, e_2) = (ae_1, b+e_2) = (a,b) \\implies e_1=1, e_2=0 \\implies e = (1, 0)$ (0,75 Pt)\n(d) Symétrique : $(a,b)*(a',b') = (1, 0) \\implies aa'=1, b+b'=0 \\implies (a',b') = (1/a, -b)$ (0,75 Pt)"
+                },
+                {
+                    "subId": "3-2",
+                    "text": "Démontrer que $\\varphi : (G, *) \\to (\\mathbb{C}^*, \\times), (a, b) \\mapsto a e^{ib}$ est un morphisme. Déterminer son noyau et son image.",
+                    "points": 2.25,
+                    "breakdown": [
+                        {"label": "Démonstration du morphisme : φ((a,b)*(a',b')) = aa' e^(i(b+b')) = φ((a,b)) × φ((a',b'))", "pts": 0.75},
+                        {"label": "Noyau : Ker φ = {(1, 2kπ), k ∈ Z}", "pts": 0.75},
+                        {"label": "Image : Im φ = C* (écriture polaire d'un complexe non nul)", "pts": 0.75}
+                    ],
+                    "officialSolution": "• Morphisme : $\\varphi((a,b)*(a',b')) = \\varphi(aa', b+b') = aa' e^{i(b+b')} = a e^{ib} a' e^{ib'} = \\varphi((a,b)) \\times \\varphi((a',b'))$ (0,75 Pt)\n• $\\ker \\varphi = \\{(a, b) \\mid a e^{ib} = 1\\} \\implies a=1$ et $b=2k\\pi (k \\in \\mathbb{Z}) \\implies \\ker \\varphi = \\{(1, 2k\\pi), k \\in \\mathbb{Z}\\}$ (0,75 Pt)\n• $\\operatorname{Im} \\varphi = \\mathbb{C}^*$ car tout $z \\in \\mathbb{C}^*$ s'écrit sous forme polaire $r e^{i\\theta}$ avec $r = |z| > 0$ et $\\theta \\in \\mathbb{R}$ (0,75 Pt)"
+                },
+                {
+                    "subId": "3-3",
+                    "text": "Démontrer que $\\varphi : (\\mathbb{Z}, +) \\to (\\mathbb{R}^*, \\times), n \\mapsto (-1)^n$ est un morphisme. Déterminer son noyau et son image.",
+                    "points": 2.25,
+                    "breakdown": [
+                        {"label": "Démonstration du morphisme : φ(n+m) = (-1)^(n+m) = (-1)^n × (-1)^m = φ(n)φ(m)", "pts": 0.75},
+                        {"label": "Noyau : Ker φ = 2Z (entiers pairs)", "pts": 0.75},
+                        {"label": "Image : Im φ = {-1, 1}", "pts": 0.75}
+                    ],
+                    "officialSolution": "• Morphisme : $\\varphi(n+m) = (-1)^{n+m} = (-1)^n \\times (-1)^m = \\varphi(n) \\times \\varphi(m)$ (0,75 Pt)\n• $\\ker \\varphi = \\{n \\in \\mathbb{Z} \\mid (-1)^n = 1\\} = \\{n = 2k, k \\in \\mathbb{Z}\\} = 2\\mathbb{Z}$ (0,75 Pt)\n• $\\operatorname{Im} \\varphi = \\{-1, 1\\}$ (0,75 Pt)"
+                }
+            ]
+        }
+    ]
+}
+
+with open('src/data/exam.json', 'w', encoding='utf-8') as f:
+    json.dump(exam_data, f, ensure_ascii=False, indent=2)
+
+print("Exam data written successfully.")
