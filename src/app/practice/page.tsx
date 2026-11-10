@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
 import {
   Cpu,
@@ -12,13 +12,13 @@ import {
   Upload,
   Camera,
   RotateCw,
-  Sliders,
   Send,
   Loader2,
   Eye,
   Award,
-  BookOpen,
   Sparkles,
+  Check,
+  ChevronDown,
 } from "lucide-react";
 import exercisesData from "@/data/exercises.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
@@ -59,12 +59,26 @@ export default function PracticePage() {
   const handleGenerateVariation = async (difficulty: string = "Medium") => {
     setIsGenerating(true);
     try {
-      const res = await fetch(`/api/exercises?action=generate&moduleId=${currentExercise.moduleId}&difficulty=${difficulty}`);
-      const newEx = await res.json();
-      setExercises((prev) => [newEx, ...prev]);
-      handleSelectExercise(newEx);
-    } catch (e) {
-      console.error("Erreur de génération", e);
+      const topicType = currentExercise.sheet?.includes("1")
+        ? "group-proof"
+        : currentExercise.id?.includes("5")
+        ? "element-order"
+        : currentExercise.id?.includes("6")
+        ? "modular-units"
+        : "modular-inverse";
+
+      const res = await fetch("/api/exercises", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: topicType, difficulty }),
+      });
+      const generated = await res.json();
+      if (generated && generated.id) {
+        setExercises((prev) => [generated, ...prev]);
+        handleSelectExercise(generated);
+      }
+    } catch (err) {
+      console.error("Erreur de génération", err);
     } finally {
       setIsGenerating(false);
     }
@@ -133,84 +147,85 @@ export default function PracticePage() {
 
   return (
     <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-      {/* 1. Left Column: Exercise Statement & Pedagogical Guidance */}
-      <div className="w-full lg:w-1/2 border-r border-border overflow-y-auto p-6 sm:p-8 space-y-6">
-        {/* Selector & Generator Header */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+      {/* 1. Left Column: Exercise Statement & Guidance */}
+      <div className="w-full lg:w-1/2 border-r border-border/80 overflow-y-auto p-6 sm:p-8 space-y-6">
+        {/* Selector Header */}
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/80 pb-4">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono font-semibold uppercase px-2 py-0.5 rounded bg-primary/10 text-primary">
-              {currentExercise.sheet || "Généré par IA"}
+            <span className="text-xs font-mono font-semibold uppercase px-2.5 py-1 rounded-full bg-primary/15 text-primary border border-primary/20">
+              {currentExercise.sheet || "Exercice Paramétré"}
             </span>
             <span className="text-xs font-mono text-muted-foreground">
-              Difficulté : {currentExercise.difficulty}
+              Difficulté : <span className="text-foreground font-semibold">{currentExercise.difficulty}</span>
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
-            <button
-              disabled={isGenerating}
-              onClick={() => handleGenerateVariation("Medium")}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-secondary/80 transition-colors shadow-sm disabled:opacity-50"
-            >
-              <RefreshCw className={`h-3.5 w-3.5 ${isGenerating ? "animate-spin" : ""}`} />
-              Générer un autre exercice
-            </button>
-          </div>
+          <button
+            disabled={isGenerating}
+            onClick={() => handleGenerateVariation("Medium")}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 hover:bg-primary/25 text-primary text-xs font-medium transition-all shadow-sm disabled:opacity-50 border border-primary/30"
+          >
+            <RefreshCw className={`h-3.5 w-3.5 ${isGenerating ? "animate-spin" : ""}`} />
+            <span>Générer une variation</span>
+          </button>
         </div>
 
-        {/* Exercise Quick Switcher */}
-        <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-none">
-          {exercises.map((ex, idx) => (
-            <button
-              key={ex.id || idx}
-              onClick={() => handleSelectExercise(ex)}
-              className={`shrink-0 px-2.5 py-1 rounded text-xs font-mono border transition-all ${
-                ex.id === currentExercise.id
-                  ? "border-primary bg-primary text-primary-foreground font-semibold"
-                  : "border-border bg-card text-muted-foreground hover:bg-muted"
-              }`}
-            >
-              Ex {ex.exerciseNumber || idx + 1}
-            </button>
-          ))}
+        {/* Quick Switcher Chips */}
+        <div className="space-y-1.5">
+          <div className="text-[11px] font-mono text-muted-foreground uppercase">Choisir un exercice du programme :</div>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {exercises.map((ex, idx) => (
+              <button
+                key={ex.id || idx}
+                onClick={() => handleSelectExercise(ex)}
+                className={`shrink-0 px-3 py-1 rounded-lg text-xs font-mono border transition-all ${
+                  ex.id === currentExercise.id
+                    ? "border-primary bg-primary text-white font-bold shadow-md shadow-primary/20"
+                    : "border-border/70 bg-card/60 text-muted-foreground hover:bg-muted hover:text-foreground"
+                }`}
+              >
+                Ex {ex.exerciseNumber || idx + 1}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Statement Box */}
-        <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-3">
+        <div className="rounded-2xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-3 backdrop-blur-md">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
-            <span>ÉNONCÉ OFFICIEL</span>
+            <span className="font-bold text-foreground">ÉNONCÉ OFFICIEL</span>
             {currentExercise.sourcePdf && (
               <span className="flex items-center gap-1 text-primary">
-                <FileText className="h-3 w-3" />
+                <FileText className="h-3.5 w-3.5" />
                 {currentExercise.sourcePdf} (p. {currentExercise.sourcePage})
               </span>
             )}
           </div>
 
-          <h1 className="text-xl font-serif font-bold text-foreground">
+          <h1 className="text-xl sm:text-2xl font-serif font-bold text-foreground">
             {currentExercise.title}
           </h1>
 
-          <div className="prose prose-sm max-w-none text-foreground leading-relaxed pt-2">
+          <div className="prose prose-invert max-w-none text-sm text-foreground/90 leading-relaxed pt-2 bg-muted/30 p-4 rounded-xl border border-border/70">
             <MathRenderer content={currentExercise.statement} />
           </div>
         </div>
 
-        {/* Progressive Hints (Level 1, 2, 3) */}
-        <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-4">
+        {/* Progressive Hints */}
+        <div className="rounded-2xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-4 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Lightbulb className="h-4 w-4 text-amber-500" />
+            <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-2">
+              <Lightbulb className="h-4 w-4" />
               Indices Pédagogiques Progressifs
             </h2>
-            <span className="text-xs font-mono text-muted-foreground">
+            <span className="text-xs font-mono text-muted-foreground bg-muted/60 px-2.5 py-0.5 rounded-full border border-border/60">
               {hintLevel} / {currentExercise.hints?.length || 3} révélés
             </span>
           </div>
 
           {hintLevel === 0 && (
-            <p className="text-xs text-muted-foreground">
-              Vous êtes bloqué ? Débloquez un indice sans perdre vos points d&apos;évaluation.
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Bloqué sur la démarche ? Débloquez les indices progressifs sans être pénalisé sur votre note finale.
             </p>
           )}
 
@@ -218,25 +233,25 @@ export default function PracticePage() {
             {currentExercise.hints?.slice(0, hintLevel).map((hint: string, hIdx: number) => (
               <div
                 key={hIdx}
-                className="p-3 rounded-lg border border-amber-500/20 bg-amber-500/5 text-xs text-foreground leading-relaxed space-y-1"
+                className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs text-foreground leading-relaxed space-y-1 animate-in fade-in"
               >
-                <div className="font-semibold text-amber-800 dark:text-amber-300 font-mono text-[11px]">
+                <div className="font-semibold text-amber-300 font-mono text-[11px]">
                   Indice {hIdx + 1} :
                 </div>
-                <div>
+                <div className="text-amber-100/90">
                   <MathRenderer content={hint} />
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-border">
+          <div className="flex items-center justify-between pt-3 border-t border-border/70">
             {hintLevel < (currentExercise.hints?.length || 3) ? (
               <button
                 onClick={() => setHintLevel((prev) => prev + 1)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-muted hover:bg-muted/80 text-xs font-medium text-foreground transition-colors"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition-colors border border-amber-500/30"
               >
-                <Lightbulb className="h-3.5 w-3.5 text-amber-500" /> Révéler l&apos;indice suivant
+                <Lightbulb className="h-3.5 w-3.5" /> Révéler l&apos;indice suivant ({hintLevel + 1})
               </button>
             ) : (
               <span className="text-xs text-muted-foreground">Tous les indices ont été révélés.</span>
@@ -244,19 +259,18 @@ export default function PracticePage() {
 
             <button
               onClick={() => setShowSolution(!showSolution)}
-              className="text-xs text-primary hover:underline flex items-center gap-1"
+              className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1.5 transition-colors"
             >
               <Eye className="h-3.5 w-3.5" />
               {showSolution ? "Masquer la solution" : "Consulter la solution officielle"}
             </button>
           </div>
 
-          {/* Worked Solution Drawer */}
           {showSolution && (
-            <div className="p-4 rounded-lg border border-border bg-muted/40 text-xs space-y-2 animate-in fade-in">
-              <div className="font-semibold text-foreground font-serif">Solution détaillée :</div>
+            <div className="p-4 rounded-xl border border-border/80 bg-muted/40 text-xs space-y-2 animate-in fade-in">
+              <div className="font-semibold text-foreground font-serif text-sm">Solution officielle rédigée :</div>
               {currentExercise.solution?.steps?.map((step: string, sIdx: number) => (
-                <div key={sIdx} className="leading-relaxed text-foreground">
+                <div key={sIdx} className="leading-relaxed text-foreground/90 py-0.5">
                   <MathRenderer content={step} />
                 </div>
               ))}
@@ -265,7 +279,7 @@ export default function PracticePage() {
         </div>
       </div>
 
-      {/* 2. Right Column: Student Workspace, OCR Handwriting Upload & AI Grading */}
+      {/* 2. Right Column: Student Workspace & AI Grading */}
       <div className="w-full lg:w-1/2 overflow-y-auto p-6 sm:p-8 space-y-6 bg-muted/10">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-serif font-bold text-foreground flex items-center gap-2">
@@ -273,16 +287,16 @@ export default function PracticePage() {
             Votre Espace de Démonstration
           </h2>
           <span className="text-xs font-mono text-muted-foreground">
-            Saisie LaTeX ou Photo manuscrite
+            Saisie Manuscrite ou Clavier
           </span>
         </div>
 
         {/* OCR Image Upload Card */}
-        <div className="rounded-xl border border-dashed border-border bg-card p-4 space-y-3">
+        <div className="rounded-2xl border border-dashed border-border/80 bg-card/60 p-5 space-y-3 backdrop-blur-md">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-              <Camera className="h-3.5 w-3.5 text-primary" />
-              Téléverser une copie manuscrite (OCR Vision)
+            <span className="text-xs font-semibold text-foreground flex items-center gap-2">
+              <Camera className="h-4 w-4 text-primary" />
+              Scanner une copie manuscrite (NVIDIA Vision)
             </span>
             <input
               type="file"
@@ -293,15 +307,15 @@ export default function PracticePage() {
             />
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded border border-border bg-muted/60 hover:bg-muted text-xs font-medium text-foreground transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-muted/60 hover:bg-muted text-xs font-medium text-foreground transition-colors"
             >
-              <Upload className="h-3 w-3" /> Choisir une photo
+              <Upload className="h-3.5 w-3.5" /> Choisir une photo
             </button>
           </div>
 
           {uploadedImage && (
-            <div className="pt-2 border-t border-border flex flex-col sm:flex-row items-center gap-4">
-              <div className="relative w-36 h-28 rounded border border-border overflow-hidden bg-black/5 shrink-0">
+            <div className="pt-3 border-t border-border/70 flex flex-col sm:flex-row items-center gap-4">
+              <div className="relative w-36 h-28 rounded-xl border border-border/80 overflow-hidden bg-black/40 shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={uploadedImage}
@@ -311,33 +325,33 @@ export default function PracticePage() {
                 />
               </div>
 
-              <div className="space-y-2 flex-1 text-xs">
+              <div className="space-y-2.5 flex-1 text-xs">
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setImageRotation((r) => (r + 90) % 360)}
-                    className="p-1 rounded bg-muted hover:bg-muted/80 text-[11px] flex items-center gap-1"
+                    className="px-2.5 py-1 rounded bg-muted hover:bg-muted/80 text-[11px] flex items-center gap-1 border border-border/60"
                   >
                     <RotateCw className="h-3 w-3" /> Pivoter 90°
                   </button>
                   {isTranscribing && (
-                    <span className="text-primary flex items-center gap-1 animate-pulse">
-                      <Loader2 className="h-3 w-3 animate-spin" /> Transcription en cours...
+                    <span className="text-primary flex items-center gap-1 animate-pulse font-medium">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Transcription NVIDIA Vision en cours...
                     </span>
                   )}
                 </div>
 
                 {ambiguities.length > 0 && (
-                  <div className="p-2 rounded bg-amber-500/10 text-amber-800 dark:text-amber-300 text-[11px]">
-                    <span className="font-semibold">Symboles ambigus détectés :</span> {ambiguities.join(", ")}
+                  <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px]">
+                    <span className="font-semibold">Symboles ambigus :</span> {ambiguities.join(", ")}
                   </div>
                 )}
 
                 <button
                   onClick={() => setOcrConfirmed(true)}
-                  className={`px-3 py-1 rounded text-xs font-medium ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     ocrConfirmed
-                      ? "bg-emerald-600 text-white"
-                      : "bg-primary text-primary-foreground hover:bg-primary/90"
+                      ? "bg-emerald-600 text-white shadow-sm"
+                      : "bg-primary text-white hover:bg-primary/90"
                   }`}
                 >
                   {ocrConfirmed ? "✓ Transcription confirmée par l'étudiant" : "Confirmer la transcription"}
@@ -348,24 +362,25 @@ export default function PracticePage() {
         </div>
 
         {/* Mathematical Notation Quick Toolbar */}
-        <div className="flex flex-wrap gap-1.5 p-2 rounded-lg bg-card border border-border">
+        <div className="flex flex-wrap gap-1.5 p-2.5 rounded-xl bg-card/60 border border-border/80">
           {[
             { label: "x⁻¹", math: "x^{-1}" },
-            { label: "e", math: "e = (1, 0)" },
+            { label: "e", math: "e" },
             { label: "∈", math: " \\in " },
             { label: "∀", math: " \\forall " },
             { label: "∃", math: " \\exists " },
             { label: "≡", math: " \\equiv " },
-            { label: "Ker", math: "\\ker \\varphi" },
-            { label: "Im", math: "\\operatorname{Im} \\varphi" },
+            { label: "Ker", math: "\\ker(f)" },
+            { label: "Im", math: "\\mathrm{Im}(f)" },
             { label: "Z/nZ", math: "\\mathbb{Z}/n\\mathbb{Z}" },
-            { label: "pgcd", math: "\\operatorname{pgcd}(a, n)" },
-            { label: "Matrice", math: "\\begin{pmatrix} a & b \\\\ c & d \\end{pmatrix}" },
+            { label: "pgcd", math: "\\gcd(a, n)" },
+            { label: "φ(n)", math: "\\varphi(n)" },
+            { label: "Matrice 3x3", math: "\\begin{pmatrix} 1 & a & c \\\\ 0 & 1 & b \\\\ 0 & 0 & 1 \\end{pmatrix}" },
           ].map((sym, sIdx) => (
             <button
               key={sIdx}
               onClick={() => insertMathSnippet(sym.math)}
-              className="px-2 py-1 rounded bg-muted/60 hover:bg-muted text-xs font-mono border border-border/60 text-foreground"
+              className="px-2.5 py-1 rounded-md bg-muted/60 hover:bg-muted text-xs font-mono border border-border/60 text-foreground transition-colors"
             >
               {sym.label}
             </button>
@@ -373,9 +388,10 @@ export default function PracticePage() {
         </div>
 
         {/* Text Area for Solution */}
-        <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-2">
-          <label className="text-xs font-mono font-semibold uppercase text-muted-foreground">
-            Votre Démonstration (Texte & LaTeX) :
+        <div className="rounded-2xl border border-border/80 bg-card/70 p-5 shadow-sm space-y-3 backdrop-blur-md">
+          <label className="text-xs font-mono font-semibold uppercase text-muted-foreground flex items-center justify-between">
+            <span>Votre Démonstration (Texte & LaTeX) :</span>
+            <span className="text-[11px] text-muted-foreground">Markdown & KaTeX supportés</span>
           </label>
           <textarea
             rows={8}
@@ -386,43 +402,43 @@ export default function PracticePage() {
 2. Associativité : (x * y) * z = ...
 3. Élément neutre : e = ...
 4. Symétrique : x⁻¹ = ..."
-            className="w-full text-xs sm:text-sm font-mono rounded-md border border-input bg-background p-3 focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed"
+            className="w-full text-xs sm:text-sm font-mono rounded-xl border border-border/80 bg-background/80 p-3.5 focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed"
           />
 
           {/* Action buttons */}
-          <div className="flex items-center justify-between pt-2">
+          <div className="flex items-center justify-between pt-1">
             <button
               onClick={() => setStudentInput("")}
-              className="text-xs text-muted-foreground hover:text-foreground"
+              className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              Effacer
+              Effacer la copie
             </button>
 
             <button
               disabled={isEvaluating || !studentInput.trim()}
               onClick={handleEvaluateSubmission}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary text-primary-foreground text-xs font-medium shadow-sm hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white text-xs font-semibold shadow-md shadow-primary/25 hover:bg-primary/90 transition-all disabled:opacity-50"
             >
               {isEvaluating ? (
                 <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" /> Évaluation par l&apos;IA...
+                  <Loader2 className="h-4 w-4 animate-spin" /> Évaluation par l'IA...
                 </>
               ) : (
                 <>
-                  <Send className="h-3.5 w-3.5" /> Soumettre & Noter selon le Barème
+                  <Send className="h-4 w-4" /> Soumettre & Corriger selon le Barème
                 </>
               )}
             </button>
           </div>
         </div>
 
-        {/* Live Preview of Mathematical Rendering */}
+        {/* Live Preview */}
         {studentInput.trim() && (
-          <div className="rounded-xl border border-border bg-card p-4 shadow-sm space-y-2">
+          <div className="rounded-2xl border border-border/80 bg-card/70 p-5 shadow-sm space-y-2 backdrop-blur-md">
             <span className="text-xs font-mono font-semibold uppercase text-muted-foreground">
               Aperçu KaTeX de votre copie :
             </span>
-            <div className="p-3 rounded bg-muted/30 text-xs sm:text-sm leading-relaxed border border-border/60">
+            <div className="p-4 rounded-xl bg-muted/30 text-xs sm:text-sm leading-relaxed border border-border/60">
               <MathRenderer content={studentInput} />
             </div>
           </div>
@@ -430,74 +446,67 @@ export default function PracticePage() {
 
         {/* Evaluation Results Card */}
         {evaluationResult && (
-          <div className="rounded-xl border border-border bg-card p-6 shadow-sm space-y-5 animate-in fade-in">
-            {/* Score Banner */}
-            <div className="flex items-center justify-between border-b border-border pb-4">
+          <div className="rounded-2xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-5 animate-in fade-in backdrop-blur-md">
+            <div className="flex items-center justify-between border-b border-border/70 pb-4">
               <div>
                 <span className="text-xs font-mono font-semibold uppercase text-primary">
-                  RÉSULTAT DE LA CORRECTION
+                  RÉSULTAT DE LA CORRECTION OFFICIELLE
                 </span>
-                <h3 className="text-xl font-serif font-bold text-foreground">
-                  Score : {evaluationResult.totalScore} / {evaluationResult.maxScore} Pts
+                <h3 className="text-2xl font-serif font-bold text-foreground mt-0.5">
+                  Note : {evaluationResult.totalScore} / {evaluationResult.maxScore} Pts
                 </h3>
               </div>
-              <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-mono font-bold">
+              <div className="h-12 w-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center font-mono font-extrabold text-base border border-primary/30">
                 {Math.round((evaluationResult.totalScore / evaluationResult.maxScore) * 100)}%
               </div>
             </div>
 
+            {/* Feedback message */}
+            {evaluationResult.feedback && (
+              <div className="p-3.5 rounded-xl bg-primary/10 border border-primary/20 text-xs text-foreground/90 leading-relaxed">
+                <span className="font-semibold text-primary">Avis du professeur examinateur : </span>
+                {evaluationResult.feedback}
+              </div>
+            )}
+
             {/* Step by Step correctness */}
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               <h4 className="text-xs font-mono font-semibold uppercase text-muted-foreground">
-                Analyse pas à pas des étapes :
+                Analyse critère par critère :
               </h4>
               {evaluationResult.stepAnalysis?.map((step: any, idx: number) => (
                 <div
                   key={idx}
-                  className={`p-3 rounded-lg border text-xs space-y-1 ${
+                  className={`p-3.5 rounded-xl border text-xs space-y-1 ${
                     step.status === "correct"
-                      ? "border-emerald-500/30 bg-emerald-500/5 text-foreground"
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-foreground"
                       : step.status === "partial"
-                      ? "border-amber-500/30 bg-amber-500/5 text-foreground"
-                      : "border-destructive/30 bg-destructive/5 text-foreground"
+                      ? "border-amber-500/30 bg-amber-500/10 text-foreground"
+                      : "border-destructive/30 bg-destructive/10 text-foreground"
                   }`}
                 >
-                  <div className="flex items-center gap-1.5 font-semibold">
-                    {step.status === "correct" && <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />}
-                    {step.status === "partial" && <AlertCircle className="h-3.5 w-3.5 text-amber-600" />}
-                    {step.status === "incorrect" && <AlertCircle className="h-3.5 w-3.5 text-destructive" />}
+                  <div className="flex items-center gap-2 font-semibold">
+                    {step.status === "correct" && <CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+                    {step.status === "partial" && <AlertCircle className="h-4 w-4 text-amber-400" />}
+                    {step.status === "incorrect" && <AlertCircle className="h-4 w-4 text-rose-400" />}
                     <span>{step.step}</span>
                   </div>
-                  <div className="text-muted-foreground text-[11px]">{step.comment}</div>
+                  <div className="text-muted-foreground text-[11px] leading-relaxed pl-6">{step.comment}</div>
                 </div>
               ))}
             </div>
 
-            {/* Missing elements if any */}
+            {/* Missing elements */}
             {evaluationResult.missingElements?.length > 0 && (
-              <div className="p-3 rounded-lg border border-amber-500/30 bg-amber-500/10 text-xs space-y-1">
-                <div className="font-semibold text-amber-900 dark:text-amber-200">
-                  Éléments ou axiomes manquants :
+              <div className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs space-y-1.5">
+                <div className="font-semibold text-amber-300">
+                  Éléments ou justifications manquantes :
                 </div>
-                <ul className="list-disc list-inside text-[11px] text-amber-800 dark:text-amber-300">
+                <ul className="list-disc list-inside text-[11px] text-amber-200/90 space-y-0.5">
                   {evaluationResult.missingElements.map((m: string, mIdx: number) => (
                     <li key={mIdx}>{m}</li>
                   ))}
                 </ul>
-              </div>
-            )}
-
-            {/* Personalized Revision Recommendation */}
-            {evaluationResult.revisionTopics && (
-              <div className="p-3 rounded-lg border border-border bg-muted/40 text-xs space-y-1">
-                <div className="font-semibold text-foreground">Recommandations de révision ciblées :</div>
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {evaluationResult.revisionTopics.map((topic: string, tIdx: number) => (
-                    <span key={tIdx} className="px-2 py-0.5 rounded bg-card border border-border text-[11px] font-mono">
-                      {topic}
-                    </span>
-                  ))}
-                </div>
               </div>
             )}
           </div>

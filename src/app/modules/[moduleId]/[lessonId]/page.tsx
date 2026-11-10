@@ -13,11 +13,18 @@ import {
   FileText,
   HelpCircle,
   CheckCircle2,
+  AlertTriangle,
   XCircle,
   Sparkles,
   Send,
   Loader2,
   ExternalLink,
+  Layers,
+  Award,
+  Lightbulb,
+  Check,
+  MessageSquare,
+  Maximize2,
 } from "lucide-react";
 import curriculumData from "@/data/curriculum.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
@@ -44,27 +51,36 @@ export default function LessonPage({ params }: PageProps) {
   const prevLesson = lessonIndex > 0 ? currentModule.lessons[lessonIndex - 1] : null;
   const nextLesson = lessonIndex < currentModule.lessons.length - 1 ? currentModule.lessons[lessonIndex + 1] : null;
 
+  // Active Tab: "theory" | "method" | "proof" | "traps" | "quiz"
+  const [activeTab, setActiveTab] = useState<"theory" | "method" | "proof" | "traps" | "quiz">("theory");
+
   // State for progressive proof reveal
   const [revealedSteps, setRevealedSteps] = useState<number>(1);
   // State for quiz
   const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
   const [quizSubmitted, setQuizSubmitted] = useState<boolean>(false);
-  // State for collapsible AI Tutor drawer
-  const [isTutorOpen, setIsTutorOpen] = useState<boolean>(true);
+
+  // State for AI Tutor drawer
+  const [isTutorOpen, setIsTutorOpen] = useState<boolean>(false);
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([
     {
       role: "assistant",
-      content: `Bonjour ! Je suis votre tuteur NVIDIA NIM pour la leçon **"${currentLesson.title}"**. N'hésitez pas à me demander de réexpliquer une définition, de détailler un calcul ou de vous tester avec une question d'entraînement.`,
+      content: `Bonjour ! Je suis votre tuteur NVIDIA NIM pour la leçon **"${currentLesson.title}"**. Posez-moi une question sur une étape de calcul, demandez un exemple supplémentaire ou faites-vous interroger sur les notions d'examen.`,
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
   const [isAiLoading, setIsAiLoading] = useState(false);
 
   const proofSteps = currentLesson.content.workedExample?.steps || [];
+  const stepByStepMethods = (currentLesson.content as any).stepByStepMethod || [];
+  const examPitfalls = (currentLesson.content as any).examPitfalls || [];
+  const detailedTheory = (currentLesson.content as any).detailedTheory || "";
 
   const handleSendMessage = async (textToSend?: string) => {
     const message = textToSend || inputMessage;
     if (!message.trim() || isAiLoading) return;
+
+    if (!isTutorOpen) setIsTutorOpen(true);
 
     const newMessages = [...chatMessages, { role: "user", content: message }];
     setChatMessages(newMessages);
@@ -110,18 +126,22 @@ export default function LessonPage({ params }: PageProps) {
     }
   };
 
+  const askTutorAboutStep = (stepTitle: string) => {
+    handleSendMessage(`Peux-tu m'expliquer en détail l'étape suivante pour ${currentLesson.title} : "${stepTitle}" avec un exemple concret et les pièges d'examen ?`);
+  };
+
   return (
     <div className="flex-1 flex overflow-hidden">
       {/* 1. Left Sidebar: Curriculum Navigation */}
-      <aside className="hidden lg:flex w-72 flex-col border-r border-border bg-card/60 p-4 overflow-y-auto">
+      <aside className="hidden lg:flex w-72 flex-col border-r border-border/80 bg-card/40 backdrop-blur-md p-4 overflow-y-auto">
         <Link
           href="/modules"
-          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground mb-4"
+          className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground mb-4 transition-colors"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Tous les modules
         </Link>
 
-        <div className="text-xs font-mono font-semibold uppercase text-primary tracking-wider mb-2">
+        <div className="text-[11px] font-mono font-semibold uppercase text-primary tracking-wider mb-2">
           {currentModule.title}
         </div>
 
@@ -132,10 +152,10 @@ export default function LessonPage({ params }: PageProps) {
               <Link
                 key={lesson.id}
                 href={`/modules/${currentModule.id}/${lesson.id}`}
-                className={`flex items-start gap-2.5 p-2 rounded-md text-xs transition-colors ${
+                className={`flex items-start gap-2.5 p-2.5 rounded-lg text-xs transition-all duration-150 ${
                   isActive
-                    ? "bg-primary text-primary-foreground font-medium shadow-sm"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    ? "bg-primary/20 text-primary font-semibold border border-primary/30 shadow-sm"
+                    : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
                 }`}
               >
                 <span className="font-mono text-[11px] opacity-70 mt-0.5">
@@ -143,7 +163,7 @@ export default function LessonPage({ params }: PageProps) {
                 </span>
                 <div className="flex-1 leading-snug">
                   <div>{lesson.title}</div>
-                  <div className={`text-[10px] ${isActive ? "text-primary-foreground/75" : "text-muted-foreground"}`}>
+                  <div className={`text-[10px] mt-0.5 ${isActive ? "text-primary/80" : "text-muted-foreground/80"}`}>
                     PDF p. {lesson.sourcePage}
                   </div>
                 </div>
@@ -153,197 +173,401 @@ export default function LessonPage({ params }: PageProps) {
         </nav>
 
         {/* Source info */}
-        <div className="mt-auto pt-6 border-t border-border text-[11px] text-muted-foreground space-y-1">
-          <div className="font-semibold text-foreground">Document source :</div>
-          <div className="flex items-center gap-1">
-            <FileText className="h-3 w-3 text-primary" />
-            <span>{currentLesson.sourcePdf}</span>
+        <div className="mt-auto pt-6 border-t border-border/70 text-[11px] text-muted-foreground space-y-2">
+          <div className="font-semibold text-foreground flex items-center gap-1.5">
+            <FileText className="h-3.5 w-3.5 text-primary" />
+            <span>Document source Oran 1 :</span>
           </div>
-          <div>Page {currentLesson.sourcePage}</div>
+          <div className="bg-muted/40 p-2 rounded border border-border/60 text-[10px] font-mono">
+            {currentLesson.sourcePdf} (Page {currentLesson.sourcePage})
+          </div>
           <Link
             href={`/library?doc=${currentLesson.sourcePdf}&page=${currentLesson.sourcePage}`}
-            className="text-primary hover:underline inline-flex items-center gap-1 pt-1"
+            className="text-primary hover:text-primary/80 text-xs font-medium inline-flex items-center gap-1 pt-1"
           >
-            Ouvrir la page originale &rarr;
+            Ouvrir la page du PDF original &rarr;
           </Link>
         </div>
       </aside>
 
       {/* 2. Center: Interactive Textbook Lesson Content */}
-      <div className="flex-1 overflow-y-auto p-4 sm:p-8 lg:p-10 max-w-4xl mx-auto space-y-10">
-        {/* Lesson Header */}
-        <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground mb-1">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-8 lg:p-10 max-w-5xl mx-auto space-y-8">
+        {/* Lesson Breadcrumb & Header */}
+        <div className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-muted-foreground">
+            <Link href="/modules" className="hover:text-primary transition-colors">Modules</Link>
+            <span>/</span>
             <span>{currentModule.title}</span>
-            <span>•</span>
-            <span>Leçon {currentLesson.order}</span>
+            <span>/</span>
+            <span className="text-primary font-semibold">Leçon {currentLesson.order}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-foreground">
+
+          <h1 className="text-3xl sm:text-4xl font-serif font-bold text-foreground tracking-tight">
             {currentLesson.title}
           </h1>
 
-          {/* Objectives & Prerequisites Pills */}
-          <div className="mt-4 flex flex-wrap gap-2">
+          {/* Objectives Pills */}
+          <div className="flex flex-wrap gap-2 pt-1">
             {currentLesson.objectives.map((obj, i) => (
               <span
                 key={i}
-                className="inline-flex items-center gap-1.5 text-xs bg-muted text-muted-foreground px-2.5 py-1 rounded border border-border"
+                className="inline-flex items-center gap-1.5 text-xs bg-muted/60 text-foreground px-3 py-1 rounded-full border border-border/70"
               >
-                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
                 {obj}
               </span>
             ))}
           </div>
         </div>
 
-        {/* Section 1: Intuition */}
-        <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-primary font-mono mb-2 flex items-center gap-2">
-            <Sparkles className="h-4 w-4" /> 1. Intuition & Idée Fondamentale
-          </h2>
-          <p className="text-sm sm:text-base text-foreground leading-relaxed">
-            {currentLesson.content.intuition}
-          </p>
-        </section>
+        {/* Tab Selector Bar */}
+        <div className="flex items-center gap-1 p-1 rounded-xl bg-card border border-border/80 overflow-x-auto shadow-sm">
+          <button
+            onClick={() => setActiveTab("theory")}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+              activeTab === "theory"
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            }`}
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>1. Cours & Théorie</span>
+          </button>
 
-        {/* Section 2: Formal Definition */}
-        <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-math-definition font-mono">
-              2. Définition Formelle du Cours Universitaire
-            </h2>
-            <span className="text-[11px] font-mono text-muted-foreground">
-              [Source : {currentLesson.sourcePdf}, p. {currentLesson.sourcePage}]
-            </span>
+          <button
+            onClick={() => setActiveTab("method")}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+              activeTab === "method"
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            }`}
+          >
+            <Layers className="h-3.5 w-3.5" />
+            <span>2. Méthode Pas-à-Pas</span>
+            {stepByStepMethods.length > 0 && (
+              <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded-full">
+                {stepByStepMethods.length}
+              </span>
+            )}
+          </button>
+
+          <button
+            onClick={() => setActiveTab("proof")}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+              activeTab === "proof"
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            }`}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            <span>3. Démonstration Guidée</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("traps")}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+              activeTab === "traps"
+                ? "bg-primary text-white shadow-md shadow-primary/25"
+                : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+            }`}
+          >
+            <AlertTriangle className="h-3.5 w-3.5" />
+            <span>4. Pièges d'Examen</span>
+          </button>
+
+          {currentLesson.quiz && currentLesson.quiz.length > 0 && (
+            <button
+              onClick={() => setActiveTab("quiz")}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                activeTab === "quiz"
+                  ? "bg-primary text-white shadow-md shadow-primary/25"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
+              }`}
+            >
+              <Award className="h-3.5 w-3.5" />
+              <span>5. Quiz d'Évaluation</span>
+            </button>
+          )}
+        </div>
+
+        {/* TAB 1: COURS & THEORIE DETAILLEE */}
+        {activeTab === "theory" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Section 1: Intuition */}
+            <section className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-primary font-mono mb-3 flex items-center gap-2">
+                <Sparkles className="h-4 w-4" /> Intuition & Utilité en Cryptographie
+              </h2>
+              <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
+                {currentLesson.content.intuition}
+              </p>
+            </section>
+
+            {/* Section 2: Définition Formelle Officielle */}
+            <section className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-blue-400 font-mono flex items-center gap-2">
+                  <BookOpen className="h-4 w-4" /> Définition Formelle du Cours Universitaire
+                </h2>
+                <span className="text-[11px] font-mono text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/60">
+                  {currentLesson.sourcePdf} • p. {currentLesson.sourcePage}
+                </span>
+              </div>
+
+              <div className="text-sm text-foreground/90 leading-relaxed bg-muted/40 p-5 rounded-lg border border-border/80">
+                <MathRenderer content={currentLesson.content.formalDefinition} />
+              </div>
+            </section>
+
+            {/* Section 3: Explication Théorique Approfondie */}
+            {detailedTheory && (
+              <section className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-4">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-amber-400 font-mono flex items-center gap-2">
+                  <Lightbulb className="h-4 w-4" /> Explication Mathématique Détaillée
+                </h2>
+                <div className="prose prose-invert max-w-none text-sm text-foreground/90 leading-relaxed space-y-3">
+                  <MathRenderer content={detailedTheory} />
+                </div>
+              </section>
+            )}
+
+            {/* Section 4: Décryptage des Notations */}
+            {currentLesson.content.notationGuide && (
+              <section className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm">
+                <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground font-mono mb-4">
+                  Symboles & Notations Mathématiques
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {currentLesson.content.notationGuide.map((item, i) => (
+                    <div key={i} className="flex items-start gap-3 p-3 rounded-lg bg-muted/30 border border-border/60">
+                      <div className="font-mono text-xs text-primary font-bold bg-card/80 px-2.5 py-1 rounded border border-border shrink-0">
+                        <MathRenderer content={`$${item.symbol}$`} />
+                      </div>
+                      <div className="text-xs text-muted-foreground leading-snug pt-0.5">
+                        {item.meaning}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
+        )}
 
-          <div className="prose prose-sm max-w-none text-foreground leading-relaxed bg-muted/40 p-4 rounded-md border border-border/80">
-            <MathRenderer content={currentLesson.content.formalDefinition} />
-          </div>
-        </section>
+        {/* TAB 2: METHODE PAS A PAS D'EXAMEN */}
+        {activeTab === "method" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="p-4 rounded-xl bg-primary/10 border border-primary/25 flex items-start gap-3">
+              <Layers className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div className="text-xs leading-relaxed">
+                <p className="font-semibold text-foreground text-sm">Protocole Méthodologique d'Examen</p>
+                <p className="text-muted-foreground mt-0.5">
+                  Voici les étapes obligatoires à rédiger mot pour mot sur votre feuille d'examen pour garantir tous les points attribués par l'équipe pédagogique d'Oran 1.
+                </p>
+              </div>
+            </div>
 
-        {/* Section 3: Notation Guide */}
-        {currentLesson.content.notationGuide && (
-          <section className="rounded-lg border border-border bg-card p-6 shadow-sm">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground font-mono mb-3">
-              3. Décryptage des Symboles & Notations
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {currentLesson.content.notationGuide.map((item, i) => (
-                <div key={i} className="flex items-start gap-2.5 p-2.5 rounded bg-muted/30 border border-border/60">
-                  <div className="font-mono text-xs text-primary font-bold bg-card px-2 py-0.5 rounded border border-border shrink-0">
-                    <MathRenderer content={`$${item.symbol}$`} />
+            <div className="space-y-4">
+              {stepByStepMethods.map((m: any, idx: number) => (
+                <div key={idx} className="rounded-xl border border-border/80 bg-card/70 p-6 space-y-4 shadow-sm hover:border-primary/40 transition-colors">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/60 pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary/20 text-primary font-mono text-xs font-bold border border-primary/30">
+                        {m.stepNumber || idx + 1}
+                      </div>
+                      <h3 className="text-base font-semibold text-foreground">
+                        {m.title}
+                      </h3>
+                    </div>
+                    <button
+                      onClick={() => askTutorAboutStep(m.title)}
+                      className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 font-medium self-start sm:self-auto"
+                    >
+                      <Sparkles className="h-3 w-3" /> Demander une explication IA &rarr;
+                    </button>
                   </div>
-                  <div className="text-xs text-muted-foreground leading-snug">
-                    {item.meaning}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div className="space-y-2 p-3.5 rounded-lg bg-muted/40 border border-border/70">
+                      <div className="font-semibold text-foreground flex items-center gap-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                        <span>Objectif & Démarche :</span>
+                      </div>
+                      <p className="text-muted-foreground leading-relaxed">
+                        {m.goal}
+                      </p>
+                      <div className="mt-2 text-foreground/90 whitespace-pre-line leading-relaxed">
+                        <MathRenderer content={m.procedure} />
+                      </div>
+                    </div>
+
+                    <div className="space-y-3">
+                      <div className="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300">
+                        <div className="font-semibold flex items-center gap-1.5 mb-1">
+                          <Check className="h-3.5 w-3.5" />
+                          <span>Astuce de Rédaction d'Oran 1 :</span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-emerald-300/90">
+                          {m.examTip}
+                        </p>
+                      </div>
+
+                      <div className="p-3 rounded-lg bg-rose-500/10 border border-rose-500/20 text-rose-300">
+                        <div className="font-semibold flex items-center gap-1.5 mb-1">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          <span>Piège classique à éviter :</span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-rose-300/90">
+                          {m.commonTrap}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
         )}
 
-        {/* Section 4: Progressive Step-by-Step Proof Demo */}
-        {currentLesson.content.workedExample && (
-          <section className="rounded-lg border border-border bg-card p-6 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="text-xs font-mono font-semibold uppercase text-math-theorem">
-                  4. Démonstration Progressive Type TD
-                </span>
-                <h3 className="text-base font-serif font-bold text-foreground mt-0.5">
-                  {currentLesson.content.workedExample.statement}
-                </h3>
+        {/* TAB 3: DEMONSTRATION COMPLETE GUIDEE */}
+        {activeTab === "proof" && currentLesson.content.workedExample && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="rounded-xl border border-border/80 bg-card/70 p-6 space-y-5 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-4">
+                <div>
+                  <span className="text-xs font-mono font-semibold uppercase text-amber-400">
+                    Exercice d'Application Type TD (Démonstration Intégrale)
+                  </span>
+                  <h3 className="text-lg font-serif font-bold text-foreground mt-1">
+                    {currentLesson.content.workedExample.statement}
+                  </h3>
+                </div>
+
+                <div className="text-xs font-mono text-muted-foreground bg-muted/60 px-3 py-1 rounded-full border border-border/60 shrink-0">
+                  Étape {Math.min(revealedSteps, proofSteps.length)} / {proofSteps.length}
+                </div>
               </div>
 
-              <div className="text-xs font-mono text-muted-foreground">
-                Étape {Math.min(revealedSteps, proofSteps.length)} / {proofSteps.length}
+              {/* Progressive proof steps */}
+              <div className="space-y-4">
+                {proofSteps.slice(0, revealedSteps).map((step, idx) => (
+                  <div
+                    key={idx}
+                    className="p-4 rounded-xl bg-muted/30 border border-border/80 space-y-2 animate-in fade-in duration-200"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-mono font-bold text-primary">
+                        {step.step}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground font-mono">
+                        Justification validée
+                      </span>
+                    </div>
+                    <div className="text-sm text-foreground/90 leading-relaxed">
+                      <MathRenderer content={step.detail} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Reveal controls */}
+              <div className="pt-2 flex items-center justify-between border-t border-border/60">
+                {revealedSteps < proofSteps.length ? (
+                  <button
+                    onClick={() => setRevealedSteps(revealedSteps + 1)}
+                    className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white shadow-sm shadow-primary/25 hover:bg-primary/90 transition-all"
+                  >
+                    <span>Révéler l'étape suivante ({revealedSteps + 1} / {proofSteps.length})</span>
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
+                    <CheckCircle2 className="h-4 w-4" />
+                    Démonstration complète révélée avec succès !
+                  </div>
+                )}
+
+                {revealedSteps > 1 && (
+                  <button
+                    onClick={() => setRevealedSteps(1)}
+                    className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Réinitialiser les étapes
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 4: PIEGES D'EXAMEN */}
+        {activeTab === "traps" && (
+          <div className="space-y-4 animate-in fade-in duration-200">
+            <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 flex items-start gap-3">
+              <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
+              <div className="text-xs leading-relaxed">
+                <p className="font-semibold text-rose-300 text-sm">Pièges Fréquents & Erreurs à Éviter</p>
+                <p className="text-rose-300/80 mt-0.5">
+                  Ces erreurs sont celles qui coûtent le plus de points aux étudiants lors des examens d'Oran 1. Mémorisez-les pour votre copie !
+                </p>
               </div>
             </div>
 
-            {/* Revealed Steps */}
-            <div className="space-y-3 pt-2">
-              {proofSteps.slice(0, revealedSteps).map((stepObj, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-lg border border-border bg-muted/20 p-4 space-y-1.5 transition-all animate-in fade-in slide-in-from-top-1"
-                >
-                  <div className="text-xs font-mono font-semibold text-primary">
-                    {stepObj.step}
+            <div className="space-y-3">
+              {examPitfalls.map((trap: string, idx: number) => (
+                <div key={idx} className="p-4 rounded-xl bg-card border border-border/80 flex items-start gap-3 shadow-sm">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-rose-500/20 text-rose-400 text-xs font-bold shrink-0 mt-0.5">
+                    {idx + 1}
                   </div>
-                  <div className="text-xs sm:text-sm text-foreground leading-relaxed">
-                    <MathRenderer content={stepObj.detail} />
+                  <div className="text-xs sm:text-sm text-foreground/90 leading-relaxed">
+                    <MathRenderer content={trap} />
                   </div>
                 </div>
               ))}
             </div>
-
-            {/* Controls for progressive proof */}
-            <div className="pt-2 flex items-center justify-between border-t border-border">
-              {revealedSteps < proofSteps.length ? (
-                <button
-                  onClick={() => setRevealedSteps((prev) => prev + 1)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground text-xs font-medium shadow-sm hover:bg-primary/90 transition-colors"
-                >
-                  Révéler l&apos;étape suivante &rarr;
-                </button>
-              ) : (
-                <span className="text-xs text-emerald-700 dark:text-emerald-400 font-medium flex items-center gap-1">
-                  <CheckCircle2 className="h-4 w-4" /> Démonstration complète terminée !
-                </span>
-              )}
-
-              <button
-                onClick={() => setRevealedSteps(revealedSteps === proofSteps.length ? 1 : proofSteps.length)}
-                className="text-xs text-muted-foreground hover:text-foreground"
-              >
-                {revealedSteps === proofSteps.length ? "Réinitialiser" : "Tout afficher"}
-              </button>
-            </div>
-          </section>
+          </div>
         )}
 
-        {/* Section 5: Comprehension Quiz */}
-        {currentLesson.quiz && currentLesson.quiz.length > 0 && (
-          <section className="rounded-lg border border-border bg-card p-6 shadow-sm space-y-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground font-mono flex items-center gap-1.5">
-              <HelpCircle className="h-4 w-4 text-primary" /> 5. Test de Compréhension Rapide
-            </h2>
-
+        {/* TAB 5: QUIZ D'AUTO-EVALUATION */}
+        {activeTab === "quiz" && currentLesson.quiz && currentLesson.quiz.length > 0 && (
+          <div className="space-y-4 animate-in fade-in duration-200">
             {currentLesson.quiz.map((q, qIdx) => (
-              <div key={qIdx} className="space-y-3">
-                <div className="text-sm font-medium text-foreground">
-                  <MathRenderer content={q.question} />
-                </div>
+              <div key={qIdx} className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-4">
+                <h3 className="text-sm sm:text-base font-semibold text-foreground">
+                  Question : {q.question}
+                </h3>
 
                 <div className="space-y-2">
-                  {q.options.map((opt, oIdx) => {
-                    const isSelected = selectedQuizOption === oIdx;
-                    const isCorrect = oIdx === q.answer;
+                  {q.options.map((opt, optIdx) => {
+                    const isSelected = selectedQuizOption === optIdx;
+                    const isCorrect = optIdx === q.answer;
+                    let optionStyle = "border-border/80 bg-muted/30 text-foreground hover:bg-muted/60";
+
+                    if (quizSubmitted) {
+                      if (isCorrect) {
+                        optionStyle = "border-emerald-500 bg-emerald-500/15 text-emerald-300 font-semibold";
+                      } else if (isSelected && !isCorrect) {
+                        optionStyle = "border-rose-500 bg-rose-500/15 text-rose-300";
+                      } else {
+                        optionStyle = "opacity-50 border-border/40 text-muted-foreground";
+                      }
+                    } else if (isSelected) {
+                      optionStyle = "border-primary bg-primary/15 text-primary font-medium";
+                    }
+
                     return (
                       <button
-                        key={oIdx}
-                        onClick={() => {
-                          if (!quizSubmitted) setSelectedQuizOption(oIdx);
-                        }}
-                        className={`w-full text-left p-3 rounded-lg border text-xs sm:text-sm transition-all flex items-center justify-between ${
-                          isSelected
-                            ? "border-primary bg-primary/5 font-medium"
-                            : "border-border hover:bg-muted/40"
-                        } ${
-                          quizSubmitted && isCorrect
-                            ? "border-emerald-500 bg-emerald-500/10 text-emerald-900 dark:text-emerald-200"
-                            : ""
-                        } ${
-                          quizSubmitted && isSelected && !isCorrect
-                            ? "border-destructive bg-destructive/10 text-destructive"
-                            : ""
-                        }`}
+                        key={optIdx}
+                        disabled={quizSubmitted}
+                        onClick={() => setSelectedQuizOption(optIdx)}
+                        className={`w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm transition-all flex items-center justify-between ${optionStyle}`}
                       >
-                        <MathRenderer content={opt} />
-                        {quizSubmitted && isCorrect && <CheckCircle2 className="h-4 w-4 text-emerald-600" />}
+                        <span>{opt}</span>
+                        {quizSubmitted && isCorrect && (
+                          <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                        )}
                         {quizSubmitted && isSelected && !isCorrect && (
-                          <XCircle className="h-4 w-4 text-destructive" />
+                          <XCircle className="h-4 w-4 text-rose-400 shrink-0" />
                         )}
                       </button>
                     );
@@ -354,130 +578,140 @@ export default function LessonPage({ params }: PageProps) {
                   <button
                     disabled={selectedQuizOption === null}
                     onClick={() => setQuizSubmitted(true)}
-                    className="mt-2 px-3 py-1.5 rounded bg-primary text-primary-foreground text-xs font-medium disabled:opacity-50"
+                    className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white shadow-sm shadow-primary/25 hover:bg-primary/90 disabled:opacity-50 transition-all"
                   >
-                    Valider ma réponse
+                    Valider la réponse
                   </button>
                 ) : (
-                  <div className="p-3 rounded bg-muted/60 text-xs text-muted-foreground space-y-1">
-                    <div className="font-semibold text-foreground">Explication :</div>
-                    <div>{q.explanation}</div>
+                  <div className="p-3.5 rounded-lg bg-muted/40 border border-border/80 text-xs space-y-1">
+                    <div className="font-semibold text-foreground flex items-center gap-1.5">
+                      <Sparkles className="h-3.5 w-3.5 text-primary" />
+                      <span>Explication détaillée :</span>
+                    </div>
+                    <p className="text-muted-foreground leading-relaxed">
+                      {q.explanation}
+                    </p>
                   </div>
                 )}
               </div>
             ))}
-          </section>
+          </div>
         )}
 
-        {/* Bottom Navigation */}
-        <div className="flex items-center justify-between pt-6 border-t border-border">
+        {/* Bottom Navigation: Previous / Next Lesson */}
+        <div className="pt-6 border-t border-border/80 flex items-center justify-between">
           {prevLesson ? (
             <Link
               href={`/modules/${currentModule.id}/${prevLesson.id}`}
-              className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground"
+              className="inline-flex items-center gap-2 rounded-lg border border-border/80 bg-card px-4 py-2.5 text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors"
             >
-              <ArrowLeft className="h-3.5 w-3.5" /> Leçon précédente : {prevLesson.title}
+              <ArrowLeft className="h-3.5 w-3.5" />
+              <div className="text-left">
+                <div className="text-[10px] text-muted-foreground">Leçon précédente</div>
+                <div className="text-foreground">{prevLesson.title}</div>
+              </div>
             </Link>
-          ) : (
-            <div />
-          )}
+          ) : <div />}
 
-          {nextLesson ? (
+          {nextLesson && (
             <Link
               href={`/modules/${currentModule.id}/${nextLesson.id}`}
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary text-primary-foreground text-xs font-medium shadow-sm hover:bg-primary/90"
+              className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs font-medium text-white shadow-sm shadow-primary/25 hover:bg-primary/90 transition-all"
             >
-              Leçon suivante : {nextLesson.title} <ArrowRight className="h-3.5 w-3.5" />
-            </Link>
-          ) : (
-            <Link
-              href="/practice"
-              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary text-primary-foreground text-xs font-medium shadow-sm hover:bg-primary/90"
-            >
-              Passer aux exercices pratiques <ArrowRight className="h-3.5 w-3.5" />
+              <div className="text-right">
+                <div className="text-[10px] text-white/80">Leçon suivante</div>
+                <div className="text-white font-semibold">{nextLesson.title}</div>
+              </div>
+              <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           )}
         </div>
       </div>
 
-      {/* 3. Right Panel: Collapsible Contextual AI Tutor */}
+      {/* 3. Right: Collapsible NVIDIA NIM AI Copilot Drawer */}
       <div
-        className={`border-l border-border bg-card flex flex-col transition-all duration-300 ${
-          isTutorOpen ? "w-80 lg:w-96" : "w-10"
+        className={`fixed lg:static top-16 bottom-0 right-0 z-40 flex flex-col border-l border-border/80 bg-card/90 backdrop-blur-xl transition-all duration-300 ${
+          isTutorOpen ? "w-80 sm:w-96" : "w-12"
         }`}
       >
-        {/* Tutor Header Toggle */}
-        <div className="p-3 border-b border-border flex items-center justify-between bg-muted/30">
-          <button
-            onClick={() => setIsTutorOpen(!isTutorOpen)}
-            className="flex items-center gap-2 text-xs font-medium text-foreground hover:text-primary"
-          >
-            <Cpu className="h-4 w-4 text-primary" />
-            {isTutorOpen && <span className="font-semibold">Tuteur NVIDIA NIM</span>}
-          </button>
-          {isTutorOpen && (
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
-              Llama 3.1 70B
-            </span>
-          )}
-        </div>
+        {/* Toggle Bar */}
+        <button
+          onClick={() => setIsTutorOpen(!isTutorOpen)}
+          className="flex items-center justify-between p-3 border-b border-border/80 text-xs font-medium text-foreground hover:bg-muted/40 transition-colors"
+        >
+          <div className="flex items-center gap-2 truncate">
+            <Cpu className="h-4 w-4 text-emerald-400 shrink-0" />
+            {isTutorOpen && <span className="font-semibold truncate">Tuteur NVIDIA NIM</span>}
+          </div>
+          {isTutorOpen ? <ChevronDown className="h-4 w-4 rotate-90" /> : <ChevronUp className="h-4 w-4 -rotate-90" />}
+        </button>
 
         {isTutorOpen && (
-          <div className="flex-1 flex flex-col overflow-hidden p-3">
-            {/* Quick Context Action Prompts */}
-            <div className="mb-3 flex flex-wrap gap-1.5">
-              {[
-                "Explique plus simplement",
-                "Donne un exemple",
-                "Pourquoi est-ce vrai ?",
-                "Pose-moi une question",
-              ].map((prompt, pIdx) => (
+          <div className="flex-1 flex flex-col overflow-hidden p-3 space-y-3">
+            {/* Quick Suggestion Chips */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-mono uppercase text-muted-foreground">Suggestions rapides :</span>
+              <div className="flex flex-wrap gap-1.5">
                 <button
-                  key={pIdx}
-                  onClick={() => handleSendMessage(prompt)}
-                  className="text-[11px] px-2 py-1 rounded border border-border bg-muted/40 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => handleSendMessage("Explique-moi les 4 axiomes avec un contre-exemple classique.")}
+                  className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
                 >
-                  {prompt}
+                  Contre-exemple d'axiome
                 </button>
-              ))}
+                <button
+                  onClick={() => handleSendMessage("Quel est le piège n°1 à éviter sur cette leçon à l'examen ?")}
+                  className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
+                >
+                  Piège n°1 d'examen
+                </button>
+                <button
+                  onClick={() => handleSendMessage("Pose-moi une question pour tester ma maîtrise.")}
+                  className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
+                >
+                  Tester ma maîtrise
+                </button>
+              </div>
             </div>
 
-            {/* Chat Messages */}
+            {/* Chat Messages Log */}
             <div className="flex-1 overflow-y-auto space-y-3 pr-1">
-              {chatMessages.map((msg, idx) => (
+              {chatMessages.map((msg, i) => (
                 <div
-                  key={idx}
-                  className={`p-2.5 rounded-lg text-xs leading-relaxed ${
+                  key={i}
+                  className={`p-3 rounded-lg text-xs leading-relaxed ${
                     msg.role === "assistant"
-                      ? "bg-muted/50 border border-border text-foreground"
-                      : "bg-primary text-primary-foreground ml-4"
+                      ? "bg-muted/50 border border-border/70 text-foreground"
+                      : "bg-primary/20 border border-primary/30 text-primary-foreground ml-4"
                   }`}
                 >
+                  <div className="text-[10px] font-mono text-muted-foreground mb-1">
+                    {msg.role === "assistant" ? "Tuteur NVIDIA NIM" : "Vous"}
+                  </div>
                   <MathRenderer content={msg.content} />
                 </div>
               ))}
               {isAiLoading && (
-                <div className="p-2.5 rounded-lg bg-muted/40 text-xs text-muted-foreground flex items-center gap-2">
+                <div className="p-3 rounded-lg bg-muted/40 border border-border/60 text-xs flex items-center gap-2 text-muted-foreground">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                  <span>Réflexion du tuteur en cours...</span>
+                  <span>Le tuteur rédige une réponse pédagogique...</span>
                 </div>
               )}
             </div>
 
             {/* Chat Input */}
-            <div className="mt-3 pt-2 border-t border-border flex gap-2">
+            <div className="pt-2 border-t border-border/80 flex gap-2">
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder="Posez une question sur cette leçon..."
-                className="flex-1 text-xs rounded-md border border-input bg-background px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-primary"
+                placeholder="Posez une question sur le cours..."
+                className="flex-1 bg-muted/40 border border-border/80 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
               />
               <button
                 disabled={isAiLoading || !inputMessage.trim()}
                 onClick={() => handleSendMessage()}
-                className="p-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                className="p-2 rounded-lg bg-primary text-white hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
                 <Send className="h-3.5 w-3.5" />
               </button>

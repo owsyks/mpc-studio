@@ -81,8 +81,8 @@ export default function MathLabPage() {
         </p>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 border-b border-border overflow-x-auto pb-1 scrollbar-none">
+      {/* Modern Tabs Bar */}
+      <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-card border border-border/80 overflow-x-auto shadow-sm">
         {[
           { id: "cayley", label: "Table de Cayley (LCI)", icon: Grid },
           { id: "cyclic", label: "Groupe Cyclique & Ordre", icon: Compass },
@@ -97,10 +97,10 @@ export default function MathLabPage() {
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id as any)}
-              className={`shrink-0 flex items-center gap-2 px-3.5 py-2 rounded-t-lg text-xs font-medium transition-all ${
+              className={`shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-medium transition-all ${
                 isActive
-                  ? "border-b-2 border-primary bg-card text-primary font-semibold shadow-sm"
-                  : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
+                  ? "bg-primary text-white shadow-md shadow-primary/25 font-semibold"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/60"
               }`}
             >
               <Icon className="h-3.5 w-3.5" />
