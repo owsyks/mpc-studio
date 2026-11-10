@@ -20,15 +20,24 @@ import {
   Check,
   ChevronDown,
 } from "lucide-react";
-import exercisesData from "@/data/exercises.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
 import { useLanguage } from "@/lib/i18n";
 import { ExerciseGenerator } from "@/lib/exercise-generator";
+import { getExercises } from "@/lib/content";
+import { useEffect } from "react";
 
 export default function PracticePage() {
   const { language, t } = useLanguage();
-  const [exercises, setExercises] = useState<any[]>(exercisesData);
-  const [currentExercise, setCurrentExercise] = useState<any>(exercisesData[0]);
+  const [exercises, setExercises] = useState<any[]>(() => getExercises(language));
+  const [currentExercise, setCurrentExercise] = useState<any>(() => getExercises(language)[0]);
+
+  // Synchronize exercises when language changes
+  useEffect(() => {
+    const list = getExercises(language);
+    setExercises(list);
+    const match = list.find((e) => e.id === currentExercise?.id) || list[0];
+    setCurrentExercise(match);
+  }, [language]);
   const [studentInput, setStudentInput] = useState<string>("");
   const [hintLevel, setHintLevel] = useState<number>(0);
   const [showSolution, setShowSolution] = useState<boolean>(false);

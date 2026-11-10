@@ -17,14 +17,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="h-full dark">
-      <body className="h-full flex flex-col bg-background text-foreground antialiased selection:bg-primary/25 selection:text-white">
+    <html lang="fr" className="h-full light">
+      <body className="h-full flex flex-col bg-background text-foreground antialiased selection:bg-primary/25 selection:text-primary">
         <ThemeProvider>
           <LanguageProvider>
-            {/* Subtle Background Glows */}
+            {/* Subtle Clean Academic Background Glows */}
             <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-              <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary/10 blur-[130px] rounded-full" />
-              <div className="absolute top-1/3 -right-40 w-[450px] h-[350px] bg-indigo-500/5 blur-[120px] rounded-full" />
+              <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[350px] bg-primary/5 blur-[130px] rounded-full" />
+              <div className="absolute top-1/3 -right-40 w-[450px] h-[350px] bg-blue-500/5 blur-[120px] rounded-full" />
             </div>
 
             {/* Global Navigation Header */}

@@ -26,9 +26,9 @@ import {
   MessageSquare,
   Maximize2,
 } from "lucide-react";
-import curriculumData from "@/data/curriculum.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
 import { useLanguage } from "@/lib/i18n";
+import { getCurriculum } from "@/lib/content";
 
 interface PageProps {
   params: Promise<{
@@ -42,6 +42,7 @@ export default function LessonPage({ params }: PageProps) {
   const { moduleId, lessonId } = resolvedParams;
   const { language, t } = useLanguage();
 
+  const curriculumData = getCurriculum(language);
   const currentModule = curriculumData.find((m) => m.id === moduleId);
   if (!currentModule) return notFound();
 

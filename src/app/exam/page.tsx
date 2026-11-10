@@ -16,15 +16,22 @@ import {
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
-import examData from "@/data/exam.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
 import { useLanguage } from "@/lib/i18n";
+import { getExam } from "@/lib/content";
 
 export default function ExamPage() {
   const { language, t } = useLanguage();
   const [examMode, setExamMode] = useState<"original" | "mock">("original");
-  const [currentExam, setCurrentExam] = useState<any>(examData);
+  const [currentExam, setCurrentExam] = useState<any>(() => getExam(language));
   const [isExamStarted, setIsExamStarted] = useState<boolean>(false);
+
+  // Synchronize exam language
+  useEffect(() => {
+    if (examMode === "original") {
+      setCurrentExam(getExam(language));
+    }
+  }, [language, examMode]);
   const [timeLeft, setTimeLeft] = useState<number>(60 * 60); // 60 minutes in seconds
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
@@ -69,7 +76,7 @@ export default function ExamPage() {
   };
 
   const handleLoadOriginal = () => {
-    setCurrentExam(examData);
+    setCurrentExam(getExam(language));
     setExamMode("original");
     setIsExamStarted(false);
     setIsSubmitted(false);

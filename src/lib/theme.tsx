@@ -17,15 +17,16 @@ const ThemeContext = createContext<ThemeContextType>({
 });
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
 
   useEffect(() => {
     const saved = localStorage.getItem("mpc_theme") as Theme;
-    if (saved === "light" || saved === "dark") {
-      setThemeState(saved);
-      applyTheme(saved);
-    } else {
+    if (saved === "dark") {
+      setThemeState("dark");
       applyTheme("dark");
+    } else {
+      setThemeState("light");
+      applyTheme("light");
     }
   }, []);
 
@@ -47,7 +48,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   };
 
   const toggleTheme = () => {
-    const next = theme === "dark" ? "light" : "dark";
+    const next = theme === "light" ? "dark" : "light";
     setTheme(next);
   };
 

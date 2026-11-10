@@ -4,9 +4,12 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { BookOpen, Cpu, Award, ArrowRight, CheckCircle2, AlertTriangle, Clock, RefreshCw, BarChart2 } from "lucide-react";
 import { MathRenderer } from "@/components/math/MathRenderer";
-import curriculumData from "@/data/curriculum.json";
+import { getCurriculum } from "@/lib/content";
+import { useLanguage } from "@/lib/i18n";
 
 export default function DashboardPage() {
+  const { language } = useLanguage();
+  const curriculumData = getCurriculum(language);
   const [completedLessons, setCompletedLessons] = useState<string[]>([]);
   const [exerciseCount, setExerciseCount] = useState<number>(3);
   const [masteryScore, setMasteryScore] = useState<number>(68);

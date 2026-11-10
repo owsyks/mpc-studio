@@ -1,21 +1,28 @@
+"use client";
+
 import Link from "next/link";
-import { BookOpen, FileText, ArrowRight, CheckCircle2, Layers, Sparkles, HelpCircle } from "lucide-react";
-import curriculumData from "@/data/curriculum.json";
-import { MathRenderer } from "@/components/math/MathRenderer";
+import { BookOpen, FileText, ArrowRight, CheckCircle2 } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
+import { getCurriculum } from "@/lib/content";
 
 export default function ModulesPage() {
+  const { language, t } = useLanguage();
+  const curriculumData = getCurriculum(language);
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8 w-full space-y-10">
       {/* Header */}
       <div className="space-y-3">
         <div className="text-xs font-mono font-semibold uppercase tracking-wider text-primary flex items-center gap-2">
-          <BookOpen className="h-4 w-4" /> Programme Universitaire Officiel • Oran 1
+          <BookOpen className="h-4 w-4" /> {language === "en" ? "Official University Curriculum • Oran 1" : "Programme Universitaire Officiel • Oran 1"}
         </div>
         <h1 className="text-3xl sm:text-5xl font-serif font-bold text-foreground tracking-tight">
-          Syllabus & Leçons Détaillées
+          {language === "en" ? "Syllabus & Detailed Lessons" : "Syllabus & Leçons Détaillées"}
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground max-w-3xl leading-relaxed">
-          Accédez aux 6 modules d'outils mathématiques pour la cryptographie avec explications approfondies, protocoles pas-à-pas, pièges d'examen et quiz d'auto-évaluation.
+          {language === "en"
+            ? "Access the 6 modules of mathematical tools for cryptography with in-depth explanations, step-by-step exam writing methods, traps, and quizzes."
+            : "Accédez aux 6 modules d'outils mathématiques pour la cryptographie avec explications approfondies, protocoles pas-à-pas, pièges d'examen et quiz d'auto-évaluation."}
         </p>
       </div>
 
@@ -38,7 +45,7 @@ export default function ModulesPage() {
                     <span>{module.sourcePdf} (Pages {module.sourcePages.join(", ")})</span>
                   </span>
                   <span>•</span>
-                  <span>{module.lessons.length} Leçons</span>
+                  <span>{module.lessons.length} {language === "en" ? "Lessons" : "Leçons"}</span>
                 </div>
 
                 <h2 className="text-2xl sm:text-3xl font-serif font-bold text-foreground">
@@ -54,7 +61,7 @@ export default function ModulesPage() {
                 href={`/modules/${module.id}/${module.lessons[0].id}`}
                 className="shrink-0 inline-flex h-11 items-center justify-center rounded-xl bg-primary px-5 text-xs font-semibold text-white shadow-md shadow-primary/20 transition-all hover:bg-primary/90 gap-2 active:scale-95"
               >
-                <span>Commencer le module</span>
+                <span>{language === "en" ? "Start Module" : "Commencer le module"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
@@ -104,7 +111,7 @@ export default function ModulesPage() {
                       href={`/modules/${module.id}/${lesson.id}`}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-card hover:bg-muted/60 text-xs font-medium text-foreground transition-all group-hover:border-primary/40"
                     >
-                      <span>Consulter</span>
+                      <span>{language === "en" ? "Study Lesson" : "Consulter"}</span>
                       <ArrowRight className="h-3 w-3 text-primary group-hover:translate-x-0.5 transition-transform" />
                     </Link>
                   </div>

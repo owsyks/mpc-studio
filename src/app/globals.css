@@ -4,7 +4,46 @@
 
 @layer base {
   :root {
-    /* Refined Deep Tech Slate Theme (Default) */
+    /* Default: Crisp Clean Academic White Mode */
+    --background: 210 25% 98%;       /* Pure academic crisp white-slate #f8fafc */
+    --foreground: 222 47% 11%;       /* Deep readable dark slate #0f172a */
+    
+    --card: 0 0% 100%;               /* Pure white card #ffffff */
+    --card-foreground: 222 47% 11%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    
+    --primary: 221 83% 53%;          /* Vibrant Royal Blue #2563eb */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 214 32% 91%;        /* Soft slate pill */
+    --secondary-foreground: 222 47% 11%;
+    
+    --muted: 214 32% 94%;            /* Light gray container */
+    --muted-foreground: 215 16% 40%; /* Clear readable slate */
+    
+    --accent: 210 40% 90%;
+    --accent-foreground: 222 47% 11%;
+    
+    --destructive: 0 84% 55%;
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 214 32% 84%;           /* Crisp modern light border */
+    --input: 214 32% 84%;
+    --ring: 221 83% 53%;
+    
+    --radius: 0.75rem;
+
+    /* Academic math color accents (Light mode high contrast) */
+    --math-definition: 221 83% 45%;
+    --math-theorem: 38 92% 38%;
+    --math-proof: 142 71% 32%;
+    --math-trap: 0 84% 48%;
+  }
+
+  html.dark, body.dark, .dark {
+    /* Optional Deep Tech Slate Dark Mode */
     --background: 222 47% 7%;        /* #0a0e17 */
     --foreground: 210 40% 98%;       /* #f8fafc */
     
@@ -29,44 +68,14 @@
     --destructive: 0 72% 51%;
     --destructive-foreground: 210 40% 98%;
     
-    --border: 222 30% 19%;           /* crisp modern borders */
+    --border: 222 30% 19%;
     --input: 222 30% 19%;
     --ring: 217 91% 60%;
-    
-    --radius: 0.75rem;
 
-    /* Academic math color accents */
-    --math-definition: 217 91% 65%;   /* Crisp blue */
-    --math-theorem: 38 92% 55%;       /* Warm gold/amber */
-    --math-proof: 142 71% 50%;        /* Vibrant emerald */
-    --math-trap: 0 84% 65%;           /* Caution rose/red */
-  }
-
-  html.light, body.light, .light {
-    --background: 210 25% 98%;       /* Crisp clean academic white/gray */
-    --foreground: 222 47% 11%;       /* Deep dark slate */
-    --card: 0 0% 100%;               /* Pure white card */
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;          /* Classic royal blue */
-    --primary-foreground: 210 40% 98%;
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 214 32% 94%;
-    --muted-foreground: 215 16% 42%;
-    --accent: 210 40% 90%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84% 55%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214 32% 84%;           /* Crisp light border */
-    --input: 214 32% 84%;
-    --ring: 221 83% 53%;
-
-    --math-definition: 221 83% 45%;
-    --math-theorem: 38 92% 40%;
-    --math-proof: 142 71% 35%;
-    --math-trap: 0 84% 50%;
+    --math-definition: 217 91% 65%;
+    --math-theorem: 38 92% 55%;
+    --math-proof: 142 71% 50%;
+    --math-trap: 0 84% 65%;
   }
 }
 
