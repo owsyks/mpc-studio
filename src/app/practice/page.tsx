@@ -538,6 +538,9 @@ export default function PracticePage() {
                 <h3 className="text-base font-bold text-foreground">
                   {t("practice.genModal.title")}
                 </h3>
+                <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                  NVIDIA NIM AI
+                </span>
               </div>
               <button
                 onClick={() => setIsGenModalOpen(false)}
@@ -641,7 +644,7 @@ export default function PracticePage() {
                 {isGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    <span>Génération en cours...</span>
+                    <span>{language === "en" ? "Generating unique AI exercise..." : "Génération d'un exercice inédit..."}</span>
                   </>
                 ) : (
                   <>

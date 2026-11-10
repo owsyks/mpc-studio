@@ -1,4 +1,5 @@
 import { MathSolver } from "./math-solver";
+import { NvidiaAIService } from "./nvidia-ai";
 
 export interface ExerciseData {
   id: string;
@@ -79,6 +80,140 @@ export class ExerciseGenerator {
       ],
     },
   ];
+
+  /**
+   * Generates a truly original, mathematically rich exercise using NVIDIA NIM
+   */
+  public static async generateWithAI(
+    moduleId: string = "module-1",
+    difficulty: "Beginner" | "Easy" | "Medium" | "Hard" | "Exam Level" = "Medium",
+    topic?: string,
+    language: "fr" | "en" = "fr"
+  ): Promise<ExerciseData> {
+    const modObj = this.MODULES.find((m) => m.id === moduleId) || this.MODULES[0];
+    const topObj = modObj.topics.find((t) => t.id === topic) || modObj.topics[0];
+
+    const isEn = language === "en";
+    const prompt = isEn
+      ? `Generate a brand-new, mathematically rigorous university exercise for "Mathematical Tools for Cryptography" (University of Oran 1).
+Module: ${modObj.title}
+Topic: ${topObj.name}
+Difficulty: ${difficulty}
+
+STRICT CREATIVITY RULES:
+1. DO NOT produce the overused trivial $x + y + kxy$ formula.
+2. Select from diverse, exciting mathematical structures:
+   - Permutation groups $S_n$ or alternating group $A_n$ (cycles, signature, order, Klein four-group $V_4$)
+   - Matrix subgroups of $\\mathrm{GL}_2(\\mathbb{R})$ or $\\mathrm{SL}_2(\\mathbb{R})$ (unipotent, orthogonal, upper-triangular)
+   - Affine groups $\\mathrm{Aff}(\\mathbb{R}) = \\{x \\mapsto ax+b \\mid a \\neq 0\\}$
+   - Relativistic velocity addition $x*y = \\frac{x+y}{1+xy}$ on $(-1, 1)$
+   - Complex roots of unity $\\mathbb{U}_n = \\{e^{2ik\\pi/n}\\}$
+   - Kernels and images of group homomorphisms
+   - Quotient groups $G/H$, Lagrange indices $[G : H]$
+   - Discrete logarithm problems or cyclic generator counts via $\\phi(n)$
+   - Extended Euclidean algorithm / Bézout identities, Chinese Remainder Theorem
+3. Ground the concepts in University of Oran 1 course notes (cours-mpc-partie1, 2, 3).
+4. Use standard KaTeX syntax ($...$ inline, $$...$$ display).
+5. Output STRICTLY valid raw JSON without markdown code fences:
+{
+  "title": "Clear descriptive title",
+  "statement": "Complete mathematical problem statement with numbered questions and KaTeX",
+  "hints": ["Hint 1 with KaTeX", "Hint 2 with KaTeX"],
+  "solution": {
+    "steps": ["Step 1 derivation with KaTeX", "Step 2 derivation with KaTeX"]
+  },
+  "rubric": [
+    {"criterion": "Grading criterion 1", "points": 2.0},
+    {"criterion": "Grading criterion 2", "points": 2.0}
+  ]
+}`
+      : `Génère un exercice universitaire inédit et mathématiquement rigoureux pour le cours officiel "Outils Mathématiques pour la Cryptographie" (Université Oran 1 - Es Senia, 3ème Année Ingénieur).
+Module : ${modObj.title}
+Thématique : ${topObj.name}
+Difficulté : ${difficulty}
+
+RÈGLES IMPÉRATIVES DE CRÉATIVITÉ :
+1. NE RÉPÈTE PAS la loi basique $x + y + kxy$.
+2. Choisis parmi des structures algébriques variées et stimulantes :
+   - Groupes de permutations $S_n$ ou groupe alterné $A_n$ (décomposition en cycles disjoints, signature, groupe de Klein $V_4$)
+   - Groupes de matrices dans $\\mathrm{GL}_2(\\mathbb{R})$ ou $\\mathrm{SL}_2(\\mathbb{R})$ (matrices unipotentes, triangulaires)
+   - Groupe affine $\\mathrm{Aff}(\\mathbb{R}) = \\{x \\mapsto ax+b \\mid a \\neq 0\\}$
+   - Loi de composition relativiste $x*y = \\frac{x+y}{1+xy}$ sur $]-1, 1[$
+   - Racines $n$-ièmes de l'unité $\\mathbb{U}_n$ et sous-groupes finis de $\\mathbb{C}^*$
+   - Calcul de noyau $\\ker(f)$ et image $\\operatorname{Im}(f)$ pour des morphismes non-triviaux
+   - Groupes quotients $G/H$, classes d'équivalence et indice de Lagrange $[G : H]$
+   - Ordre dans les produits directs $\\mathbb{Z}/a\\mathbb{Z} \\times \\mathbb{Z}/b\\mathbb{Z}$ et dénombrement des générateurs via $\\phi(n)$
+   - Cryptosystèmes RSA/Diffie-Hellman : Théorème d'Euler, algorithme d'Euclide étendu et coefficients de Bézout, Théorème des Restes Chinois
+3. Conforme aux cours et fiches TD de l'Université d'Oran 1.
+4. Formate TOUTES les formules mathématiques en KaTeX ($...$ en ligne, $$...$$ en bloc).
+5. Renvoie STRICTEMENT un JSON valide brut sans balises markdown :
+{
+  "title": "Titre explicite de l'exercice",
+  "statement": "Énoncé complet et rigoureux avec questions numérotées en KaTeX",
+  "hints": ["Indice 1 en KaTeX", "Indice 2 en KaTeX"],
+  "solution": {
+    "steps": ["Étape 1 de résolution détaillée en KaTeX", "Étape 2 de résolution détaillée en KaTeX"]
+  },
+  "rubric": [
+    {"criterion": "Critère de notation 1", "points": 2.0},
+    {"criterion": "Critère de notation 2", "points": 2.0}
+  ]
+}`;
+
+    const rawResponse = await NvidiaAIService.chatCompletion({
+      messages: [
+        {
+          role: "system",
+          content: isEn
+            ? "You are an expert algebra professor at University of Oran 1. Output strictly valid raw JSON without markdown fences."
+            : "Tu es un professeur expert d'algèbre à l'Université d'Oran 1. Renvoie strictement du JSON brut sans balises markdown.",
+        },
+        { role: "user", content: prompt },
+      ],
+      temperature: 0.7,
+      maxTokens: 1100,
+    });
+
+    // Clean possible markdown code fences
+    const cleaned = rawResponse
+      .replace(/^```json\s*/i, "")
+      .replace(/^```\s*/i, "")
+      .replace(/```\s*$/i, "")
+      .trim();
+
+    const parsed = JSON.parse(cleaned);
+    const seed = Date.now();
+
+    return {
+      id: `gen-ai-${seed}`,
+      title: parsed.title || `Exercice IA : ${topObj.name}`,
+      moduleId,
+      topic: topObj.id,
+      sourcePdf:
+        moduleId === "module-1"
+          ? "cours-mpc-partie1.pdf"
+          : moduleId.includes("2") || moduleId.includes("3")
+          ? "cours-mpc-partie2 (1).pdf"
+          : "cours-mpc-part3.pdf",
+      sourcePage: 5,
+      difficulty,
+      type: "proof",
+      statement: parsed.statement,
+      normalizedLatex: parsed.statement.slice(0, 80),
+      hints: Array.isArray(parsed.hints) && parsed.hints.length > 0
+        ? parsed.hints
+        : [isEn ? "Check the fundamental course definitions." : "Vérifiez les définitions fondamentales du cours."],
+      solution: {
+        steps: Array.isArray(parsed.solution?.steps) && parsed.solution.steps.length > 0
+          ? parsed.solution.steps
+          : [parsed.solution || (isEn ? "Full step-by-step derivation." : "Démonstration complète pas-à-pas.")],
+      },
+      rubric: Array.isArray(parsed.rubric) && parsed.rubric.length > 0
+        ? parsed.rubric
+        : [{ criterion: isEn ? "Mathematical rigor" : "Rigueur mathématique", points: 4.0 }],
+      isGenerated: true,
+    };
+  }
 
   /**
    * Generates a deterministic, mathematically validated exercise for a chosen module & topic
@@ -172,86 +307,169 @@ export class ExerciseGenerator {
 
   // --- MODULE 1: Groupes et Sous-groupes ---
   private static generateModule1(difficulty: string, topic: string | undefined, seed: number): ExerciseData {
-    const k = [2, 3, 4, 5][seed % 4];
+    const archetype = seed % 4;
 
-    if (topic === "matrix-group") {
+    if (archetype === 0 || topic === "matrix-group") {
       return {
         id: `gen-m1-mat-${seed}`,
-        title: `Sous-groupe de matrices triangulaires supérieures`,
+        title: `Sous-groupe de matrices triangulaires unipotentes`,
         moduleId: "module-1",
         topic: "matrix-group",
         sourcePdf: "cours-mpc-partie1.pdf",
         sourcePage: 9,
         difficulty: difficulty as any,
         type: "proof",
-        statement: `Soit le sous-ensemble de $GL_2(\\mathbb{R})$ :
-$$T = \\left\\{ \\begin{pmatrix} 1 & a \\\\ 0 & 1 \\end{pmatrix} \\;\\middle|\\; a \\in \\mathbb{R} \\right\\}$$
+        statement: `Soit l'ensemble de matrices réelles $2 \\times 2$ :
+$$T = \\left\\{ M(a) = \\begin{pmatrix} 1 & a \\\\ 0 & 1 \\end{pmatrix} \\;\\middle|\\; a \\in \\mathbb{R} \\right\\}$$
 1. Montrer que $T$ est non vide.
-2. Démontrer que $T$ est un sous-groupe abélien de $(GL_2(\\mathbb{R}), \\times)$.`,
-        normalizedLatex: `T = \\left\\{ \\begin{pmatrix} 1 & a \\\\ 0 & 1 \\end{pmatrix} \\right\\} \\le GL_2(\\mathbb{R})`,
+2. Démontrer que $T$ est un sous-groupe abélien de $(\\mathrm{GL}_2(\\mathbb{R}), \\times)$.`,
+        normalizedLatex: `T = \\left\\{ \\begin{pmatrix} 1 & a \\\\ 0 & 1 \\end{pmatrix} \\right\\} \\le \\mathrm{GL}_2(\\mathbb{R})`,
         hints: [
-          `Hint 1 : Vérifiez que la matrice identité $I_2$ correspond à $a = 0$.`,
-          `Hint 2 : Utilisez le critère de sous-groupe : soient $M_a, M_b \\in T$, calculez $M_a \\times M_b^{-1}$.`,
-          `Hint 3 : L'inverse de $M_b = \\begin{pmatrix} 1 & b \\\\ 0 & 1 \\end{pmatrix}$ est $M_{-b}$.`
+          `Hint 1 : Vérifiez que pour $a = 0$, $M(0) = I_2 \\in T$.`,
+          `Hint 2 : Calculez le produit $M(a) \\times M(b)^{-1}$ avec $M(b)^{-1} = M(-b)$.`,
+          `Hint 3 : Vérifiez la commutativité $M(a)M(b) = M(b)M(a)$.`
         ],
         solution: {
           isGroup: true,
           isAbelian: true,
           steps: [
-            `1. Non-vacuité : Pour $a = 0$, $M_0 = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = I_2 \\in T$, donc $T \\neq \\emptyset$.`,
-            `2. Inverse d'un élément : $\\det(M_b) = 1 \\times 1 - 0 = 1 \\neq 0$. Son inverse est $M_b^{-1} = \\begin{pmatrix} 1 & -b \\\\ 0 & 1 \\end{pmatrix} = M_{-b} \\in T$.`,
-            `3. Stabilité par produit avec l'inverse : Soient $M_a, M_b \\in T$ :
-$$M_a \\times M_b^{-1} = \\begin{pmatrix} 1 & a \\\\ 0 & 1 \\end{pmatrix} \\begin{pmatrix} 1 & -b \\\\ 0 & 1 \\end{pmatrix} = \\begin{pmatrix} 1 & a-b \\\\ 0 & 1 \\end{pmatrix} = M_{a-b} \\in T$$
+            `1. Non-vacuité : Pour $a = 0$, $M(0) = \\begin{pmatrix} 1 & 0 \\\\ 0 & 1 \\end{pmatrix} = I_2 \\in T$, donc $T \\neq \\emptyset$.`,
+            `2. Inverse d'un élément : $\\det(M(b)) = 1 \\neq 0$. Son inverse est $M(b)^{-1} = M(-b) = \\begin{pmatrix} 1 & -b \\\\ 0 & 1 \\end{pmatrix} \\in T$.`,
+            `3. Stabilité par produit : Soient $M(a), M(b) \\in T$ :
+$$M(a) \\times M(b)^{-1} = \\begin{pmatrix} 1 & a \\\\ 0 & 1 \\end{pmatrix} \\begin{pmatrix} 1 & -b \\\\ 0 & 1 \\end{pmatrix} = \\begin{pmatrix} 1 & a-b \\\\ 0 & 1 \\end{pmatrix} = M(a-b) \\in T$$
 puisque $a - b \\in \\mathbb{R}$.`,
-            `4. Commutativité : $M_a M_b = M_{a+b} = M_{b+a} = M_b M_a$. Donc $T$ est un sous-groupe commutatif.`
+            `4. Commutativité : $M(a)M(b) = M(a+b) = M(b+a) = M(b)M(a)$. Donc $T$ est abélien.`
           ]
         },
         rubric: [
           { criterion: "Vérification de la non-vacuité (I₂ ∈ T)", points: 0.5 },
-          { criterion: "Calcul de l'inverse M_b⁻¹ = M_{-b}", points: 1.0 },
-          { criterion: "Application du critère de sous-groupe M_a M_b⁻¹ ∈ T", points: 1.5 },
+          { criterion: "Calcul de l'inverse M(b)⁻¹ = M(-b)", points: 1.0 },
+          { criterion: "Application du critère de sous-groupe M(a)M(b)⁻¹ ∈ T", points: 1.5 },
           { criterion: "Preuve de commutativité", points: 1.0 }
         ],
         isGenerated: true,
       };
     }
 
-    // Default: Rational group law on R \ {-1/k}
+    if (archetype === 1) {
+      // Relativistic Velocity Addition Group on ]-1, 1[
+      return {
+        id: `gen-m1-vel-${seed}`,
+        title: `Loi d'addition relativiste sur ]-1, 1[`,
+        moduleId: "module-1",
+        topic: "group-law",
+        sourcePdf: "cours-mpc-partie1.pdf",
+        sourcePage: 6,
+        difficulty: difficulty as any,
+        type: "proof",
+        statement: `Soit l'intervalle ouvert $G = ]-1, 1[$. On définit l'opération :
+$$x * y = \\frac{x + y}{1 + xy}$$
+1. Montrer que $*$ est une loi de composition interne sur $G$ (prouver que $|x*y| < 1$).
+2. Démontrer que $(G, *)$ est un groupe abélien en précisant le neutre $e$ et le symétrique $x'$ de tout $x \\in G$.`,
+        normalizedLatex: `x * y = \\frac{x+y}{1+xy} \\quad \\text{sur } ]-1, 1[`,
+        hints: [
+          `Hint 1 : Calculez $1 - (x * y)^2 = \\frac{(1-x^2)(1-y^2)}{(1+xy)^2}$ pour prouver que $|x*y| < 1$.`,
+          `Hint 2 : Le neutre $e$ satisfait $x * e = x \\iff \\frac{x+e}{1+xe} = x \\iff e(1-x^2) = 0$.`,
+          `Hint 3 : Le symétrique $x'$ satisfait $x * x' = 0 \\iff x + x' = 0$.`
+        ],
+        solution: {
+          isGroup: true,
+          isAbelian: true,
+          steps: [
+            `1. Loi interne : Remarquons que $1 - (x*y) = \\frac{(1-x)(1-y)}{1+xy} > 0$ et $1 + (x*y) = \\frac{(1+x)(1+y)}{1+xy} > 0$. Donc $-1 < x*y < 1$, ce qui prouve la stabilité de $G$.`,
+            `2. Associativité : $(x*y)*z = \\frac{x+y+z+xyz}{1+xy+xz+yz} = x*(y*z)$.`,
+            `3. Commutativité : $x*y = \\frac{x+y}{1+xy} = \\frac{y+x}{1+yx} = y*x$.`,
+            `4. Neutre : $\\frac{x+e}{1+xe} = x \\iff x+e = x+x^2 e \\iff e(1-x^2) = 0$. Comme $x \\in ]-1, 1[$, $1-x^2 \\neq 0$, donc $e = 0 \\in G$.`,
+            `5. Symétrique : $\\frac{x+x'}{1+xx'} = 0 \\iff x+x' = 0 \\iff x' = -x \\in G$.`
+          ]
+        },
+        rubric: [
+          { criterion: "Preuve de fermeture |x*y| < 1", points: 1.5 },
+          { criterion: "Associativité et commutativité", points: 1.0 },
+          { criterion: "Élément neutre e = 0", points: 0.75 },
+          { criterion: "Inverse x' = -x", points: 0.75 }
+        ],
+        isGenerated: true,
+      };
+    }
+
+    if (archetype === 2) {
+      // Klein Four-group in Permutation Group S4
+      return {
+        id: `gen-m1-klein-${seed}`,
+        title: `Sous-groupe de Klein dans le groupe symétrique S₄`,
+        moduleId: "module-1",
+        topic: "subgroup-criterion",
+        sourcePdf: "cours-mpc-partie1.pdf",
+        sourcePage: 10,
+        difficulty: difficulty as any,
+        type: "proof",
+        statement: `Dans le groupe symétrique $S_4$, considérons le sous-ensemble :
+$$V = \\{ \\mathrm{id}, \\; (12)(34), \\; (13)(24), \\; (14)(23) \\}$$
+1. Dresser la table de composition de $V$.
+2. En déduire que $V$ est un sous-groupe abélien de $(S_4, \\circ)$. Quel est l'ordre de chaque élément ?`,
+        normalizedLatex: `V = \\{ \\mathrm{id}, (12)(34), (13)(24), (14)(23) \\} \\le S_4`,
+        hints: [
+          `Hint 1 : Composez les transpositions disjointes, par exemple $(12)(34) \\circ (13)(24) = (14)(23)$.`,
+          `Hint 2 : Remarquez que chaque élément non trivial est son propre inverse (ordre 2).`,
+          `Hint 3 : Vérifiez la clôture : la table ne contient que des éléments de $V$.`
+        ],
+        solution: {
+          isGroup: true,
+          isAbelian: true,
+          steps: [
+            `1. Table de composition : Posons $\\sigma_1 = (12)(34)$, $\\sigma_2 = (13)(24)$, $\\sigma_3 = (14)(23)$.
+On vérifie $\\sigma_1^2 = \\sigma_2^2 = \\sigma_3^2 = \\mathrm{id}$.
+De plus, $\\sigma_1 \\sigma_2 = \\sigma_3 = \\sigma_2 \\sigma_1$, $\\sigma_2 \\sigma_3 = \\sigma_1 = \\sigma_3 \\sigma_2$, et $\\sigma_3 \\sigma_1 = \\sigma_2 = \\sigma_1 \\sigma_3$.`,
+            `2. Sous-groupe : $V$ est non vide (contient $\\mathrm{id}$), stable par composition et chaque élément admet son propre inverse dans $V$. Donc $(V, \\circ)$ est un sous-groupe.`,
+            `3. Ordre des éléments : $\\mathrm{ord}(\\mathrm{id}) = 1$, et $\\mathrm{ord}(\\sigma_1) = \\mathrm{ord}(\\sigma_2) = \\mathrm{ord}(\\sigma_3) = 2$. C'est le groupe de Klein $V_4 \\simeq \\mathbb{Z}/2\\mathbb{Z} \\times \\mathbb{Z}/2\\mathbb{Z}$.`
+          ]
+        },
+        rubric: [
+          { criterion: "Table de composition complète", points: 1.5 },
+          { criterion: "Preuve du statut de sous-groupe", points: 1.5 },
+          { criterion: "Détermination exacte des ordres", points: 1.0 }
+        ],
+        isGenerated: true,
+      };
+    }
+
+    // Archetype 3: Rational group law on R \ {1}
     return {
       id: `gen-m1-grp-${seed}`,
-      title: `Structure de groupe sur ℝ \\ {-1/${k}}`,
+      title: `Structure de groupe abélien sur ℝ \\ {1}`,
       moduleId: "module-1",
       topic: "group-law",
       sourcePdf: "cours-mpc-partie1.pdf",
       sourcePage: 6,
       difficulty: difficulty as any,
       type: "proof",
-      statement: `Soit $E = \\mathbb{R} \\setminus \\{-1/${k}\\}$. On munit $E$ de la loi :
-$$x * y = x + y + ${k}xy$$
+      statement: `Soit $E = \\mathbb{R} \\setminus \\{1\\}$. On définit la loi $*$ par :
+$$x * y = x + y - xy$$
 1. Prouver que $*$ est une loi de composition interne sur $E$.
 2. Établir que $(E, *)$ est un groupe abélien en calculant l'élément neutre $e$ et l'inverse $x'$ de tout $x \\in E$.`,
-      normalizedLatex: `x * y = x + y + ${k}xy \\quad \\text{sur } \\mathbb{R} \\setminus \\{-1/${k}\\}`,
+      normalizedLatex: `x * y = x + y - xy \\quad \\text{sur } \\mathbb{R} \\setminus \\{1\\}`,
       hints: [
-        `Hint 1 : Utilisez l'identité fondamentale $1 + ${k}(x * y) = (1 + ${k}x)(1 + ${k}y)$.`,
-        `Hint 2 : Montrez que $(1 + ${k}x)(1 + ${k}y) \\neq 0$ dès lors que $x, y \\in E$.`,
-        `Hint 3 : Le neutre $e$ satisfait $x * e = x \\iff e(1 + ${k}x) = 0$.`
+        `Hint 1 : Utilisez l'identité $1 - (x * y) = (1 - x)(1 - y)$.`,
+        `Hint 2 : Comme $x \\neq 1$ et $y \\neq 1$, le produit $(1 - x)(1 - y) \\neq 0$.`,
+        `Hint 3 : Le neutre satisfait $x * e = x \\iff e(1 - x) = 0$.`
       ],
       solution: {
         isGroup: true,
         isAbelian: true,
         steps: [
-          `1. Stabilité (loi interne) : Remarquons $1 + ${k}(x * y) = 1 + ${k}x + ${k}y + ${k}^2 xy = (1 + ${k}x)(1 + ${k}y)$. Comme $x \\neq -1/${k}$ et $y \\neq -1/${k}$, aucun facteur n'est nul, donc $1 + ${k}(x * y) \\neq 0 \\implies x * y \\neq -1/${k}$. La loi est bien interne.`,
-          `2. Associativité : $(x * y) * z = x + y + z + ${k}(xy + yz + zx) + ${k}^2 xyz = x * (y * z)$.`,
-          `3. Commutativité : $x * y = x + y + ${k}xy = y + x + ${k}yx = y * x$.`,
-          `4. Élément neutre : $x * e = x \\iff x + e(1 + ${k}x) = x \\iff e(1 + ${k}x) = 0$. Comme $1 + ${k}x \\neq 0$, $e = 0 \\in E$.`,
-          `5. Inverse : $x * x' = 0 \\iff x + x'(1 + ${k}x) = 0 \\iff x' = \\frac{-x}{1 + ${k}x} \\in E$.`
+          `1. Stabilité (loi interne) : $1 - (x * y) = 1 - x - y + xy = (1 - x)(1 - y)$. Comme $x \\neq 1$ et $y \\neq 1$, $(1-x)(1-y) \\neq 0 \\implies x * y \\neq 1$. Donc $*$ est interne sur $E$.`,
+          `2. Associativité : $(x * y) * z = x + y + z - xy - xz - yz + xyz = x * (y * z)$.`,
+          `3. Commutativité : $x * y = x + y - xy = y + x - yx = y * x$.`,
+          `4. Neutre : $x * e = x \\iff e(1 - x) = 0$. Comme $x \\neq 1$, $e = 0 \\in E$.`,
+          `5. Inverse : $x * x' = 0 \\iff x'(1 - x) = -x \\iff x' = \\frac{x}{x - 1} \\in E$.`
         ]
       },
       rubric: [
-        { criterion: "Preuve de fermeture (factorisation)", points: 1.5 },
+        { criterion: "Preuve de fermeture via (1-x)(1-y) ≠ 0", points: 1.5 },
         { criterion: "Preuve de l'associativité et commutativité", points: 1.0 },
         { criterion: "Élément neutre e = 0", points: 0.75 },
-        { criterion: "Inverse x' = -x / (1 + kx)", points: 0.75 }
+        { criterion: "Inverse x' = x / (x - 1)", points: 0.75 }
       ],
       isGenerated: true,
     };
@@ -259,11 +477,95 @@ $$x * y = x + y + ${k}xy$$
 
   // --- MODULE 2: Morphismes de groupes ---
   private static generateModule2(difficulty: string, topic: string | undefined, seed: number): ExerciseData {
-    const coeff = [2, 3, 5][seed % 3];
+    const archetype = seed % 3;
 
+    if (archetype === 1 || topic === "homomorphism-proof") {
+      // Determinant Homomorphism from GL2 to R*
+      return {
+        id: `gen-m2-det-${seed}`,
+        title: `Morphisme déterminant et sous-groupe spécial linéaire SL₂(ℝ)`,
+        moduleId: "module-2",
+        topic: "homomorphism-proof",
+        sourcePdf: "cours-mpc-partie2 (1).pdf",
+        sourcePage: 5,
+        difficulty: difficulty as any,
+        type: "proof",
+        statement: `Soit l'application $\\det : (\\mathrm{GL}_2(\\mathbb{R}), \\times) \\to (\\mathbb{R}^*, \\times)$ qui à toute matrice $M$ associe son déterminant $\\det(M)$.
+1. Montrer que $\\det$ est un morphisme de groupes.
+2. Déterminer son noyau $\\ker(\\det)$ et identifier ce sous-groupe remarquable.
+3. Le morphisme $\\det$ est-il injectif ? Est-il surjectif ? Justifier.`,
+        normalizedLatex: `\\det : \\mathrm{GL}_2(\\mathbb{R}) \\to \\mathbb{R}^*, \\quad \\ker(\\det) = \\mathrm{SL}_2(\\mathbb{R})`,
+        hints: [
+          `Hint 1 : Utilisez la formule fondamentale du cours d'algèbre : $\\det(AB) = \\det(A) \\cdot \\det(B)$.`,
+          `Hint 2 : Le neutre du groupe d'arrivée $(\\mathbb{R}^*, \\times)$ est 1. Résolvez $\\det(M) = 1$.`,
+          `Hint 3 : Pour la surjectivité, pour tout $\\lambda \\in \\mathbb{R}^*$, construisez la matrice diagonale $\\begin{pmatrix} \\lambda & 0 \\\\ 0 & 1 \\end{pmatrix}$.`
+        ],
+        solution: {
+          steps: [
+            `1. Morphisme : Pour toutes matrices $A, B \\in \\mathrm{GL}_2(\\mathbb{R})$, la propriété multiplicative du déterminant donne :
+$$\\det(A \\times B) = \\det(A) \\times \\det(B)$$
+Donc $\\det$ est un morphisme du groupe multiplicatif des matrices inversibles vers $(\\mathbb{R}^*, \\times)$.`,
+            `2. Noyau : $\\ker(\\det) = \\{M \\in \\mathrm{GL}_2(\\mathbb{R}) \\mid \\det(M) = 1\\}$.
+Ce sous-groupe remarquable est appelé le **Groupe Spécial Linéaire**, noté $\\mathrm{SL}_2(\\mathbb{R})$.`,
+            `3. Injectivité : $\\ker(\\det) \\neq \\{I_2\\}$ (par exemple $\\begin{pmatrix} -1 & 0 \\\\ 0 & -1 \\end{pmatrix} \\in \\ker(\\det)$). Donc $\\det$ n'est pas injectif.`,
+            `4. Surjectivité : Pour tout $\\lambda \\in \\mathbb{R}^*$, considérons $M_\\lambda = \\begin{pmatrix} \\lambda & 0 \\\\ 0 & 1 \\end{pmatrix} \\in \\mathrm{GL}_2(\\mathbb{R})$. On a $\\det(M_\\lambda) = \\lambda \\times 1 - 0 = \\lambda$. Donc $\\det$ est surjectif.`
+          ]
+        },
+        rubric: [
+          { criterion: "Preuve de det(AB) = det(A)det(B)", points: 1.5 },
+          { criterion: "Identification du noyau Ker = SL₂(ℝ)", points: 1.5 },
+          { criterion: "Étude rigoureuse d'injectivité et surjectivité", points: 1.0 }
+        ],
+        isGenerated: true,
+      };
+    }
+
+    if (archetype === 2) {
+      // Conjugation Automorphism
+      return {
+        id: `gen-m2-conj-${seed}`,
+        title: `Automorphisme intérieur par conjugaison`,
+        moduleId: "module-2",
+        topic: "homomorphism-proof",
+        sourcePdf: "cours-mpc-partie2 (1).pdf",
+        sourcePage: 6,
+        difficulty: difficulty as any,
+        type: "proof",
+        statement: `Soit $(G, \\cdot)$ un groupe et soit un élément fixé $g \\in G$. On définit l'application de conjugaison $\\phi_g : G \\to G$ par :
+$$\\phi_g(x) = g \\cdot x \\cdot g^{-1}$$
+1. Montrer que $\\phi_g$ est un morphisme de groupes de $G$ dans $G$.
+2. Déterminer son noyau $\\ker(\\phi_g)$. Que peut-on en déduire sur l'injectivité ?
+3. Montrer que $\\phi_g$ est bijectif et préciser son application réciproque $(\\phi_g)^{-1}$.`,
+        normalizedLatex: `\\phi_g(x) = gxg^{-1}, \\quad \\phi_g \\in \\mathrm{Aut}(G)`,
+        hints: [
+          `Hint 1 : Développez $\\phi_g(x) \\cdot \\phi_g(y) = (g x g^{-1})(g y g^{-1})$ et simplifiez $g^{-1}g$.`,
+          `Hint 2 : Pour le noyau, résolvez $g x g^{-1} = e$.`,
+          `Hint 3 : L'application inverse de la conjugaison par $g$ est la conjugaison par $g^{-1}$.`
+        ],
+        solution: {
+          steps: [
+            `1. Morphisme : Pour tous $x, y \\in G$ :
+$$\\phi_g(x) \\cdot \\phi_g(y) = (g x g^{-1}) \\cdot (g y g^{-1}) = g x (g^{-1} g) y g^{-1} = g x e y g^{-1} = g (xy) g^{-1} = \\phi_g(xy)$$
+Donc $\\phi_g$ est un endomorphisme de $G$.`,
+            `2. Noyau : $\\ker(\\phi_g) = \\{x \\in G \\mid gxg^{-1} = e\\}$.
+$$g x g^{-1} = e \\iff g x = e g = g \\iff x = g^{-1} g = e$$
+Le noyau est réduit au neutre $\\ker(\\phi_g) = \\{e\\}$, donc $\\phi_g$ est injectif.`,
+            `3. Bijectivité : L'application $\\phi_{g^{-1}}(y) = g^{-1} y (g^{-1})^{-1} = g^{-1} y g$ satisfait $(\\phi_g \\circ \\phi_{g^{-1}})(y) = y$ et $(\\phi_{g^{-1}} \\circ \\phi_g)(x) = x$. Donc $\\phi_g$ est un automorphisme de $G$ (automorphisme intérieur).`
+          ]
+        },
+        rubric: [
+          { criterion: "Preuve de morphisme via g⁻¹g = e", points: 1.5 },
+          { criterion: "Calcul de Ker = {e} et injectivité", points: 1.5 },
+          { criterion: "Preuve de surjectivité / bijectivité", points: 1.0 }
+        ],
+        isGenerated: true,
+      };
+    }
+
+    const coeff = [2, 3, 5][seed % 3];
     return {
       id: `gen-m2-morph-${seed}`,
-      title: `Morphisme exponentiel et calcul de Ker & Im`,
+      title: `Morphisme exponentiel complexe et calcul de Ker & Im`,
       moduleId: "module-2",
       topic: "kernel-image",
       sourcePdf: "cours-mpc-partie2 (1).pdf",

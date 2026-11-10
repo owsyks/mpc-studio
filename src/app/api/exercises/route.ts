@@ -14,13 +14,24 @@ export async function GET(req: NextRequest) {
   const language = (searchParams.get("language") || "fr") as "fr" | "en";
 
   if (action === "generate") {
-    const generated = ExerciseGenerator.generate(
-      moduleId || "module-1",
-      difficulty as any,
-      topic,
-      language
-    );
-    return NextResponse.json(generated);
+    try {
+      const generated = await ExerciseGenerator.generateWithAI(
+        moduleId || "module-1",
+        difficulty as any,
+        topic,
+        language
+      );
+      return NextResponse.json(generated);
+    } catch (aiErr) {
+      console.warn("AI generation failed in GET, falling back to deterministic:", aiErr);
+      const generated = ExerciseGenerator.generate(
+        moduleId || "module-1",
+        difficulty as any,
+        topic,
+        language
+      );
+      return NextResponse.json(generated);
+    }
   }
 
   let filtered = exercisesData;
@@ -34,7 +45,21 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { moduleId, topic, difficulty, language } = body;
+    const { moduleId, topic, difficulty, language, forceStatic } = body;
+
+    if (!forceStatic) {
+      try {
+        const generated = await ExerciseGenerator.generateWithAI(
+          moduleId || "module-1",
+          (difficulty as any) || "Medium",
+          topic,
+          language || "fr"
+        );
+        return NextResponse.json(generated);
+      } catch (aiErr: any) {
+        console.warn("AI exercise generation failed, falling back to diverse generator:", aiErr.message);
+      }
+    }
 
     const generated = ExerciseGenerator.generate(
       moduleId || "module-1",
