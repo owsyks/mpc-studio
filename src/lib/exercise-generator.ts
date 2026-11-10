@@ -181,7 +181,18 @@ RÈGLES IMPÉRATIVES DE CRÉATIVITÉ :
       .replace(/```\s*$/i, "")
       .trim();
 
-    const parsed = JSON.parse(cleaned);
+    let parsed: any;
+    try {
+      parsed = JSON.parse(cleaned);
+    } catch (_) {
+      const match = cleaned.match(/\{[\s\S]*\}/);
+      if (match) {
+        parsed = JSON.parse(match[0]);
+      } else {
+        throw new Error("Could not parse JSON from AI response");
+      }
+    }
+
     const seed = Date.now();
 
     return {
