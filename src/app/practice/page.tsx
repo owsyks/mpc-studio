@@ -22,8 +22,10 @@ import {
 } from "lucide-react";
 import exercisesData from "@/data/exercises.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
+import { useLanguage } from "@/lib/i18n";
 
 export default function PracticePage() {
+  const { language, t } = useLanguage();
   const [exercises, setExercises] = useState<any[]>(exercisesData);
   const [currentExercise, setCurrentExercise] = useState<any>(exercisesData[0]);
   const [studentInput, setStudentInput] = useState<string>("");
@@ -166,13 +168,13 @@ export default function PracticePage() {
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/15 hover:bg-primary/25 text-primary text-xs font-medium transition-all shadow-sm disabled:opacity-50 border border-primary/30"
           >
             <RefreshCw className={`h-3.5 w-3.5 ${isGenerating ? "animate-spin" : ""}`} />
-            <span>Générer une variation</span>
+            <span>{t("practice.generate")}</span>
           </button>
         </div>
 
         {/* Quick Switcher Chips */}
         <div className="space-y-1.5">
-          <div className="text-[11px] font-mono text-muted-foreground uppercase">Choisir un exercice du programme :</div>
+          <div className="text-[11px] font-mono text-muted-foreground uppercase">{t("practice.switch")}</div>
           <div className="flex gap-2 overflow-x-auto pb-2">
             {exercises.map((ex, idx) => (
               <button
@@ -193,7 +195,7 @@ export default function PracticePage() {
         {/* Statement Box */}
         <div className="rounded-2xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-3 backdrop-blur-md">
           <div className="flex items-center justify-between text-xs text-muted-foreground font-mono">
-            <span className="font-bold text-foreground">ÉNONCÉ OFFICIEL</span>
+            <span className="font-bold text-foreground">{t("practice.statement")}</span>
             {currentExercise.sourcePdf && (
               <span className="flex items-center gap-1 text-primary">
                 <FileText className="h-3.5 w-3.5" />
@@ -216,16 +218,16 @@ export default function PracticePage() {
           <div className="flex items-center justify-between">
             <h2 className="text-xs font-mono font-semibold uppercase tracking-wider text-amber-400 flex items-center gap-2">
               <Lightbulb className="h-4 w-4" />
-              Indices Pédagogiques Progressifs
+              {t("practice.hints")}
             </h2>
             <span className="text-xs font-mono text-muted-foreground bg-muted/60 px-2.5 py-0.5 rounded-full border border-border/60">
-              {hintLevel} / {currentExercise.hints?.length || 3} révélés
+              {hintLevel} / {currentExercise.hints?.length || 3} {language === "en" ? "revealed" : "révélés"}
             </span>
           </div>
 
           {hintLevel === 0 && (
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Bloqué sur la démarche ? Débloquez les indices progressifs sans être pénalisé sur votre note finale.
+              {language === "en" ? "Stuck on the proof? Reveal progressive hints without score penalty." : "Bloqué sur la démarche ? Débloquez les indices progressifs sans être pénalisé sur votre note finale."}
             </p>
           )}
 
@@ -236,7 +238,7 @@ export default function PracticePage() {
                 className="p-3.5 rounded-xl border border-amber-500/30 bg-amber-500/10 text-xs text-foreground leading-relaxed space-y-1 animate-in fade-in"
               >
                 <div className="font-semibold text-amber-300 font-mono text-[11px]">
-                  Indice {hIdx + 1} :
+                  {language === "en" ? "Hint" : "Indice"} {hIdx + 1} :
                 </div>
                 <div className="text-amber-100/90">
                   <MathRenderer content={hint} />
@@ -251,10 +253,10 @@ export default function PracticePage() {
                 onClick={() => setHintLevel((prev) => prev + 1)}
                 className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-medium transition-colors border border-amber-500/30"
               >
-                <Lightbulb className="h-3.5 w-3.5" /> Révéler l&apos;indice suivant ({hintLevel + 1})
+                <Lightbulb className="h-3.5 w-3.5" /> {t("practice.hint.next")} ({hintLevel + 1})
               </button>
             ) : (
-              <span className="text-xs text-muted-foreground">Tous les indices ont été révélés.</span>
+              <span className="text-xs text-muted-foreground">{t("practice.hint.all")}</span>
             )}
 
             <button
@@ -262,7 +264,7 @@ export default function PracticePage() {
               className="text-xs text-primary hover:text-primary/80 font-medium flex items-center gap-1.5 transition-colors"
             >
               <Eye className="h-3.5 w-3.5" />
-              {showSolution ? "Masquer la solution" : "Consulter la solution officielle"}
+              {showSolution ? t("practice.solution.hide") : t("practice.solution.show")}
             </button>
           </div>
 
@@ -284,10 +286,10 @@ export default function PracticePage() {
         <div className="flex items-center justify-between">
           <h2 className="text-base font-serif font-bold text-foreground flex items-center gap-2">
             <Cpu className="h-4 w-4 text-primary" />
-            Votre Espace de Démonstration
+            {t("practice.title")}
           </h2>
           <span className="text-xs font-mono text-muted-foreground">
-            Saisie Manuscrite ou Clavier
+            {language === "en" ? "Handwriting or LaTeX Input" : "Saisie Manuscrite ou Clavier"}
           </span>
         </div>
 
@@ -296,7 +298,7 @@ export default function PracticePage() {
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-foreground flex items-center gap-2">
               <Camera className="h-4 w-4 text-primary" />
-              Scanner une copie manuscrite (NVIDIA Vision)
+              {t("practice.ocr.title")}
             </span>
             <input
               type="file"
@@ -309,7 +311,7 @@ export default function PracticePage() {
               onClick={() => fileInputRef.current?.click()}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/80 bg-muted/60 hover:bg-muted text-xs font-medium text-foreground transition-colors"
             >
-              <Upload className="h-3.5 w-3.5" /> Choisir une photo
+              <Upload className="h-3.5 w-3.5" /> {t("practice.ocr.btn")}
             </button>
           </div>
 
@@ -331,18 +333,18 @@ export default function PracticePage() {
                     onClick={() => setImageRotation((r) => (r + 90) % 360)}
                     className="px-2.5 py-1 rounded bg-muted hover:bg-muted/80 text-[11px] flex items-center gap-1 border border-border/60"
                   >
-                    <RotateCw className="h-3 w-3" /> Pivoter 90°
+                    <RotateCw className="h-3 w-3" /> {t("practice.ocr.rotate")}
                   </button>
                   {isTranscribing && (
                     <span className="text-primary flex items-center gap-1 animate-pulse font-medium">
-                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> Transcription NVIDIA Vision en cours...
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" /> {language === "en" ? "Transcribing handwriting..." : "Transcription NVIDIA Vision en cours..."}
                     </span>
                   )}
                 </div>
 
                 {ambiguities.length > 0 && (
                   <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px]">
-                    <span className="font-semibold">Symboles ambigus :</span> {ambiguities.join(", ")}
+                    <span className="font-semibold">{language === "en" ? "Ambiguous symbols:" : "Symboles ambigus :"}</span> {ambiguities.join(", ")}
                   </div>
                 )}
 
@@ -354,7 +356,7 @@ export default function PracticePage() {
                       : "bg-primary text-white hover:bg-primary/90"
                   }`}
                 >
-                  {ocrConfirmed ? "✓ Transcription confirmée par l'étudiant" : "Confirmer la transcription"}
+                  {ocrConfirmed ? t("practice.ocr.confirmed") : t("practice.ocr.confirm")}
                 </button>
               </div>
             </div>
@@ -390,18 +392,14 @@ export default function PracticePage() {
         {/* Text Area for Solution */}
         <div className="rounded-2xl border border-border/80 bg-card/70 p-5 shadow-sm space-y-3 backdrop-blur-md">
           <label className="text-xs font-mono font-semibold uppercase text-muted-foreground flex items-center justify-between">
-            <span>Votre Démonstration (Texte & LaTeX) :</span>
-            <span className="text-[11px] text-muted-foreground">Markdown & KaTeX supportés</span>
+            <span>{t("practice.work.label")}</span>
+            <span className="text-[11px] text-muted-foreground">Markdown & KaTeX</span>
           </label>
           <textarea
             rows={8}
             value={studentInput}
             onChange={(e) => setStudentInput(e.target.value)}
-            placeholder="Rédigez votre preuve étape par étape... Ex :
-1. Stabilité par la loi : soient x, y dans G...
-2. Associativité : (x * y) * z = ...
-3. Élément neutre : e = ...
-4. Symétrique : x⁻¹ = ..."
+            placeholder={t("practice.work.placeholder")}
             className="w-full text-xs sm:text-sm font-mono rounded-xl border border-border/80 bg-background/80 p-3.5 focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed"
           />
 
@@ -411,7 +409,7 @@ export default function PracticePage() {
               onClick={() => setStudentInput("")}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              Effacer la copie
+              {t("practice.clear")}
             </button>
 
             <button
@@ -421,11 +419,11 @@ export default function PracticePage() {
             >
               {isEvaluating ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Évaluation par l'IA...
+                  <Loader2 className="h-4 w-4 animate-spin" /> {t("practice.evaluating")}
                 </>
               ) : (
                 <>
-                  <Send className="h-4 w-4" /> Soumettre & Corriger selon le Barème
+                  <Send className="h-4 w-4" /> {t("practice.submit")}
                 </>
               )}
             </button>
@@ -436,7 +434,7 @@ export default function PracticePage() {
         {studentInput.trim() && (
           <div className="rounded-2xl border border-border/80 bg-card/70 p-5 shadow-sm space-y-2 backdrop-blur-md">
             <span className="text-xs font-mono font-semibold uppercase text-muted-foreground">
-              Aperçu KaTeX de votre copie :
+              {t("practice.preview")}
             </span>
             <div className="p-4 rounded-xl bg-muted/30 text-xs sm:text-sm leading-relaxed border border-border/60">
               <MathRenderer content={studentInput} />

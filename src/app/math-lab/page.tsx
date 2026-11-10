@@ -4,8 +4,10 @@ import React, { useState, useMemo } from "react";
 import { Sparkles, Compass, CircleDot, Layers, ArrowRight, Grid } from "lucide-react";
 import { MathSolver } from "@/lib/math-solver";
 import { MathRenderer } from "@/components/math/MathRenderer";
+import { useLanguage } from "@/lib/i18n";
 
 export default function MathLabPage() {
+  const { language, t } = useLanguage();
   const [activeTab, setActiveTab] = useState<"cayley" | "cyclic" | "circle" | "cosets" | "homomorphism" | "matrix">("cayley");
 
   // State for Cayley table tool
@@ -71,25 +73,25 @@ export default function MathLabPage() {
       <div>
         <div className="flex items-center gap-2 text-xs font-mono font-semibold uppercase tracking-wider text-primary">
           <Sparkles className="h-4 w-4" />
-          Laboratoire de Mathématiques Interactif
+          {language === "en" ? "Interactive Mathematics Laboratory" : "Laboratoire de Mathématiques Interactif"}
         </div>
         <h1 className="text-3xl font-serif font-bold text-foreground mt-1">
-          Math Lab — Explorateur Algébrique
+          {t("mathlab.title")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground max-w-3xl">
-          Visualisez concrètement les tables d&apos;opérations finies, les orbites cycliques, les congruences modulaires, les partitions en classes et les matrices de Heisenberg du cours.
+          {t("mathlab.subtitle")}
         </p>
       </div>
 
       {/* Modern Tabs Bar */}
       <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-card border border-border/80 overflow-x-auto shadow-sm">
         {[
-          { id: "cayley", label: "Table de Cayley (LCI)", icon: Grid },
-          { id: "cyclic", label: "Groupe Cyclique & Ordre", icon: Compass },
-          { id: "circle", label: "Cercle Modulaire Z/nZ", icon: CircleDot },
-          { id: "cosets", label: "Classes & Quotients G/H", icon: Layers },
-          { id: "homomorphism", label: "Morphismes (Ker & Im)", icon: ArrowRight },
-          { id: "matrix", label: "Matrices de Heisenberg", icon: Sparkles },
+          { id: "cayley", label: t("mathlab.tab.cayley"), icon: Grid },
+          { id: "cyclic", label: t("mathlab.tab.cyclic"), icon: Compass },
+          { id: "circle", label: t("mathlab.tab.circle"), icon: CircleDot },
+          { id: "cosets", label: t("mathlab.tab.cosets"), icon: Layers },
+          { id: "homomorphism", label: t("mathlab.tab.homo"), icon: ArrowRight },
+          { id: "matrix", label: t("mathlab.tab.heisenberg"), icon: Sparkles },
         ].map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;

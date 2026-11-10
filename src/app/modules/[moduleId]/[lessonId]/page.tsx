@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import curriculumData from "@/data/curriculum.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
+import { useLanguage } from "@/lib/i18n";
 
 interface PageProps {
   params: Promise<{
@@ -39,6 +40,7 @@ interface PageProps {
 export default function LessonPage({ params }: PageProps) {
   const resolvedParams = use(params);
   const { moduleId, lessonId } = resolvedParams;
+  const { language, t } = useLanguage();
 
   const currentModule = curriculumData.find((m) => m.id === moduleId);
   if (!currentModule) return notFound();
@@ -65,7 +67,9 @@ export default function LessonPage({ params }: PageProps) {
   const [chatMessages, setChatMessages] = useState<Array<{ role: string; content: string }>>([
     {
       role: "assistant",
-      content: `Bonjour ! Je suis votre tuteur NVIDIA NIM pour la leçon **"${currentLesson.title}"**. Posez-moi une question sur une étape de calcul, demandez un exemple supplémentaire ou faites-vous interroger sur les notions d'examen.`,
+      content: language === "en"
+        ? `Hello! I am your NVIDIA NIM AI Tutor for **"${currentLesson.title}"**. Feel free to ask me to clarify a concept, calculate intermediate steps, or test your exam readiness.`
+        : `Bonjour ! Je suis votre tuteur NVIDIA NIM pour la leçon **"${currentLesson.title}"**. Posez-moi une question sur une étape de calcul, demandez un exemple supplémentaire ou faites-vous interroger sur les notions d'examen.`,
     },
   ]);
   const [inputMessage, setInputMessage] = useState("");
@@ -97,6 +101,7 @@ export default function LessonPage({ params }: PageProps) {
             moduleId: currentModule.id,
             lessonTitle: currentLesson.title,
             explanationStyle: "pedagogical",
+            language,
           },
         }),
       });
@@ -231,7 +236,7 @@ export default function LessonPage({ params }: PageProps) {
             }`}
           >
             <BookOpen className="h-3.5 w-3.5" />
-            <span>1. Cours & Théorie</span>
+            <span>{t("lesson.tab.theory")}</span>
           </button>
 
           <button
@@ -243,7 +248,7 @@ export default function LessonPage({ params }: PageProps) {
             }`}
           >
             <Layers className="h-3.5 w-3.5" />
-            <span>2. Méthode Pas-à-Pas</span>
+            <span>{t("lesson.tab.method")}</span>
             {stepByStepMethods.length > 0 && (
               <span className="text-[10px] bg-white/20 px-1.5 py-0.2 rounded-full">
                 {stepByStepMethods.length}
@@ -260,7 +265,7 @@ export default function LessonPage({ params }: PageProps) {
             }`}
           >
             <Sparkles className="h-3.5 w-3.5" />
-            <span>3. Démonstration Guidée</span>
+            <span>{t("lesson.tab.proof")}</span>
           </button>
 
           <button
@@ -272,7 +277,7 @@ export default function LessonPage({ params }: PageProps) {
             }`}
           >
             <AlertTriangle className="h-3.5 w-3.5" />
-            <span>4. Pièges d'Examen</span>
+            <span>{t("lesson.tab.traps")}</span>
           </button>
 
           {currentLesson.quiz && currentLesson.quiz.length > 0 && (
@@ -285,7 +290,7 @@ export default function LessonPage({ params }: PageProps) {
               }`}
             >
               <Award className="h-3.5 w-3.5" />
-              <span>5. Quiz d'Évaluation</span>
+              <span>{t("lesson.tab.quiz")}</span>
             </button>
           )}
         </div>
@@ -296,7 +301,7 @@ export default function LessonPage({ params }: PageProps) {
             {/* Section 1: Intuition */}
             <section className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm">
               <h2 className="text-xs font-semibold uppercase tracking-wider text-primary font-mono mb-3 flex items-center gap-2">
-                <Sparkles className="h-4 w-4" /> Intuition & Utilité en Cryptographie
+                <Sparkles className="h-4 w-4" /> {t("lesson.intuition.title")}
               </h2>
               <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
                 {currentLesson.content.intuition}
@@ -307,7 +312,7 @@ export default function LessonPage({ params }: PageProps) {
             <section className="rounded-xl border border-border/80 bg-card/70 p-6 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-semibold uppercase tracking-wider text-blue-400 font-mono flex items-center gap-2">
-                  <BookOpen className="h-4 w-4" /> Définition Formelle du Cours Universitaire
+                  <BookOpen className="h-4 w-4" /> {t("lesson.formal.title")}
                 </h2>
                 <span className="text-[11px] font-mono text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/60">
                   {currentLesson.sourcePdf} • p. {currentLesson.sourcePage}
@@ -360,9 +365,9 @@ export default function LessonPage({ params }: PageProps) {
             <div className="p-4 rounded-xl bg-primary/10 border border-primary/25 flex items-start gap-3">
               <Layers className="h-5 w-5 text-primary shrink-0 mt-0.5" />
               <div className="text-xs leading-relaxed">
-                <p className="font-semibold text-foreground text-sm">Protocole Méthodologique d'Examen</p>
+                <p className="font-semibold text-foreground text-sm">{t("lesson.method.title")}</p>
                 <p className="text-muted-foreground mt-0.5">
-                  Voici les étapes obligatoires à rédiger mot pour mot sur votre feuille d'examen pour garantir tous les points attribués par l'équipe pédagogique d'Oran 1.
+                  {t("lesson.method.desc")}
                 </p>
               </div>
             </div>
@@ -383,7 +388,7 @@ export default function LessonPage({ params }: PageProps) {
                       onClick={() => askTutorAboutStep(m.title)}
                       className="inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 font-medium self-start sm:self-auto"
                     >
-                      <Sparkles className="h-3 w-3" /> Demander une explication IA &rarr;
+                      <Sparkles className="h-3 w-3" /> {t("lesson.method.ai")} &rarr;
                     </button>
                   </div>
 
@@ -436,7 +441,7 @@ export default function LessonPage({ params }: PageProps) {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-4">
                 <div>
                   <span className="text-xs font-mono font-semibold uppercase text-amber-400">
-                    Exercice d'Application Type TD (Démonstration Intégrale)
+                    {t("lesson.proof.title")}
                   </span>
                   <h3 className="text-lg font-serif font-bold text-foreground mt-1">
                     {currentLesson.content.workedExample.statement}
@@ -444,7 +449,7 @@ export default function LessonPage({ params }: PageProps) {
                 </div>
 
                 <div className="text-xs font-mono text-muted-foreground bg-muted/60 px-3 py-1 rounded-full border border-border/60 shrink-0">
-                  Étape {Math.min(revealedSteps, proofSteps.length)} / {proofSteps.length}
+                  {language === "en" ? "Step" : "Étape"} {Math.min(revealedSteps, proofSteps.length)} / {proofSteps.length}
                 </div>
               </div>
 
@@ -460,7 +465,7 @@ export default function LessonPage({ params }: PageProps) {
                         {step.step}
                       </span>
                       <span className="text-[10px] text-muted-foreground font-mono">
-                        Justification validée
+                        {language === "en" ? "Justification verified" : "Justification validée"}
                       </span>
                     </div>
                     <div className="text-sm text-foreground/90 leading-relaxed">
@@ -477,13 +482,13 @@ export default function LessonPage({ params }: PageProps) {
                     onClick={() => setRevealedSteps(revealedSteps + 1)}
                     className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white shadow-sm shadow-primary/25 hover:bg-primary/90 transition-all"
                   >
-                    <span>Révéler l'étape suivante ({revealedSteps + 1} / {proofSteps.length})</span>
+                    <span>{t("lesson.proof.reveal")} ({revealedSteps + 1} / {proofSteps.length})</span>
                     <ChevronDown className="h-3.5 w-3.5" />
                   </button>
                 ) : (
                   <div className="flex items-center gap-2 text-xs text-emerald-400 font-medium">
                     <CheckCircle2 className="h-4 w-4" />
-                    Démonstration complète révélée avec succès !
+                    {t("lesson.proof.completed")}
                   </div>
                 )}
 
@@ -492,7 +497,7 @@ export default function LessonPage({ params }: PageProps) {
                     onClick={() => setRevealedSteps(1)}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
-                    Réinitialiser les étapes
+                    {t("lesson.proof.reset")}
                   </button>
                 )}
               </div>
@@ -506,9 +511,9 @@ export default function LessonPage({ params }: PageProps) {
             <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/25 flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-rose-400 shrink-0 mt-0.5" />
               <div className="text-xs leading-relaxed">
-                <p className="font-semibold text-rose-300 text-sm">Pièges Fréquents & Erreurs à Éviter</p>
+                <p className="font-semibold text-rose-300 text-sm">{t("lesson.traps.title")}</p>
                 <p className="text-rose-300/80 mt-0.5">
-                  Ces erreurs sont celles qui coûtent le plus de points aux étudiants lors des examens d'Oran 1. Mémorisez-les pour votre copie !
+                  {t("lesson.traps.desc")}
                 </p>
               </div>
             </div>
@@ -607,7 +612,7 @@ export default function LessonPage({ params }: PageProps) {
             >
               <ArrowLeft className="h-3.5 w-3.5" />
               <div className="text-left">
-                <div className="text-[10px] text-muted-foreground">Leçon précédente</div>
+                <div className="text-[10px] text-muted-foreground">{t("lesson.prev")}</div>
                 <div className="text-foreground">{prevLesson.title}</div>
               </div>
             </Link>
@@ -619,7 +624,7 @@ export default function LessonPage({ params }: PageProps) {
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-xs font-medium text-white shadow-sm shadow-primary/25 hover:bg-primary/90 transition-all"
             >
               <div className="text-right">
-                <div className="text-[10px] text-white/80">Leçon suivante</div>
+                <div className="text-[10px] text-white/80">{t("lesson.next")}</div>
                 <div className="text-white font-semibold">{nextLesson.title}</div>
               </div>
               <ArrowRight className="h-3.5 w-3.5" />
@@ -641,7 +646,7 @@ export default function LessonPage({ params }: PageProps) {
         >
           <div className="flex items-center gap-2 truncate">
             <Cpu className="h-4 w-4 text-emerald-400 shrink-0" />
-            {isTutorOpen && <span className="font-semibold truncate">Tuteur NVIDIA NIM</span>}
+            {isTutorOpen && <span className="font-semibold truncate">{t("lesson.tutor.title")}</span>}
           </div>
           {isTutorOpen ? <ChevronDown className="h-4 w-4 rotate-90" /> : <ChevronUp className="h-4 w-4 -rotate-90" />}
         </button>
@@ -650,25 +655,25 @@ export default function LessonPage({ params }: PageProps) {
           <div className="flex-1 flex flex-col overflow-hidden p-3 space-y-3">
             {/* Quick Suggestion Chips */}
             <div className="space-y-1.5">
-              <span className="text-[10px] font-mono uppercase text-muted-foreground">Suggestions rapides :</span>
+              <span className="text-[10px] font-mono uppercase text-muted-foreground">{t("lesson.tutor.chips")}</span>
               <div className="flex flex-wrap gap-1.5">
                 <button
-                  onClick={() => handleSendMessage("Explique-moi les 4 axiomes avec un contre-exemple classique.")}
+                  onClick={() => handleSendMessage(language === "en" ? "Explain the 4 group axioms with a classic counter-example." : "Explique-moi les 4 axiomes avec un contre-exemple classique.")}
                   className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
                 >
-                  Contre-exemple d'axiome
+                  {t("lesson.tutor.chip1")}
                 </button>
                 <button
-                  onClick={() => handleSendMessage("Quel est le piège n°1 à éviter sur cette leçon à l'examen ?")}
+                  onClick={() => handleSendMessage(language === "en" ? "What is the #1 trap to avoid on this topic during exams?" : "Quel est le piège n°1 à éviter sur cette leçon à l'examen ?")}
                   className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
                 >
-                  Piège n°1 d'examen
+                  {t("lesson.tutor.chip2")}
                 </button>
                 <button
-                  onClick={() => handleSendMessage("Pose-moi une question pour tester ma maîtrise.")}
+                  onClick={() => handleSendMessage(language === "en" ? "Ask me a question to test my understanding of this lesson." : "Pose-moi une question pour tester ma maîtrise.")}
                   className="text-[11px] bg-muted/60 hover:bg-muted px-2 py-1 rounded border border-border/60 text-muted-foreground hover:text-foreground text-left transition-colors"
                 >
-                  Tester ma maîtrise
+                  {t("lesson.tutor.chip3")}
                 </button>
               </div>
             </div>
@@ -685,7 +690,7 @@ export default function LessonPage({ params }: PageProps) {
                   }`}
                 >
                   <div className="text-[10px] font-mono text-muted-foreground mb-1">
-                    {msg.role === "assistant" ? "Tuteur NVIDIA NIM" : "Vous"}
+                    {msg.role === "assistant" ? "NVIDIA NIM" : (language === "en" ? "You" : "Vous")}
                   </div>
                   <MathRenderer content={msg.content} />
                 </div>
@@ -693,7 +698,7 @@ export default function LessonPage({ params }: PageProps) {
               {isAiLoading && (
                 <div className="p-3 rounded-lg bg-muted/40 border border-border/60 text-xs flex items-center gap-2 text-muted-foreground">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-                  <span>Le tuteur rédige une réponse pédagogique...</span>
+                  <span>{t("lesson.tutor.loading")}</span>
                 </div>
               )}
             </div>
@@ -705,7 +710,7 @@ export default function LessonPage({ params }: PageProps) {
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
-                placeholder="Posez une question sur le cours..."
+                placeholder={t("lesson.tutor.placeholder")}
                 className="flex-1 bg-muted/40 border border-border/80 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-1 focus:ring-primary"
               />
               <button

@@ -18,8 +18,10 @@ import {
 } from "lucide-react";
 import examData from "@/data/exam.json";
 import { MathRenderer } from "@/components/math/MathRenderer";
+import { useLanguage } from "@/lib/i18n";
 
 export default function ExamPage() {
+  const { language, t } = useLanguage();
   const [examMode, setExamMode] = useState<"original" | "mock">("original");
   const [currentExam, setCurrentExam] = useState<any>(examData);
   const [isExamStarted, setIsExamStarted] = useState<boolean>(false);
@@ -115,64 +117,66 @@ export default function ExamPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={handleLoadOriginal}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-all ${
               examMode === "original"
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-muted/60 text-muted-foreground hover:bg-muted"
+                ? "border-primary bg-primary text-white shadow-sm"
+                : "border-border/80 bg-muted/60 text-muted-foreground hover:bg-muted"
             }`}
           >
-            Sujet Historique (16 Pts)
+            {t("exam.original")}
           </button>
           <button
             disabled={isLoadingMock}
             onClick={handleLoadMock}
-            className={`px-3 py-1.5 rounded-md text-xs font-medium border transition-colors ${
+            className={`px-3.5 py-2 rounded-lg text-xs font-semibold border transition-all ${
               examMode === "mock"
-                ? "border-primary bg-primary text-primary-foreground"
-                : "border-border bg-muted/60 text-muted-foreground hover:bg-muted"
+                ? "border-primary bg-primary text-white shadow-sm"
+                : "border-border/80 bg-muted/60 text-muted-foreground hover:bg-muted"
             }`}
           >
-            Examen Blanc Inédit
+            {t("exam.mock")}
           </button>
         </div>
       </div>
 
       {/* Pre-Exam Intro Screen */}
       {!isExamStarted && !isSubmitted && (
-        <div className="rounded-xl border border-border bg-card p-8 shadow-sm text-center max-w-2xl mx-auto space-y-6">
-          <div className="h-12 w-12 rounded-full bg-primary/10 text-primary mx-auto flex items-center justify-center">
-            <Clock className="h-6 w-6" />
+        <div className="rounded-2xl border border-border/80 bg-card/70 p-8 shadow-sm text-center max-w-2xl mx-auto space-y-6 backdrop-blur-md">
+          <div className="h-14 w-14 rounded-2xl bg-primary/15 text-primary mx-auto flex items-center justify-center border border-primary/25">
+            <Clock className="h-7 w-7" />
           </div>
 
           <div>
-            <h2 className="text-xl font-serif font-bold text-foreground">
-              Consignes de l&apos;Épreuve
+            <h2 className="text-2xl font-serif font-bold text-foreground">
+              {language === "en" ? "Official Examination Instructions" : "Consignes de l'Épreuve Officielle"}
             </h2>
             <p className="text-xs sm:text-sm text-muted-foreground mt-2 leading-relaxed">
-              Durée officielle : <strong>1 heure (60 minutes)</strong>. Le sujet comporte 3 exercices notés sur un barème total de <strong>{currentExam.totalPoints} points</strong>. Vos réponses sont sauvegardées en temps réel.
+              {language === "en"
+                ? `Official duration: 1 hour (60 minutes). The exam contains 3 exercises graded out of a total of ${currentExam.totalPoints} points. Your answers are auto-saved in real time.`
+                : `Durée officielle : 1 heure (60 minutes). Le sujet comporte 3 exercices notés sur un barème total de ${currentExam.totalPoints} points. Vos réponses sont sauvegardées en temps réel.`}
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 text-left text-xs bg-muted/30 p-4 rounded-lg border border-border">
+          <div className="grid grid-cols-3 gap-3 text-left text-xs bg-muted/30 p-4 rounded-xl border border-border/70">
             <div>
               <div className="font-semibold text-foreground">Exercice 1</div>
-              <div className="text-muted-foreground">Sous-groupes & Inverses (4,25 Pts)</div>
+              <div className="text-muted-foreground">Sous-groupes (4,25 Pts)</div>
             </div>
             <div>
               <div className="font-semibold text-foreground">Exercice 2</div>
-              <div className="text-muted-foreground">Matrices de GL2(R) (4,25 Pts)</div>
+              <div className="text-muted-foreground">Morphismes (4,25 Pts)</div>
             </div>
             <div>
               <div className="font-semibold text-foreground">Exercice 3</div>
-              <div className="text-muted-foreground">R*+ x R & Morphismes (7,5 Pts)</div>
+              <div className="text-muted-foreground">Z/12Z & Heisenberg (7,5 Pts)</div>
             </div>
           </div>
 
           <button
             onClick={() => setIsExamStarted(true)}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-md bg-primary text-primary-foreground text-sm font-semibold shadow hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90 transition-all active:scale-95"
           >
-            <Play className="h-4 w-4" /> Démarrer l&apos;Examen Chronométré
+            <Play className="h-4 w-4" /> {t("exam.start")}
           </button>
         </div>
       )}

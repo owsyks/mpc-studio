@@ -3,19 +3,21 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Layers, Cpu, Award, Library, Sparkles, Menu, X, ArrowRight } from "lucide-react";
+import { BookOpen, Layers, Cpu, Award, Library, Sparkles, Menu, X, ArrowRight, Globe } from "lucide-react";
+import { useLanguage } from "@/lib/i18n";
 
 export default function HeaderNav() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { language, setLanguage, t } = useLanguage();
 
   const navLinks = [
-    { href: "/dashboard", label: "Tableau de bord", icon: Layers },
-    { href: "/modules", label: "Cours & Leçons", icon: BookOpen },
-    { href: "/practice", label: "Exercices & IA", icon: Cpu },
-    { href: "/math-lab", label: "Math Lab", icon: Sparkles },
-    { href: "/exam", label: "Examen", icon: Award },
-    { href: "/library", label: "Bibliothèque", icon: Library },
+    { href: "/dashboard", label: t("nav.dashboard"), icon: Layers },
+    { href: "/modules", label: t("nav.courses"), icon: BookOpen },
+    { href: "/practice", label: t("nav.practice"), icon: Cpu },
+    { href: "/math-lab", label: t("nav.mathlab"), icon: Sparkles },
+    { href: "/exam", label: t("nav.exam"), icon: Award },
+    { href: "/library", label: t("nav.library"), icon: Library },
   ];
 
   return (
@@ -32,7 +34,7 @@ export default function HeaderNav() {
                 MPC Studio
               </span>
               <span className="text-[10px] text-muted-foreground font-mono">
-                Univ. Oran 1 • Ing 3
+                {t("nav.subtitle")}
               </span>
             </div>
           </Link>
@@ -60,27 +62,59 @@ export default function HeaderNav() {
           </nav>
         </div>
 
-        {/* Right CTA & Status */}
+        {/* Right CTA, Language Switcher & Status */}
         <div className="hidden sm:flex items-center gap-3">
+          {/* Language Switcher */}
+          <div className="flex items-center p-0.5 rounded-lg border border-border/80 bg-muted/40 text-xs font-mono">
+            <button
+              onClick={() => setLanguage("fr")}
+              className={`px-2 py-1 rounded-md transition-all ${
+                language === "fr"
+                  ? "bg-primary text-white font-bold shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              FR
+            </button>
+            <button
+              onClick={() => setLanguage("en")}
+              className={`px-2 py-1 rounded-md transition-all ${
+                language === "en"
+                  ? "bg-primary text-white font-bold shadow-xs"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              EN
+            </button>
+          </div>
+
           <div className="flex items-center gap-2 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-[11px] font-medium text-emerald-400">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span>NVIDIA NIM Connecté</span>
+            <span>{t("nav.status")}</span>
           </div>
 
           <Link
             href="/practice"
             className="inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-primary px-4 text-xs font-medium text-white shadow-sm shadow-primary/25 hover:bg-primary/90 transition-all hover:gap-2 active:scale-95"
           >
-            <span>S'entraîner</span>
+            <span>{t("nav.train")}</span>
             <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
 
-        {/* Mobile Hamburger Button */}
+        {/* Mobile Hamburger Button & Quick Lang */}
         <div className="flex md:hidden items-center gap-2">
+          {/* Mobile Language Switcher */}
+          <button
+            onClick={() => setLanguage(language === "fr" ? "en" : "fr")}
+            className="px-2 py-1 rounded-md border border-border/80 bg-card text-xs font-mono font-bold text-primary"
+          >
+            {language.toUpperCase()}
+          </button>
+
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/60 focus:outline-none"
@@ -94,9 +128,26 @@ export default function HeaderNav() {
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-b border-border bg-card/95 backdrop-blur-xl px-4 pt-3 pb-5 space-y-2 animate-in slide-in-from-top-2 duration-150">
-          <div className="flex items-center gap-2 mb-3 px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            <span>NVIDIA NIM Connecté (Gemma 4 & Vision)</span>
+          <div className="flex items-center justify-between mb-3 px-2 py-1.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-emerald-500" />
+              <span>{t("nav.status")}</span>
+            </div>
+            <div className="flex items-center gap-1 font-mono">
+              <button
+                onClick={() => setLanguage("fr")}
+                className={`px-1.5 py-0.5 rounded text-[11px] ${language === "fr" ? "bg-primary text-white" : "text-muted-foreground"}`}
+              >
+                FR
+              </button>
+              <span>/</span>
+              <button
+                onClick={() => setLanguage("en")}
+                className={`px-1.5 py-0.5 rounded text-[11px] ${language === "en" ? "bg-primary text-white" : "text-muted-foreground"}`}
+              >
+                EN
+              </button>
+            </div>
           </div>
           {navLinks.map((item) => {
             const Icon = item.icon;
